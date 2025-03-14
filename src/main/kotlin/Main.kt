@@ -63,6 +63,18 @@ fun SigmoidFunctionPlotter(
         val xScale = (endPoint - startPoint) / width
         val yScale = 1.0 / height
 
+        // Draw x and y axes
+        drawLine(
+            color = Color.Gray,
+            start = Offset(0f, height / 2),
+            end = Offset(width, height / 2)
+        )
+        drawLine(
+            color = Color.Gray,
+            start = Offset(width / 2, 0f),
+            end = Offset(width / 2, height)
+        )
+
         val points = (0 until width.toInt()).map { x ->
             val xValue = startPoint + x * xScale
             val yValue = f(xValue)
