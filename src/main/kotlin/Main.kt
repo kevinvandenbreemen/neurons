@@ -63,35 +63,7 @@ fun SigmoidFunctionPlotter(
         val xScale = (endPoint - startPoint) / width
         val yScale = 1.0 / height
 
-        // Draw x and y axes
-        drawLine(
-            color = Color.Gray,
-            start = Offset(0f, height / 2),
-            end = Offset(width, height / 2)
-        )
-        drawLine(
-            color = Color.Gray,
-            start = Offset(width / 2, 0f),
-            end = Offset(width / 2, height)
-        )
 
-        // Draw x-axis ticks
-        for (i in 0..width.toInt() step 50) {
-            drawLine(
-                color = Color.Gray,
-                start = Offset(i.toFloat(), height / 2 - 5),
-                end = Offset(i.toFloat(), height / 2 + 5)
-            )
-        }
-
-        // Draw y-axis ticks
-        for (i in 0..height.toInt() step 50) {
-            drawLine(
-                color = Color.Gray,
-                start = Offset(width / 2 - 5, i.toFloat()),
-                end = Offset(width / 2 + 5, i.toFloat())
-            )
-        }
 
         val points = (0 until width.toInt()).map { x ->
             val xValue = startPoint + x * xScale
@@ -124,5 +96,5 @@ fun NeuralNetDisplayPreview() {
 @Preview
 fun SigmoidCurveTester(){
     val neuron = Neuron()
-    SigmoidFunctionPlotter(-10.0, 10.0, neuron::sigmoid)
+    SigmoidFunctionPlotter(-5.0, 10.0, neuron::sigmoid)
 }
