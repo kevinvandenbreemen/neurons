@@ -1,5 +1,7 @@
 package com.vandenbreemen.neurons.model
 
+import kotlin.math.exp
+
 class Neuron {
     private val connections = mutableListOf<Connection>()
 
@@ -12,7 +14,11 @@ class Neuron {
     }
 
     fun stimulate(input: Double) {
-        value += input
+        value = sigmoid(value + input)
+    }
+
+    fun sigmoid(x: Double): Double {
+        return 1 / (1 + exp(-x))
     }
 
     fun fire() {

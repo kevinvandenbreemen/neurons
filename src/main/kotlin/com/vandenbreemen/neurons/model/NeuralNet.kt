@@ -14,4 +14,8 @@ class NeuralNet(val rows: Int, val cols: Int) {
             }
         }
     }
+
+    fun getCellAt(row: Int, col: Int): Neuron {
+        return grid[row][col]
+    }
 }
