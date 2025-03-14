@@ -64,14 +64,18 @@ fun SigmoidFunctionPlotter(
         val yScale = 1.0 / height
 
 
-
+        val zeroX = ((0 - startPoint) / xScale).toFloat()
         val points = (0 until width.toInt()).map { x ->
             val xValue = startPoint + x * xScale
             val yValue = f(xValue)
             Offset(x.toFloat(), ((1 - yValue) / yScale).toFloat())
         }
 
+        
+
         drawPoints(points, pointMode = PointMode.Polygon, color = Color.Black)
+        drawPoints(points, pointMode = PointMode.Polygon, color = Color.Black)
+        drawLine(Color.Red, Offset(zeroX, 0f), Offset(zeroX, height))
     }
 }
 
