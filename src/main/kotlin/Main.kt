@@ -75,6 +75,24 @@ fun SigmoidFunctionPlotter(
             end = Offset(width / 2, height)
         )
 
+        // Draw x-axis ticks
+        for (i in 0..width.toInt() step 50) {
+            drawLine(
+                color = Color.Gray,
+                start = Offset(i.toFloat(), height / 2 - 5),
+                end = Offset(i.toFloat(), height / 2 + 5)
+            )
+        }
+
+        // Draw y-axis ticks
+        for (i in 0..height.toInt() step 50) {
+            drawLine(
+                color = Color.Gray,
+                start = Offset(width / 2 - 5, i.toFloat()),
+                end = Offset(width / 2 + 5, i.toFloat())
+            )
+        }
+
         val points = (0 until width.toInt()).map { x ->
             val xValue = startPoint + x * xScale
             val yValue = f(xValue)
