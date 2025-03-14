@@ -3,8 +3,20 @@ package com.vandenbreemen.neurons.model
 class Neuron {
     private val connections = mutableListOf<Connection>()
 
+    private var value = 0.0
+    val activation: Double
+        get() = value
+
     fun connect(neuron: Neuron, strength: Double = 1.0) {
         connections.add(Connection(neuron, strength))
+    }
+
+    fun stimulate(input: Double) {
+        value += input
+    }
+
+    fun fire() {
+        connections.forEach { it.neuron.stimulate(it.strength * value) }
     }
 }
 
