@@ -23,4 +23,32 @@ class NeuralNet(val rows: Int, val cols: Int) {
     fun getCellAt(row: Int, col: Int): Neuron {
         return grid[row][col]
     }
+
+    private fun getDestination(row: Int, col: Int, direction: Direction): Pair<Int, Int>? {
+        return when (direction) {
+            Direction.UP -> if (row > 0) row - 1 to col else null
+            Direction.DOWN -> if (row < rows - 1) row + 1 to col else null
+            Direction.LEFT -> if (col > 0) row to col - 1 else null
+            Direction.RIGHT -> if (col < cols - 1) row to col + 1 else null
+            Direction.UP_LEFT -> if (row > 0 && col > 0) row - 1 to col - 1 else null
+            Direction.UP_RIGHT -> if (row > 0 && col < cols - 1) row - 1 to col + 1 else null
+            Direction.DOWN_LEFT -> if (row < rows - 1 && col > 0) row + 1 to col - 1 else null
+            Direction.DOWN_RIGHT -> if (row < rows - 1 && col < cols - 1) row + 1 to col + 1 else null
+        }
+    }
+
+    fun getConnectionStrengthFrom(row: Int, col: Int, direction: Direction): Double {
+
+        if (row < 0 || row >= rows || col < 0 || col >= cols) {
+            return Double.MIN_VALUE
+        }
+
+        val destination = getDestination(row, col, direction) ?: return Double.MIN_VALUE
+
+
+        val (destRow, destCol) = destination
+        val neuron = grid[row][col]
+        val connection = neuron.connections.find { it.neuron == grid[destRow][destCol] }
+        return connection?.strength ?: 0.0
+    }
 }

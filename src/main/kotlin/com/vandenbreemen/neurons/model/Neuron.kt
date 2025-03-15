@@ -3,7 +3,7 @@ package com.vandenbreemen.neurons.model
 import kotlin.math.exp
 
 class Neuron {
-    private val connections = mutableListOf<Connection>()
+    internal val connections = mutableListOf<Connection>()
 
     private var value = 0.0
     val activation: Double
