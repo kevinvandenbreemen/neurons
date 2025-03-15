@@ -1,7 +1,7 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -15,6 +15,7 @@ import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.Direction
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
+import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
 @Composable
@@ -22,60 +23,81 @@ import kotlin.math.absoluteValue
 fun App() {
     var text by remember { mutableStateOf("Hello, World!") }
 
-    MaterialTheme {
-        Button(onClick = {
-            text = "Simple Test Network Demo"
-        }) {
-            Text(text)
+    val neuralNet = NeuralNet(10, 10)
+    for (i in 0 until neuralNet.rows) {
+        for (j in 0 until neuralNet.cols) {
+            neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
         }
+    }
+    neuralNet.applyAll()
+
+
+    MaterialTheme {
+        NeuralNetworkDisplay(neuralNet)
     }
 }
 
 
 @Composable
-fun NeuralNetworkDisplay(neuralNet: NeuralNet) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val cellWidth = size.width / neuralNet.cols
-        val cellHeight = size.height / neuralNet.rows
+fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 1000) {
+    var fireCount by remember { mutableStateOf(0) }
 
-        for (i in 0 until neuralNet.rows) {
-            for (j in 0 until neuralNet.cols) {
-                val neuron = neuralNet.getCellAt(i, j)
-                val activation = neuron.activation
-                val color = Color(activation.toFloat(), activation.toFloat(), activation.toFloat())
-                drawRect(color, topLeft = Offset(j * cellWidth, i * cellHeight), size = Size(cellWidth, cellHeight))
+    LaunchedEffect(Unit) {
 
-                Direction.entries.forEach { direction ->
-                    val strength = neuralNet.getConnectionStrengthFrom(i, j, direction)
-                    if (strength > 0) {
-                        val (dx, dy) = when (direction) {
-                            Direction.UP -> 0 to -1
-                            Direction.DOWN -> 0 to 1
-                            Direction.LEFT -> -1 to 0
-                            Direction.RIGHT -> 1 to 0
-                            Direction.UP_LEFT -> -1 to -1
-                            Direction.UP_RIGHT -> 1 to -1
-                            Direction.DOWN_LEFT -> -1 to 1
-                            Direction.DOWN_RIGHT -> 1 to 1
+        while (true) {
+            delay(turnWait)
+            neuralNet.fireAndUpdate()
+            fireCount++ // Trigger recomposition
+            println("Updating")
+        }
+    }
+
+    Column {
+        Text("Turns: $fireCount")
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cellWidth = size.width / neuralNet.cols
+            val cellHeight = size.height / neuralNet.rows
+
+            for (i in 0 until neuralNet.rows) {
+                for (j in 0 until neuralNet.cols) {
+                    val neuron = neuralNet.getCellAt(i, j)
+                    val activation = neuron.activation
+                    val color = Color(activation.toFloat(), activation.toFloat(), activation.toFloat())
+                    drawRect(color, topLeft = Offset(j * cellWidth, i * cellHeight), size = Size(cellWidth, cellHeight))
+
+                    Direction.entries.forEach { direction ->
+                        val strength = neuralNet.getConnectionStrengthFrom(i, j, direction)
+                        if (strength > 0) {
+                            val (dx, dy) = when (direction) {
+                                Direction.UP -> 0 to -1
+                                Direction.DOWN -> 0 to 1
+                                Direction.LEFT -> -1 to 0
+                                Direction.RIGHT -> 1 to 0
+                                Direction.UP_LEFT -> -1 to -1
+                                Direction.UP_RIGHT -> 1 to -1
+                                Direction.DOWN_LEFT -> -1 to 1
+                                Direction.DOWN_RIGHT -> 1 to 1
+                            }
+                            val startX = j * cellWidth + cellWidth / 2
+                            val startY = i * cellHeight + cellHeight / 2
+                            val endX = (j + dx) * cellWidth + cellWidth / 2
+                            val endY = (i + dy) * cellHeight + cellHeight / 2
+                            drawLine(
+                                color = Color.Blue.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
+                                start = Offset(startX, startY),
+                                end = Offset(endX, endY),
+                                strokeWidth = 2f
+                            )
                         }
-                        val startX = j * cellWidth + cellWidth / 2
-                        val startY = i * cellHeight + cellHeight / 2
-                        val endX = (j + dx) * cellWidth + cellWidth / 2
-                        val endY = (i + dy) * cellHeight + cellHeight / 2
-                        drawLine(
-                            color = Color.Blue.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
-                            start = Offset(startX, startY),
-                            end = Offset(endX, endY),
-                            strokeWidth = 2f
-                        )
                     }
                 }
             }
+
+
         }
-
-
-
     }
+
+
 
 }
 
