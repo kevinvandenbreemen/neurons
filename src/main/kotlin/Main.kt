@@ -67,7 +67,7 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 1000) {
 
                     Direction.entries.forEach { direction ->
                         val strength = neuralNet.getConnectionStrengthFrom(i, j, direction)
-                        if (strength > 0) {
+                        if (strength != 0.0) {
                             val (dx, dy) = when (direction) {
                                 Direction.UP -> 0 to -1
                                 Direction.DOWN -> 0 to 1
@@ -83,7 +83,10 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 1000) {
                             val endX = (j + dx) * cellWidth + cellWidth / 2
                             val endY = (i + dy) * cellHeight + cellHeight / 2
                             drawLine(
-                                color = Color.Blue.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
+                                color = if (strength < 0)
+                                    Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
+                                else
+                                    Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
                                 start = Offset(startX, startY),
                                 end = Offset(endX, endY),
                                 strokeWidth = 2f
