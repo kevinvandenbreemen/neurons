@@ -1,5 +1,6 @@
 package com.vandenbreemen.neurons.model
 
+import kotlin.math.absoluteValue
 import kotlin.math.exp
 
 class Neuron {
@@ -18,7 +19,7 @@ class Neuron {
     private var stimulationValue = 0.0
 
     fun connect(neuron: Neuron, strength: Double = 1.0) {
-        if (strength > 1.0f) throw IllegalArgumentException("Strength must be between 0 and 1")
+        if (strength.absoluteValue > 1.0f) throw IllegalArgumentException("Strength must be between -1 and 1")
         //  Don't allow more than one connection to same neuron
         if (connections.any { it.neuron == neuron }) return
         connections.add(Connection(neuron, strength))
