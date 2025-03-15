@@ -18,6 +18,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import com.vandenbreemen.neurons.model.Neuron
+import kotlin.math.absoluteValue
 
 @Composable
 @Preview
@@ -65,13 +66,14 @@ fun SigmoidFunctionPlotter(
 
 
         val zeroX = ((0 - startPoint) / xScale).toFloat()
+        val closestToZero = height / 2f
         val points = (0 until width.toInt()).map { x ->
             val xValue = startPoint + x * xScale
             val yValue = f(xValue)
             Offset(x.toFloat(), ((1 - yValue) / yScale).toFloat())
         }
 
-        
+        drawLine(Color.Red, Offset(0f, closestToZero), Offset(width, closestToZero))
 
         drawPoints(points, pointMode = PointMode.Polygon, color = Color.Black)
         drawPoints(points, pointMode = PointMode.Polygon, color = Color.Black)
