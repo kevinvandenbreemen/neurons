@@ -10,6 +10,9 @@ class Neuron {
         get() = value
 
     fun connect(neuron: Neuron, strength: Double = 1.0) {
+        if (strength > 1.0f) throw IllegalArgumentException("Strength must be between 0 and 1")
+        //  Don't allow more than one connection to same neuron
+        if (connections.any { it.neuron == neuron }) return
         connections.add(Connection(neuron, strength))
     }
 
