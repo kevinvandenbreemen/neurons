@@ -51,4 +51,29 @@ class NeuralNet(val rows: Int, val cols: Int) {
         val connection = neuron.connections.find { it.neuron == grid[destRow][destCol] }
         return connection?.strength ?: 0.0
     }
+
+    /**
+     * Fires all neurons in the network and then applies their updates.
+     * This is done in two phases to ensure all neurons fire based on their current state
+     * before any updates are applied.
+     */
+    fun fireAndUpdate() {
+        // First phase: Fire all neurons
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                grid[i][j].fire()
+            }
+        }
+
+        // Second phase: Apply all stimulation updates
+        applyAll()
+    }
+
+    fun applyAll() {
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                grid[i][j].applyStimulation()
+            }
+        }
+    }
 }
