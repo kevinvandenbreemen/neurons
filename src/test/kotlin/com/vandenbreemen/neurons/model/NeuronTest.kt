@@ -38,9 +38,10 @@ class NeuronTest {
 
         // Then
         assertTrue(targetNeuron.activation > 0.0, "Target neuron should have received activation")
-        assertTrue(
-            targetNeuron.activation <= connectionStrength,
-            "Target neuron activation should not exceed connection strength"
+        assertEquals(
+            targetNeuron.sigmoid(
+                sourceNeuron.sigmoid(1.0) * .5
+            ), targetNeuron.activation
         )
     }
 
