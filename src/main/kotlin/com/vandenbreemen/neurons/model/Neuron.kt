@@ -41,6 +41,32 @@ class Neuron {
         return 1 / (1 + exp(-x))
     }
 
+    /**
+     * Updates all connection weights based on Hebbian learning.
+     * The weight change is determined by the correlation between this neuron's activation
+     * and each target neuron's activation.
+     * @param learningRate How quickly the weights should change (default 0.1)
+     */
+    fun updateAllConnectionWeights(learningRate: Double = 0.1) {
+        val updatedConnections = connections.map { connection ->
+            // Calculate weight update based on correlation of activations
+            val correlation = value * connection.neuron.activation
+
+            // Map correlation through sigmoid and scale to [-1,1] range
+            val weightDelta = (sigmoid(correlation) * 2) - 1
+
+            // Update weight ensuring it stays in [-1,1] range
+            val newStrength = (connection.strength + (weightDelta * learningRate)).coerceIn(-1.0, 1.0)
+
+            // Create new connection with updated weight
+            Connection(connection.neuron, newStrength)
+        }
+
+        // Replace all connections with their updated versions
+        connections.clear()
+        connections.addAll(updatedConnections)
+    }
+
     fun fire() {
         connections.forEach { it.neuron.stimulate(it.strength * value) }
     }

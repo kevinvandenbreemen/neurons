@@ -96,4 +96,15 @@ class NeuralNet(val rows: Int, val cols: Int) {
             }
         }
     }
+
+    /**
+     * Updates connection weights across the entire network based on current neuron activations
+     */
+    fun updateAllWeights(learningRate: Double = 0.1) {
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                grid[i][j].updateAllConnectionWeights(learningRate)
+            }
+        }
+    }
 }

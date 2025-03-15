@@ -39,14 +39,14 @@ fun App() {
 
 
 @Composable
-fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 1000) {
+fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100) {
     var fireCount by remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
-
         while (true) {
             delay(turnWait)
             neuralNet.fireAndUpdate()
+            neuralNet.updateAllWeights(0.1)  // Update weights after firing
             fireCount++ // Trigger recomposition
             println("Updating")
         }
