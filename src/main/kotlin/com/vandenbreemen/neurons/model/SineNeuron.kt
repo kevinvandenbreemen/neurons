@@ -2,7 +2,7 @@ package com.vandenbreemen.neurons.model
 
 import kotlin.math.sin
 
-class SineNeuron(weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator()) :
+class SineNeuron(weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator) :
     Neuron(weightCalculator) {
     private var time = 0.0
 
