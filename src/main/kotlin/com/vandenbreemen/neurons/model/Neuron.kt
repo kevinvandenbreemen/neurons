@@ -3,7 +3,7 @@ package com.vandenbreemen.neurons.model
 import kotlin.math.absoluteValue
 import kotlin.math.exp
 
-open class Neuron {
+open class Neuron(private val weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator()) {
     internal val connections = mutableListOf<Connection>()
 
     /**
@@ -49,13 +49,12 @@ open class Neuron {
      */
     fun updateAllConnectionWeights(learningRate: Double = 0.1) {
         val updatedConnections = connections.map { connection ->
-
-            val myStrength = this.activation
-            val theirStrength = connection.neuron.activation
-            val rawDiff = myStrength - theirStrength
-            val delta = rawDiff // * learningRate
-            val newStrength = (connection.strength + delta)
-
+            val newStrength = weightCalculator.calculateWeight(
+                this,
+                connection.neuron,
+                connection.strength,
+                learningRate
+            )
             Connection(connection.neuron, newStrength)
         }
 

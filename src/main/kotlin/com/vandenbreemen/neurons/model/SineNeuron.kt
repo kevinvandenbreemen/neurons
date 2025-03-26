@@ -2,7 +2,8 @@ package com.vandenbreemen.neurons.model
 
 import kotlin.math.sin
 
-class SineNeuron : Neuron() {
+class SineNeuron(weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator()) :
+    Neuron(weightCalculator) {
     private var time = 0.0
 
     override val activation: Double

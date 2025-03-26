@@ -5,18 +5,22 @@ interface NeuronProvider {
     fun getNeuron(): Neuron
 }
 
-class DefaultNeuronProvider : NeuronProvider {
+class DefaultNeuronProvider(private val weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator()) :
+    NeuronProvider {
 
     override fun getNeuron(): Neuron {
-        return Neuron()
+        return Neuron(weightCalculator)
     }
 
 }
 
-class RandomNeuronProvider(private val ratioSineToNeuron: Double) : NeuronProvider {
+class RandomNeuronProvider(
+    private val ratioSineToNeuron: Double,
+    private val weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator()
+) : NeuronProvider {
 
     override fun getNeuron(): Neuron {
-        return if (Math.random() < ratioSineToNeuron) SineNeuron() else Neuron()
+        return if (Math.random() < ratioSineToNeuron) SineNeuron(weightCalculator) else Neuron(weightCalculator)
     }
 
 }

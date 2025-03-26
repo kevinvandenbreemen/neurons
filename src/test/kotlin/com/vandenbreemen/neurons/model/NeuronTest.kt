@@ -1,6 +1,7 @@
 package com.vandenbreemen.neurons.model
 
 import org.junit.jupiter.api.Test
+import kotlin.math.absoluteValue
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -101,5 +102,42 @@ class NeuronTest {
         // Then
         assertTrue(targetNeuron1.activation > 0.5, "Excitatory connection should increase activation")
         assertTrue(targetNeuron2.activation < 0.5, "Inhibitory connection should decrease activation")
+    }
+
+    @Test
+    fun `should update all connection weights based on correlated activity`() {
+        // Given
+        val sourceNeuron = Neuron()
+        val targetNeuron1 = Neuron()
+        val targetNeuron2 = Neuron()
+
+        // Create connections with initial weights
+        sourceNeuron.connect(targetNeuron1, 0.0)  // Neutral connection
+        sourceNeuron.connect(targetNeuron2, 0.0)  // Neutral connection
+
+        // When - Set up correlated activity with first target, anti-correlated with second
+        sourceNeuron.stimulate(1.0)
+        targetNeuron1.stimulate(1.0)  // Correlated activity
+        targetNeuron2.stimulate(-1.0) // Anti-correlated activity
+
+        sourceNeuron.applyStimulation()
+        targetNeuron1.applyStimulation()
+        targetNeuron2.applyStimulation()
+
+        // Update weights with high learning rate for visible effect
+        sourceNeuron.updateAllConnectionWeights(learningRate = 0.5)
+
+        // Then
+        val conn1 = sourceNeuron.connections.find { it.neuron == targetNeuron1 }!!
+        val conn2 = sourceNeuron.connections.find { it.neuron == targetNeuron2 }!!
+
+        println(sourceNeuron)
+        println(targetNeuron1)
+        println(targetNeuron2)
+
+        assertTrue(conn1.strength > 0, "Connection to correlated neuron should become positive")
+        assertTrue(conn2.strength < 0, "Connection to anti-correlated neuron should become negative")
+        assertTrue(conn1.strength.absoluteValue <= 1.0, "Connection strength should not exceed 1")
+        assertTrue(conn2.strength.absoluteValue <= 1.0, "Connection strength should not exceed -1")
     }
 } 
