@@ -1,7 +1,7 @@
 package com.vandenbreemen.neurons.model
 
-class NeuralNet(val rows: Int, val cols: Int) {
-    private val grid: Array<Array<Neuron>> = Array(rows) { Array(cols) { Neuron() } }
+class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider = DefaultNeuronProvider()) {
+    private val grid: Array<Array<Neuron>> = Array(rows) { Array(cols) { neuronProvider.getNeuron() } }
 
     init {
         for (i in 0 until rows) {
