@@ -3,14 +3,14 @@ package com.vandenbreemen.neurons.model
 import kotlin.math.absoluteValue
 import kotlin.math.exp
 
-class Neuron {
+open class Neuron {
     internal val connections = mutableListOf<Connection>()
 
     /**
      * Current value of this neuron.
      */
     private var value = 0.0
-    val activation: Double
+    open val activation: Double
         get() = value
 
     /**
@@ -25,14 +25,14 @@ class Neuron {
         connections.add(Connection(neuron, strength))
     }
 
-    fun stimulate(input: Double) {
+    open fun stimulate(input: Double) {
         stimulationValue = (stimulationValue + input)
     }
 
     /**
      * Update the value to be the total stimulation received
      */
-    fun applyStimulation() {
+    open fun applyStimulation() {
         value = sigmoid(stimulationValue)
         stimulationValue = 0.0
     }
@@ -65,7 +65,7 @@ class Neuron {
         connections.addAll(updatedConnections)
     }
 
-    fun fire() {
+    open fun fire() {
         connections.forEach { it.neuron.stimulate(it.weight * value) }
     }
 
