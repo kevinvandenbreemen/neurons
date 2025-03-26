@@ -70,6 +70,14 @@ class Neuron {
     fun fire() {
         connections.forEach { it.neuron.stimulate(it.strength * value) }
     }
+
+    override fun toString(): String {
+        return "Neuron(value=$value, connections=$connections)"
+    }
 }
 
-data class Connection(val neuron: Neuron, val strength: Double)
+data class Connection(val neuron: Neuron, val strength: Double) {
+    override fun toString(): String {
+        return "Connection to neuron:  strength=$strength"
+    }
+}
