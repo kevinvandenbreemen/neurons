@@ -26,14 +26,14 @@ class Neuron {
     }
 
     fun stimulate(input: Double) {
-        stimulationValue = sigmoid(stimulationValue + input)
+        stimulationValue = (stimulationValue + input)
     }
 
     /**
      * Update the value to be the total stimulation received
      */
     fun applyStimulation() {
-        value = stimulationValue
+        value = sigmoid(stimulationValue)
         stimulationValue = 0.0
     }
 
@@ -49,16 +49,14 @@ class Neuron {
      */
     fun updateAllConnectionWeights(learningRate: Double = 0.1) {
         val updatedConnections = connections.map { connection ->
-            // Calculate weight update based on correlation of activations
-            val correlation = value * connection.neuron.activation
 
-            // Map correlation through sigmoid and scale to [-1,1] range
-            val weightDelta = (sigmoid(correlation) * 2) - 1
+            val myStrength = this.activation
+            val theirStrength = connection.neuron.activation
+            val rawDiff = myStrength - theirStrength
+            val delta = rawDiff * learningRate
+            val newStrength = (connection.strength + delta)
 
-            // Update weight ensuring it stays in [-1,1] range
-            val newStrength = (connection.strength + (weightDelta * learningRate)).coerceIn(-1.0, 1.0)
 
-            // Create new connection with updated weight
             Connection(connection.neuron, newStrength)
         }
 

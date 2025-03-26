@@ -37,7 +37,20 @@ fun App() {
 
 
     MaterialTheme {
-        NeuralNetworkDisplay(neuralNet)
+        NeuralNetworkDisplay(
+            turnWait = 1000L,
+            neuralNet = neuralNet,
+            onNeuronClick = { neuron ->
+//                println("Clicked neuron with activation: ${neuron.activation}")
+//                println("Number of connections: ${neuron.connections.size}")
+//                neuron.connections.forEach { connection ->
+//
+//                }
+
+                neuron.stimulate(10.0)
+
+            }
+        )
     }
 }
 
@@ -78,6 +91,7 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
                 val row = (y / cellHeight).toInt()
                 val col = (x / cellWidth).toInt()
                 if (row in 0 until neuralNet.rows && col in 0 until neuralNet.cols) {
+                    println("Clicked on neuron at $row, $col")
                     onNeuronClick?.invoke(neuralNet.getCellAt(row, col))
                 }
                 pointerInput = null
