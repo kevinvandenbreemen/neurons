@@ -25,9 +25,10 @@ import kotlin.math.absoluteValue
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
 
-    val neuralNet = NeuralNet(10, 10)
+    val dim = 50
+
+    val neuralNet = NeuralNet(dim, dim)
     for (i in 0 until neuralNet.rows) {
         for (j in 0 until neuralNet.cols) {
             neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
@@ -67,7 +68,6 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
             neuralNet.fireAndUpdate()
             neuralNet.updateAllWeights(0.1)  // Update weights after firing
             fireCount++ // Trigger recomposition
-            println("Updating")
         }
     }
 
@@ -186,7 +186,10 @@ fun main() = application {
 @Preview
 @Composable
 fun NeuralNetDisplayPreview() {
-    val neuralNet = NeuralNet(10, 10)
+
+    val dim = 100
+
+    val neuralNet = NeuralNet(dim, dim)
 
     for (i in 0 until neuralNet.rows) {
         for (j in 0 until neuralNet.cols) {
