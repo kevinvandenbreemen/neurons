@@ -7,34 +7,34 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
         for (i in 0 until rows) {
             for (j in 0 until cols) {
                 val neuron = grid[i][j]
-                if (i > 0) neuron.connect(grid[i - 1][j], (-100..100).random() / 100.0) // Connect to the neuron above
+                if (i > 0) neuron.connect(grid[i - 1][j], 0.0) // Connect to the neuron above
                 if (i < rows - 1) neuron.connect(
                     grid[i + 1][j],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron below
                 if (j > 0) neuron.connect(
                     grid[i][j - 1],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron to the left
                 if (j < cols - 1) neuron.connect(
                     grid[i][j + 1],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron to the right
                 if (i > 0 && j > 0) neuron.connect(
                     grid[i - 1][j - 1],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron above-left
                 if (i > 0 && j < cols - 1) neuron.connect(
                     grid[i - 1][j + 1],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron above-right
                 if (i < rows - 1 && j > 0) neuron.connect(
                     grid[i + 1][j - 1],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron below-left
                 if (i < rows - 1 && j < cols - 1) neuron.connect(
                     grid[i + 1][j + 1],
-                    (-100..100).random() / 100.0
+                    0.0
                 ) // Connect to the neuron below-right
             }
         }

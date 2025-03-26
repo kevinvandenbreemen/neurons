@@ -53,9 +53,8 @@ open class Neuron {
             val myStrength = this.activation
             val theirStrength = connection.neuron.activation
             val rawDiff = myStrength - theirStrength
-            val delta = rawDiff * learningRate
+            val delta = rawDiff // * learningRate
             val newStrength = (connection.strength + delta)
-
 
             Connection(connection.neuron, newStrength)
         }
