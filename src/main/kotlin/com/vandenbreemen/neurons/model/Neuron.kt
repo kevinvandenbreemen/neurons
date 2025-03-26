@@ -66,7 +66,7 @@ class Neuron {
     }
 
     fun fire() {
-        connections.forEach { it.neuron.stimulate(it.strength * value) }
+        connections.forEach { it.neuron.stimulate(it.weight * value) }
     }
 
     override fun toString(): String {
@@ -74,7 +74,15 @@ class Neuron {
     }
 }
 
-data class Connection(val neuron: Neuron, val strength: Double) {
+data class Connection(
+    val neuron: Neuron,
+    val strength: Double,
+    private val sigmoidCalculator: (Double) -> Double = { x -> 1 / (1 + exp(-x)) }
+) {
+
+    val weight: Double
+        get() = strength
+
     override fun toString(): String {
         return "Connection to neuron:  strength=$strength"
     }

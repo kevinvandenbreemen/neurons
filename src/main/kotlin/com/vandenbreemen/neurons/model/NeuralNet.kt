@@ -69,7 +69,7 @@ class NeuralNet(val rows: Int, val cols: Int) {
         val (destRow, destCol) = destination
         val neuron = grid[row][col]
         val connection = neuron.connections.find { it.neuron == grid[destRow][destCol] }
-        return connection?.strength ?: 0.0
+        return connection?.weight ?: 0.0
     }
 
     /**
