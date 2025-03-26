@@ -5,11 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.Direction
@@ -38,9 +42,11 @@ fun App() {
 }
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100) {
+fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronClick: ((Neuron) -> Unit)? = null) {
     var fireCount by remember { mutableStateOf(0) }
+    var pointerInput by remember { mutableStateOf<PointerInputChange?>(null) }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -54,9 +60,28 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100) {
 
     Column {
         Text("Turns: $fireCount")
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .onPointerEvent(PointerEventType.Press) { event ->
+                    pointerInput = event.changes.firstOrNull()
+                }
+        ) {
             val cellWidth = size.width / neuralNet.cols
             val cellHeight = size.height / neuralNet.rows
+
+            // Handle click if we have a pointer input
+            val input = pointerInput
+            if (input != null) {
+                val x = input.position.x
+                val y = input.position.y
+                val row = (y / cellHeight).toInt()
+                val col = (x / cellWidth).toInt()
+                if (row in 0 until neuralNet.rows && col in 0 until neuralNet.cols) {
+                    onNeuronClick?.invoke(neuralNet.getCellAt(row, col))
+                }
+                pointerInput = null
+            }
 
             for (i in 0 until neuralNet.rows) {
                 for (j in 0 until neuralNet.cols) {
