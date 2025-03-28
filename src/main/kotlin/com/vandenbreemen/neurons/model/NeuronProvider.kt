@@ -20,7 +20,7 @@ class RandomNeuronProvider(
 ) : NeuronProvider {
 
     override fun getNeuron(): Neuron {
-        return if (Math.random() < ratioSineToNeuron) SineNeuron(weightCalculator) else Neuron(weightCalculator)
+        return if (Math.random() < ratioSineToNeuron) SineNeuron(0.01f, weightCalculator) else Neuron(weightCalculator)
     }
 
 }

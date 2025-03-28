@@ -2,15 +2,18 @@ package com.vandenbreemen.neurons.model
 
 import kotlin.math.sin
 
-class SineNeuron(weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator) :
+class SineNeuron(
+    private val timeIncrement: Float = 0.01f,
+    weightCalculator: ConnectionWeightCalculator = DefaultConnectionWeightCalculator
+) :
     Neuron(weightCalculator) {
     private var time = 0.0
 
     override val activation: Double
-        get() = sin(time)
+        get() = (sin(time) / 2.0) + 0.5
 
     override fun applyStimulation() {
-        time += 0.1f
+        time += timeIncrement
     }
 
     override fun fire() {
