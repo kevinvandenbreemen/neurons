@@ -29,7 +29,7 @@ fun App() {
 
     val dim = 50
 
-    val neuralNet = NeuralNet(dim, dim, RandomNeuronProvider(0.01))
+    val neuralNet = NeuralNet(dim, dim, RandomNeuronProvider(0.1, 0.01))
     for (i in 0 until neuralNet.rows) {
         for (j in 0 until neuralNet.cols) {
             neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
@@ -67,7 +67,7 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
         while (true) {
             delay(turnWait)
             neuralNet.fireAndUpdate()
-            neuralNet.updateAllWeights(0.1)  // Update weights after firing
+            neuralNet.updateAllWeights(0.001)  // Update weights after firing
             fireCount++ // Trigger recomposition
         }
     }
