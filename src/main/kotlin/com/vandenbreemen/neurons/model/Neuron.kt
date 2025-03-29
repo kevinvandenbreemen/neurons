@@ -47,7 +47,7 @@ open class Neuron(private val weightCalculator: ConnectionWeightCalculator = Str
      * and each target neuron's activation.
      * @param learningRate How quickly the weights should change (default 0.1)
      */
-    fun updateAllConnectionWeights(learningRate: Double = 0.1) {
+    open fun updateAllConnectionWeights(learningRate: Double = 0.1) {
         val updatedConnections = connections.map { connection ->
             val newStrength = weightCalculator.calculateWeight(
                 this,

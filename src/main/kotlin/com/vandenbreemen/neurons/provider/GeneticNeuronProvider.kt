@@ -55,9 +55,8 @@ class GeneticNeuronProvider(
             0L -> Neuron(weightCalculator)
             1L -> InhibitoryNeuron(weightCalculator)
             2L -> SineNeuron(0.01f, weightCalculator)
+            3L -> FixedWeightNeuron(weightCalculator)
             else -> Neuron(weightCalculator)
         }
-
-
     }
 }
