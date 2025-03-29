@@ -2,8 +2,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,7 +23,8 @@ import kotlin.math.absoluteValue
 @Composable
 @Preview
 fun App() {
-
+    var showConnections by remember { mutableStateOf(true) }
+    var showMenu by remember { mutableStateOf(false) }
     val dim = 10
 
     val neuralNet = NeuralNet(
@@ -43,27 +43,56 @@ fun App() {
 
 
     MaterialTheme {
-        NeuralNetworkDisplay(
-            turnWait = 50L,
-            neuralNet = neuralNet,
-            onNeuronClick = { neuron ->
+        Column {
+            // View menu button and dropdown
+            Button(onClick = { showMenu = true }) {
+                Text("View")
+            }
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(onClick = {
+                    showConnections = true
+                    showMenu = false
+                }) {
+                    Text("Show Connections")
+                }
+                DropdownMenuItem(onClick = {
+                    showConnections = false
+                    showMenu = false
+                }) {
+                    Text("Hide Connections")
+                }
+            }
+            NeuralNetworkDisplay(
+                turnWait = 50L,
+                neuralNet = neuralNet,
+                showConnections = showConnections,
+                onNeuronClick = { neuron ->
 //                println("Clicked neuron with activation: ${neuron.activation}")
 //                println("Number of connections: ${neuron.connections.size}")
 //                neuron.connections.forEach { connection ->
 //
 //                }
 
-                neuron.stimulate(10.0)
+                    neuron.stimulate(10.0)
 
-            }
-        )
+                }
+            )
+        }
     }
 }
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronClick: ((Neuron) -> Unit)? = null) {
+fun NeuralNetworkDisplay(
+    neuralNet: NeuralNet,
+    turnWait: Long = 100,
+    showConnections: Boolean = true,
+    onNeuronClick: ((Neuron) -> Unit)? = null
+) {
     var fireCount by remember { mutableStateOf(0) }
     var pointerInput by remember { mutableStateOf<PointerInputChange?>(null) }
 
@@ -142,89 +171,91 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
                         else -> {} // Regular neuron, no indicator needed
                     }
 
-                    Direction.entries.forEach { direction ->
-                        val strength = neuralNet.getConnectionStrengthFrom(i, j, direction)
-                        if (strength != 0.0) {
-                            val (dx, dy) = when (direction) {
-                                Direction.UP -> 0 to -1
-                                Direction.DOWN -> 0 to 1
-                                Direction.LEFT -> -1 to 0
-                                Direction.RIGHT -> 1 to 0
-                                Direction.UP_LEFT -> -1 to -1
-                                Direction.UP_RIGHT -> 1 to -1
-                                Direction.DOWN_LEFT -> -1 to 1
-                                Direction.DOWN_RIGHT -> 1 to 1
+                    if (showConnections) {
+                        Direction.entries.forEach { direction ->
+                            val strength = neuralNet.getConnectionStrengthFrom(i, j, direction)
+                            if (strength != 0.0) {
+                                val (dx, dy) = when (direction) {
+                                    Direction.UP -> 0 to -1
+                                    Direction.DOWN -> 0 to 1
+                                    Direction.LEFT -> -1 to 0
+                                    Direction.RIGHT -> 1 to 0
+                                    Direction.UP_LEFT -> -1 to -1
+                                    Direction.UP_RIGHT -> 1 to -1
+                                    Direction.DOWN_LEFT -> -1 to 1
+                                    Direction.DOWN_RIGHT -> 1 to 1
+                                }
+                                val startX = j * cellWidth + cellWidth / 2
+                                val startY = i * cellHeight + cellHeight / 2
+                                val endX = (j + dx) * cellWidth + cellWidth / 2
+                                val endY = (i + dy) * cellHeight + cellHeight / 2
+
+                                // Calculate the offset from center for start and end points
+                                val offset = minOf(cellWidth, cellHeight) * 0.2f // 20% of cell size
+                                val startOffsetX = startX + dx * offset
+                                val startOffsetY = startY + dy * offset
+                                val endOffsetX = endX - dx * offset
+                                val endOffsetY = endY - dy * offset
+
+                                // Calculate the middle point with a perpendicular offset
+                                val midX = (startOffsetX + endOffsetX) / 2
+                                val midY = (startOffsetY + endOffsetY) / 2
+                                val perpOffset = minOf(cellWidth, cellHeight) * 0.3f // 30% of cell size
+                                val perpX = midX + dy * perpOffset
+                                val perpY = midY - dx * perpOffset
+
+                                // Draw three connected lines
+                                val connectionColor = if (strength < 0)
+                                    Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
+                                else
+                                    Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f))
+
+                                // First line from start to middle point
+                                drawLine(
+                                    color = connectionColor,
+                                    start = Offset(startOffsetX, startOffsetY),
+                                    end = Offset(perpX, perpY),
+                                    strokeWidth = 1f
+                                )
+
+                                // Second line from middle point to end
+                                drawLine(
+                                    color = connectionColor,
+                                    start = Offset(perpX, perpY),
+                                    end = Offset(endOffsetX, endOffsetY),
+                                    strokeWidth = 1f
+                                )
+
+                                // Draw arrow at the end
+                                val arrowSize = minOf(cellWidth, cellHeight) * 0.15f // Size of the arrow
+                                val angle = kotlin.math.atan2(endOffsetY - perpY, endOffsetX - perpX)
+                                val arrowAngle1 = angle + Math.PI / 6 // 30 degrees
+                                val arrowAngle2 = angle - Math.PI / 6 // -30 degrees
+
+                                // Calculate arrow points
+                                val arrowPoint1 = Offset(
+                                    (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle1)).toFloat(),
+                                    (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle1)).toFloat()
+                                )
+                                val arrowPoint2 = Offset(
+                                    (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle2)).toFloat(),
+                                    (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle2)).toFloat()
+                                )
+
+                                // Draw arrow lines
+                                drawLine(
+                                    color = connectionColor,
+                                    start = Offset(endOffsetX, endOffsetY),
+                                    end = arrowPoint1,
+                                    strokeWidth = 1f
+                                )
+                                drawLine(
+                                    color = connectionColor,
+                                    start = Offset(endOffsetX, endOffsetY),
+                                    end = arrowPoint2,
+                                    strokeWidth = 1f
+                                )
                             }
-                            val startX = j * cellWidth + cellWidth / 2
-                            val startY = i * cellHeight + cellHeight / 2
-                            val endX = (j + dx) * cellWidth + cellWidth / 2
-                            val endY = (i + dy) * cellHeight + cellHeight / 2
-
-                            // Calculate the offset from center for start and end points
-                            val offset = minOf(cellWidth, cellHeight) * 0.2f // 20% of cell size
-                            val startOffsetX = startX + dx * offset
-                            val startOffsetY = startY + dy * offset
-                            val endOffsetX = endX - dx * offset
-                            val endOffsetY = endY - dy * offset
-
-                            // Calculate the middle point with a perpendicular offset
-                            val midX = (startOffsetX + endOffsetX) / 2
-                            val midY = (startOffsetY + endOffsetY) / 2
-                            val perpOffset = minOf(cellWidth, cellHeight) * 0.3f // 30% of cell size
-                            val perpX = midX + dy * perpOffset
-                            val perpY = midY - dx * perpOffset
-
-                            // Draw three connected lines
-                            val connectionColor = if (strength < 0)
-                                Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
-                            else
-                                Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f))
-
-                            // First line from start to middle point
-                            drawLine(
-                                color = connectionColor,
-                                start = Offset(startOffsetX, startOffsetY),
-                                end = Offset(perpX, perpY),
-                                strokeWidth = 1f
-                            )
-
-                            // Second line from middle point to end
-                            drawLine(
-                                color = connectionColor,
-                                start = Offset(perpX, perpY),
-                                end = Offset(endOffsetX, endOffsetY),
-                                strokeWidth = 1f
-                            )
-
-                            // Draw arrow at the end
-                            val arrowSize = minOf(cellWidth, cellHeight) * 0.15f // Size of the arrow
-                            val angle = kotlin.math.atan2(endOffsetY - perpY, endOffsetX - perpX)
-                            val arrowAngle1 = angle + Math.PI / 6 // 30 degrees
-                            val arrowAngle2 = angle - Math.PI / 6 // -30 degrees
-
-                            // Calculate arrow points
-                            val arrowPoint1 = Offset(
-                                (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle1)).toFloat(),
-                                (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle1)).toFloat()
-                            )
-                            val arrowPoint2 = Offset(
-                                (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle2)).toFloat(),
-                                (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle2)).toFloat()
-                            )
-
-                            // Draw arrow lines
-                            drawLine(
-                                color = connectionColor,
-                                start = Offset(endOffsetX, endOffsetY),
-                                end = arrowPoint1,
-                                strokeWidth = 1f
-                            )
-                            drawLine(
-                                color = connectionColor,
-                                start = Offset(endOffsetX, endOffsetY),
-                                end = arrowPoint2,
-                                strokeWidth = 1f
-                            )
                         }
                     }
                 }
