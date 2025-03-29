@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.Direction
+import com.vandenbreemen.neurons.model.InhibitoryNeuron
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
@@ -27,7 +28,7 @@ import kotlin.math.absoluteValue
 @Preview
 fun App() {
 
-    val dim = 50
+    val dim = 100
 
     val neuralNet = NeuralNet(
         dim, dim,
@@ -109,6 +110,18 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
                     val activation = neuron.activation
                     val color = Color(activation.toFloat(), activation.toFloat(), activation.toFloat())
                     drawRect(color, topLeft = Offset(j * cellWidth, i * cellHeight), size = Size(cellWidth, cellHeight))
+
+                    // Draw indicator for inhibitory neurons
+                    if (neuron is InhibitoryNeuron) {
+                        val centerX = j * cellWidth + cellWidth / 2
+                        val centerY = i * cellHeight + cellHeight / 2
+                        val dotRadius = minOf(cellWidth, cellHeight) * 0.15f
+                        drawCircle(
+                            color = Color.Red,
+                            radius = dotRadius,
+                            center = Offset(centerX, centerY)
+                        )
+                    }
 
                     Direction.entries.forEach { direction ->
                         val strength = neuralNet.getConnectionStrengthFrom(i, j, direction)
