@@ -16,10 +16,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.vandenbreemen.neurons.model.Direction
-import com.vandenbreemen.neurons.model.InhibitoryNeuron
-import com.vandenbreemen.neurons.model.NeuralNet
-import com.vandenbreemen.neurons.model.Neuron
+import com.vandenbreemen.neurons.model.*
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
@@ -111,16 +108,37 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
                     val color = Color(activation.toFloat(), activation.toFloat(), activation.toFloat())
                     drawRect(color, topLeft = Offset(j * cellWidth, i * cellHeight), size = Size(cellWidth, cellHeight))
 
-                    // Draw indicator for inhibitory neurons
-                    if (neuron is InhibitoryNeuron) {
-                        val centerX = j * cellWidth + cellWidth / 2
-                        val centerY = i * cellHeight + cellHeight / 2
-                        val dotRadius = minOf(cellWidth, cellHeight) * 0.15f
-                        drawCircle(
-                            color = Color.Red,
-                            radius = dotRadius,
-                            center = Offset(centerX, centerY)
-                        )
+                    // Draw indicators for special neuron types
+                    val centerX = j * cellWidth + cellWidth / 2
+                    val centerY = i * cellHeight + cellHeight / 2
+                    val dotRadius = minOf(cellWidth, cellHeight) * 0.15f
+
+                    when (neuron) {
+                        is InhibitoryNeuron -> {
+                            drawCircle(
+                                color = Color.Red,
+                                radius = dotRadius,
+                                center = Offset(centerX, centerY)
+                            )
+                        }
+
+                        is SineNeuron -> {
+                            drawCircle(
+                                color = Color.Green,
+                                radius = dotRadius,
+                                center = Offset(centerX, centerY)
+                            )
+                        }
+
+                        is FixedWeightNeuron -> {
+                            drawCircle(
+                                color = Color.Blue,
+                                radius = dotRadius,
+                                center = Offset(centerX, centerY)
+                            )
+                        }
+
+                        else -> {} // Regular neuron, no indicator needed
                     }
 
                     Direction.entries.forEach { direction ->
