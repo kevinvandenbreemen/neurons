@@ -3,7 +3,7 @@ package com.vandenbreemen.neurons.model
 import kotlin.math.absoluteValue
 import kotlin.math.exp
 
-open class Neuron(private val weightCalculator: ConnectionWeightCalculator = StrengthBasedConnector) {
+open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBasedConnector) {
     internal val connections = mutableListOf<Connection>()
 
     /**
