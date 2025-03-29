@@ -1,9 +1,12 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -44,25 +47,27 @@ fun App() {
 
     MaterialTheme {
         Column {
-            // View menu button and dropdown
-            Button(onClick = { showMenu = true }) {
-                Text("View")
-            }
-            DropdownMenu(
-                expanded = showMenu,
-                onDismissRequest = { showMenu = false }
-            ) {
-                DropdownMenuItem(onClick = {
-                    showConnections = true
-                    showMenu = false
-                }) {
-                    Text("Show Connections")
+            Box {
+                // View menu button and dropdown
+                Button(onClick = { showMenu = true }) {
+                    Text("View")
                 }
-                DropdownMenuItem(onClick = {
-                    showConnections = false
-                    showMenu = false
-                }) {
-                    Text("Hide Connections")
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(onClick = {
+                        showConnections = true
+                        showMenu = false
+                    }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = showConnections,
+                                onCheckedChange = { showConnections = it }
+                            )
+                            Text("Show Connections")
+                        }
+                    }
                 }
             }
             NeuralNetworkDisplay(
