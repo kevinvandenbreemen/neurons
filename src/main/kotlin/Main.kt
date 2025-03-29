@@ -19,7 +19,7 @@ import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.Direction
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
-import com.vandenbreemen.neurons.provider.RandomNeuronProvider
+import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
@@ -29,7 +29,12 @@ fun App() {
 
     val dim = 50
 
-    val neuralNet = NeuralNet(dim, dim, RandomNeuronProvider(0.1, 0.01))
+    val neuralNet = NeuralNet(
+        dim, dim,
+        //RandomNeuronProvider(0.1, 0.01)
+        GeneticNeuronProvider.generateGeneticProvider(dim, dim)
+    )
+
     for (i in 0 until neuralNet.rows) {
         for (j in 0 until neuralNet.cols) {
             neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
