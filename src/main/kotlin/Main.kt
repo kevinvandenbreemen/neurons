@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.*
-import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
+import com.vandenbreemen.neurons.provider.RandomNeuronProvider
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
@@ -25,12 +25,13 @@ import kotlin.math.absoluteValue
 @Preview
 fun App() {
 
-    val dim = 100
+    val dim = 10
 
     val neuralNet = NeuralNet(
         dim, dim,
-        //RandomNeuronProvider(0.1, 0.01)
-        GeneticNeuronProvider.generateGeneticProvider(dim, dim)
+        RandomNeuronProvider(0.1, 0.01, fixedWeightNeuronPercentage = 0.01)
+
+        //GeneticNeuronProvider.generateGeneticProvider(dim, dim)
     )
 
     for (i in 0 until neuralNet.rows) {
@@ -158,15 +159,72 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
                             val startY = i * cellHeight + cellHeight / 2
                             val endX = (j + dx) * cellWidth + cellWidth / 2
                             val endY = (i + dy) * cellHeight + cellHeight / 2
-//                            drawLine(
-//                                color = if (strength < 0)
-//                                    Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
-//                                else
-//                                    Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
-//                                start = Offset(startX, startY),
-//                                end = Offset(endX, endY),
-//                                strokeWidth = 2f
-//                            )
+
+                            // Calculate the offset from center for start and end points
+                            val offset = minOf(cellWidth, cellHeight) * 0.2f // 20% of cell size
+                            val startOffsetX = startX + dx * offset
+                            val startOffsetY = startY + dy * offset
+                            val endOffsetX = endX - dx * offset
+                            val endOffsetY = endY - dy * offset
+
+                            // Calculate the middle point with a perpendicular offset
+                            val midX = (startOffsetX + endOffsetX) / 2
+                            val midY = (startOffsetY + endOffsetY) / 2
+                            val perpOffset = minOf(cellWidth, cellHeight) * 0.3f // 30% of cell size
+                            val perpX = midX + dy * perpOffset
+                            val perpY = midY - dx * perpOffset
+
+                            // Draw three connected lines
+                            val connectionColor = if (strength < 0)
+                                Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
+                            else
+                                Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f))
+
+                            // First line from start to middle point
+                            drawLine(
+                                color = connectionColor,
+                                start = Offset(startOffsetX, startOffsetY),
+                                end = Offset(perpX, perpY),
+                                strokeWidth = 1f
+                            )
+
+                            // Second line from middle point to end
+                            drawLine(
+                                color = connectionColor,
+                                start = Offset(perpX, perpY),
+                                end = Offset(endOffsetX, endOffsetY),
+                                strokeWidth = 1f
+                            )
+
+                            // Draw arrow at the end
+                            val arrowSize = minOf(cellWidth, cellHeight) * 0.15f // Size of the arrow
+                            val angle = kotlin.math.atan2(endOffsetY - perpY, endOffsetX - perpX)
+                            val arrowAngle1 = angle + Math.PI / 6 // 30 degrees
+                            val arrowAngle2 = angle - Math.PI / 6 // -30 degrees
+
+                            // Calculate arrow points
+                            val arrowPoint1 = Offset(
+                                (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle1)).toFloat(),
+                                (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle1)).toFloat()
+                            )
+                            val arrowPoint2 = Offset(
+                                (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle2)).toFloat(),
+                                (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle2)).toFloat()
+                            )
+
+                            // Draw arrow lines
+                            drawLine(
+                                color = connectionColor,
+                                start = Offset(endOffsetX, endOffsetY),
+                                end = arrowPoint1,
+                                strokeWidth = 1f
+                            )
+                            drawLine(
+                                color = connectionColor,
+                                start = Offset(endOffsetX, endOffsetY),
+                                end = arrowPoint2,
+                                strokeWidth = 1f
+                            )
                         }
                     }
                 }
