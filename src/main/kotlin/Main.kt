@@ -28,7 +28,8 @@ import kotlin.math.absoluteValue
 fun App() {
     var showConnections by remember { mutableStateOf(true) }
     var showMenu by remember { mutableStateOf(false) }
-    val dim = 10
+    var showActivationColor by remember { mutableStateOf(true) }
+    val dim = 25
 
     val neuralNet = NeuralNet(
         dim, dim,
@@ -68,12 +69,25 @@ fun App() {
                             Text("Show Connections")
                         }
                     }
+                    DropdownMenuItem(onClick = {
+                        showActivationColor = !showActivationColor
+                        showMenu = false
+                    }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = showActivationColor,
+                                onCheckedChange = { showActivationColor = it }
+                            )
+                            Text("Show Activation Color")
+                        }
+                    }
                 }
             }
             NeuralNetworkDisplay(
                 turnWait = 50L,
                 neuralNet = neuralNet,
                 showConnections = showConnections,
+                showActivationColor = showActivationColor,
                 onNeuronClick = { neuron ->
 //                println("Clicked neuron with activation: ${neuron.activation}")
 //                println("Number of connections: ${neuron.connections.size}")
@@ -96,6 +110,7 @@ fun NeuralNetworkDisplay(
     neuralNet: NeuralNet,
     turnWait: Long = 100,
     showConnections: Boolean = true,
+    showActivationColor: Boolean = true,
     onNeuronClick: ((Neuron) -> Unit)? = null
 ) {
     var fireCount by remember { mutableStateOf(0) }
@@ -140,7 +155,11 @@ fun NeuralNetworkDisplay(
                 for (j in 0 until neuralNet.cols) {
                     val neuron = neuralNet.getCellAt(i, j)
                     val activation = neuron.activation
-                    val color = Color(activation.toFloat(), activation.toFloat(), activation.toFloat())
+                    val color = if (showActivationColor) {
+                        Color(activation.toFloat(), activation.toFloat(), activation.toFloat())
+                    } else {
+                        Color.Gray // Neutral color when activation coloring is off
+                    }
                     drawRect(color, topLeft = Offset(j * cellWidth, i * cellHeight), size = Size(cellWidth, cellHeight))
 
                     // Draw indicators for special neuron types
