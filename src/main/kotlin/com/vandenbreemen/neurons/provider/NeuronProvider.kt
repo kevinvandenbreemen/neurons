@@ -1,4 +1,6 @@
-package com.vandenbreemen.neurons.model
+package com.vandenbreemen.neurons.provider
+
+import com.vandenbreemen.neurons.model.*
 
 interface NeuronProvider {
 

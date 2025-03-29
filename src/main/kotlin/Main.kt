@@ -19,7 +19,7 @@ import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.Direction
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
-import com.vandenbreemen.neurons.model.RandomNeuronProvider
+import com.vandenbreemen.neurons.provider.RandomNeuronProvider
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
@@ -40,7 +40,7 @@ fun App() {
 
     MaterialTheme {
         NeuralNetworkDisplay(
-            turnWait = 10L,
+            turnWait = 50L,
             neuralNet = neuralNet,
             onNeuronClick = { neuron ->
 //                println("Clicked neuron with activation: ${neuron.activation}")
@@ -122,15 +122,15 @@ fun NeuralNetworkDisplay(neuralNet: NeuralNet, turnWait: Long = 100, onNeuronCli
                             val startY = i * cellHeight + cellHeight / 2
                             val endX = (j + dx) * cellWidth + cellWidth / 2
                             val endY = (i + dy) * cellHeight + cellHeight / 2
-                            drawLine(
-                                color = if (strength < 0)
-                                    Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
-                                else
-                                    Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
-                                start = Offset(startX, startY),
-                                end = Offset(endX, endY),
-                                strokeWidth = 2f
-                            )
+//                            drawLine(
+//                                color = if (strength < 0)
+//                                    Color.Red.copy(alpha = strength.absoluteValue.toFloat().coerceIn(0f, 1f))
+//                                else
+//                                    Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f)),
+//                                start = Offset(startX, startY),
+//                                end = Offset(endX, endY),
+//                                strokeWidth = 2f
+//                            )
                         }
                     }
                 }

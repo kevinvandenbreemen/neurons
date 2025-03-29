@@ -1,5 +1,8 @@
 package com.vandenbreemen.neurons.model
 
+import com.vandenbreemen.neurons.provider.DefaultNeuronProvider
+import com.vandenbreemen.neurons.provider.NeuronProvider
+
 class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider = DefaultNeuronProvider()) {
     private val grid: Array<Array<Neuron>> = Array(rows) { Array(cols) { neuronProvider.getNeuron() } }
 
