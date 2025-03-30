@@ -26,7 +26,7 @@ import kotlin.math.absoluteValue
 @Composable
 @Preview
 fun App() {
-    var showConnections by remember { mutableStateOf(true) }
+    var showConnections by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showActivationColor by remember { mutableStateOf(true) }
     val dim = 25
