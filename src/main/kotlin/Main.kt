@@ -89,14 +89,7 @@ fun App() {
                 showConnections = showConnections,
                 showActivationColor = showActivationColor,
                 onNeuronClick = { neuron ->
-//                println("Clicked neuron with activation: ${neuron.activation}")
-//                println("Number of connections: ${neuron.connections.size}")
-//                neuron.connections.forEach { connection ->
-//
-//                }
-
                     neuron.stimulate(10.0)
-
                 }
             )
         }
