@@ -185,6 +185,25 @@ fun NeuralNetworkDisplay(
                             )
                         }
 
+                        is DeadNeuron -> {
+                            // Draw a red X at the center
+                            val xSize = minOf(cellWidth, cellHeight) * 0.2f // Size of the X
+                            // Draw first diagonal of X
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - xSize, centerY - xSize),
+                                end = Offset(centerX + xSize, centerY + xSize),
+                                strokeWidth = 2f
+                            )
+                            // Draw second diagonal of X
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - xSize, centerY + xSize),
+                                end = Offset(centerX + xSize, centerY - xSize),
+                                strokeWidth = 2f
+                            )
+                        }
+
                         is RelayNeuron -> {
                             // Draw a green circle for the relay neuron
                             drawCircle(
@@ -259,8 +278,6 @@ fun NeuralNetworkDisplay(
                                         strokeWidth = 2f
                                     )
                                 }
-                            } else {
-                                println("NO TARGET DEFINED FOR RELAY NEURON")
                             }
                         }
 

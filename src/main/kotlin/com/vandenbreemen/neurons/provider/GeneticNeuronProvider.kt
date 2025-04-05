@@ -73,6 +73,7 @@ class GeneticNeuronProvider(
             2L -> SineNeuron(0.01f, weightCalculator)
             3L -> FixedWeightNeuron(weightCalculator)
             4L -> RelayNeuron(weightCalculator)
+            5L -> DeadNeuron(weightCalculator)
             else -> Neuron(weightCalculator)
         }
 
