@@ -1,9 +1,6 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +13,7 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.*
@@ -29,6 +27,7 @@ fun App() {
     var showConnections by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showActivationColor by remember { mutableStateOf(true) }
+    var showLegend by remember { mutableStateOf(false) }
     val dim = 25
 
     val neuralNet = NeuralNet(
@@ -81,8 +80,100 @@ fun App() {
                             Text("Show Activation Color")
                         }
                     }
+                    DropdownMenuItem(onClick = {
+                        showLegend = true
+                        showMenu = false
+                    }) {
+                        Text("Show Legend")
+                    }
                 }
             }
+
+            // Legend Dialog
+            if (showLegend) {
+                AlertDialog(
+                    onDismissRequest = { showLegend = false },
+                    title = { Text("Neuron Indicators Legend") },
+                    text = {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Canvas(modifier = Modifier.size(30.dp)) {
+                                    drawCircle(
+                                        color = Color.Red,
+                                        radius = size.width * 0.15f,
+                                        center = Offset(size.width / 2, size.height / 2)
+                                    )
+                                }
+                                Text("Inhibitory Neuron - Reduces activation of connected neurons")
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Canvas(modifier = Modifier.size(30.dp)) {
+                                    drawCircle(
+                                        color = Color.Green,
+                                        radius = size.width * 0.15f,
+                                        center = Offset(size.width / 2, size.height / 2)
+                                    )
+                                }
+                                Text("Sine Neuron - Oscillates activation over time")
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Canvas(modifier = Modifier.size(30.dp)) {
+                                    drawCircle(
+                                        color = Color.Blue,
+                                        radius = size.width * 0.15f,
+                                        center = Offset(size.width / 2, size.height / 2)
+                                    )
+                                }
+                                Text("Fixed Weight Neuron - Maintains constant connection strength")
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Canvas(modifier = Modifier.size(30.dp)) {
+                                    drawLine(
+                                        color = Color.Red,
+                                        start = Offset(size.width * 0.2f, size.height * 0.2f),
+                                        end = Offset(size.width * 0.8f, size.height * 0.8f),
+                                        strokeWidth = 2f
+                                    )
+                                    drawLine(
+                                        color = Color.Red,
+                                        start = Offset(size.width * 0.2f, size.height * 0.8f),
+                                        end = Offset(size.width * 0.8f, size.height * 0.2f),
+                                        strokeWidth = 2f
+                                    )
+                                }
+                                Text("Dead Neuron - Does nothing, blocks signal flow")
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Canvas(modifier = Modifier.size(30.dp)) {
+                                    drawCircle(
+                                        color = Color.Green,
+                                        radius = size.width * 0.15f,
+                                        center = Offset(size.width / 2, size.height / 2)
+                                    )
+                                    // Draw a small arrow
+                                    drawLine(
+                                        color = Color.Green,
+                                        start = Offset(size.width * 0.5f, size.height * 0.5f),
+                                        end = Offset(size.width * 0.8f, size.height * 0.5f),
+                                        strokeWidth = 2f
+                                    )
+                                }
+                                Text("Relay Neuron - Sends signal in one direction only")
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showLegend = false }) {
+                            Text("Close")
+                        }
+                    }
+                )
+            }
+            
             NeuralNetworkDisplay(
                 turnWait = 50L,
                 neuralNet = neuralNet,
