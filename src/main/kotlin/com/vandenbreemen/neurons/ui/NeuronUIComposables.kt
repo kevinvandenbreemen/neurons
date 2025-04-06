@@ -99,6 +99,39 @@ fun NeuronLegendDialog(
                         }
                         Text("Relay Neuron - Sends signal in one direction only")
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(30.dp)) {
+                            val centerX = size.width / 2
+                            val centerY = size.height / 2
+                            val mSize = size.width * 0.2f
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX - mSize, centerY + mSize),
+                                end = Offset(centerX - mSize / 2, centerY - mSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX - mSize / 2, centerY - mSize),
+                                end = Offset(centerX + mSize / 2, centerY + mSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX + mSize / 2, centerY + mSize),
+                                end = Offset(centerX + mSize, centerY - mSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX + mSize, centerY - mSize),
+                                end = Offset(centerX - mSize, centerY + mSize),
+                                strokeWidth = 2f
+                            )
+                        }
+                        Text("Motor Neuron - Provides an action ID for motor control")
+                    }
                 }
             },
             confirmButton = {
@@ -214,6 +247,35 @@ fun NeuralNetworkDisplay(
                                 color = Color.Red,
                                 start = Offset(centerX - xSize, centerY + xSize),
                                 end = Offset(centerX + xSize, centerY - xSize),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        is MotorNeuron -> {
+                            //  Draw a green M at the center of the neuron
+                            val mSize = minOf(cellWidth, cellHeight) * 0.2f // Size of the M
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX - mSize, centerY + mSize),
+                                end = Offset(centerX - mSize / 2, centerY - mSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX - mSize / 2, centerY - mSize),
+                                end = Offset(centerX + mSize / 2, centerY + mSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX + mSize / 2, centerY + mSize),
+                                end = Offset(centerX + mSize, centerY - mSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(centerX + mSize, centerY - mSize),
+                                end = Offset(centerX - mSize, centerY + mSize),
                                 strokeWidth = 2f
                             )
                         }
