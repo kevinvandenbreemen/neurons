@@ -61,6 +61,11 @@ class GeneticNeuronProvider(
         return ((gene shr 11) and 0xFF).toByte()
     }
 
+    private fun getSensorIdFromGene(gene: Long): Byte {
+        // Use bits 19-26 (8 bits) to determine sensorId
+        return ((gene shr 19) and 0xFF).toByte()
+    }
+
     private fun assembleNeuronBasedOnGene(gene: Long): Neuron {
         //  Use the first 4 bits to determine the type of weight calculation
         val weightCalculatorType = gene and 0xF
@@ -80,6 +85,7 @@ class GeneticNeuronProvider(
             4L -> RelayNeuron(weightCalculator)
             5L -> DeadNeuron(weightCalculator)
             6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
+            7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             else -> Neuron(weightCalculator)
         }
 

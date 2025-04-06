@@ -132,6 +132,34 @@ fun NeuronLegendDialog(
                         }
                         Text("Motor Neuron - Provides an action ID for motor control")
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(30.dp)) {
+                            val centerX = size.width / 2
+                            val centerY = size.height / 2
+                            val sSize = size.width * 0.2f
+                            // Draw the S shape using multiple lines
+                            drawLine(
+                                color = Color.Blue,
+                                start = Offset(centerX - sSize, centerY - sSize),
+                                end = Offset(centerX + sSize, centerY - sSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Blue,
+                                start = Offset(centerX + sSize, centerY - sSize),
+                                end = Offset(centerX - sSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Blue,
+                                start = Offset(centerX - sSize, centerY),
+                                end = Offset(centerX + sSize, centerY + sSize),
+                                strokeWidth = 2f
+                            )
+                        }
+                        Text("Sensory Neuron - Processes specific types of sensory data")
+                    }
                 }
             },
             confirmButton = {
@@ -276,6 +304,30 @@ fun NeuralNetworkDisplay(
                                 color = Color.Green,
                                 start = Offset(centerX + mSize, centerY - mSize),
                                 end = Offset(centerX - mSize, centerY + mSize),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        is SensoryNeuron -> {
+                            // Draw a blue S at the center of the neuron
+                            val sSize = minOf(cellWidth, cellHeight) * 0.2f // Size of the S
+                            // Draw the S shape using multiple lines
+                            drawLine(
+                                color = Color.Blue,
+                                start = Offset(centerX - sSize, centerY - sSize),
+                                end = Offset(centerX + sSize, centerY - sSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Blue,
+                                start = Offset(centerX + sSize, centerY - sSize),
+                                end = Offset(centerX - sSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Blue,
+                                start = Offset(centerX - sSize, centerY),
+                                end = Offset(centerX + sSize, centerY + sSize),
                                 strokeWidth = 2f
                             )
                         }
