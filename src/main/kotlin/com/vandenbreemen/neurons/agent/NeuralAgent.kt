@@ -2,6 +2,7 @@ package com.vandenbreemen.neurons.agent
 
 import com.vandenbreemen.neurons.model.MotorNeuron
 import com.vandenbreemen.neurons.model.NeuralNet
+import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.model.SensoryNeuron
 
 /**
@@ -14,12 +15,29 @@ class NeuralAgent(
     private val learningRate: Double
 ) {
 
+    private val neuronActionsMap: MutableMap<Neuron, MutableList<(Neuron) -> Unit>> = mutableMapOf()
+
+
     /**
      * Performs one iteration of the neural network, including firing, updating, and weight adjustments
      */
     fun iterate() {
         neuralNet.fireAndUpdate()
         neuralNet.updateAllWeights(learningRate)
+        neuronActionsMap.entries.forEach {
+            it.value.forEach { action ->
+                action(it.key)
+            }
+        }
+    }
+
+    /**
+     * Adds an action to be performed on a specific neuron during the iteration
+     * @param neuron The neuron to which the action will be added
+     * @param action The action to be performed on the neuron
+     */
+    fun addNeuronAction(neuron: Neuron, action: (Neuron) -> Unit) {
+        neuronActionsMap.computeIfAbsent(neuron) { mutableListOf() }.add(action)
     }
 
     /**
