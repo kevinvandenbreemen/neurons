@@ -1,4 +1,4 @@
-package com.vandenbreemen.neurons.world
+package com.vandenbreemen.neurons.world.model
 
 /**
  * Represents an agent's position in the world

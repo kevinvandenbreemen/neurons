@@ -1,6 +1,8 @@
-package com.vandenbreemen.neurons.world
+package com.vandenbreemen.neurons.world.controller
 
 import com.vandenbreemen.neurons.agent.NeuralAgent
+import com.vandenbreemen.neurons.world.model.AgentPosition
+import com.vandenbreemen.neurons.world.model.World
 
 /**
  * A simulation that manages a world and its neural agents

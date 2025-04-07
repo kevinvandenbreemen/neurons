@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import com.vandenbreemen.neurons.world.World
+import com.vandenbreemen.neurons.world.model.World
 
 /**
  * A composable that visualizes the world

@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.agent.NeuralAgent
 import com.vandenbreemen.neurons.model.NeuralNet
-import com.vandenbreemen.neurons.world.AgentPosition
-import com.vandenbreemen.neurons.world.World
-import com.vandenbreemen.neurons.world.WorldSimulation
+import com.vandenbreemen.neurons.world.controller.WorldSimulation
+import com.vandenbreemen.neurons.world.model.AgentPosition
+import com.vandenbreemen.neurons.world.model.World
 
 @Preview
 @Composable
