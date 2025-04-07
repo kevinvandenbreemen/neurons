@@ -1,4 +1,4 @@
-package com.vandenbreemen.neurons.world
+package com.vandenbreemen.neurons.world.view
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import com.vandenbreemen.neurons.world.World
 
 /**
  * A composable that visualizes the world

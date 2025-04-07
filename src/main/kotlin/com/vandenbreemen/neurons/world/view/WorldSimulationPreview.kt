@@ -1,4 +1,4 @@
-package com.vandenbreemen.neurons.world
+package com.vandenbreemen.neurons.world.view
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.size
@@ -7,6 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.agent.NeuralAgent
 import com.vandenbreemen.neurons.model.NeuralNet
+import com.vandenbreemen.neurons.world.AgentPosition
+import com.vandenbreemen.neurons.world.World
+import com.vandenbreemen.neurons.world.WorldSimulation
 
 @Preview
 @Composable
