@@ -9,7 +9,7 @@ import com.vandenbreemen.neurons.world.model.World
  * @param world The world for the simulation
  * @param initialAgents The initial set of neural agents in the simulation
  */
-class WorldSimulation(
+open class WorldSimulation(
     val world: World = World(),
     initialAgents: List<NeuralAgent> = emptyList()
 ) {
@@ -17,11 +17,26 @@ class WorldSimulation(
     private val agentPositions = mutableMapOf<NeuralAgent, AgentPosition>()
 
     init {
-        agents.addAll(initialAgents)
+        with(agents) {
+            agents.addAll(this)
+            //  Do setup
+            for (agent in this) {
+                doAgentSetup(agent)
+            }
+        }
         // Initialize positions for initial agents
         initialAgents.forEach { agent ->
             agentPositions[agent] = AgentPosition(0, 0) // Default starting position
         }
+    }
+
+    /**
+     * Allows you to configure what the agent will do etc.  Note that setup code may NOT know
+     * anything about the agent's position in the world or any other detail about the world setup.  This is
+     * by design
+     */
+    open fun doAgentSetup(agent: NeuralAgent) {
+
     }
 
     /**
@@ -39,6 +54,7 @@ class WorldSimulation(
      */
     fun addAgent(agent: NeuralAgent, position: AgentPosition = AgentPosition(0, 0)) {
         agents.add(agent)
+        doAgentSetup(agent)
         agentPositions[agent] = position
     }
 
