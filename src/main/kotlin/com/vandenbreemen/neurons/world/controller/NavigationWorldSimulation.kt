@@ -8,6 +8,10 @@ class NavigationWorldSimulation(
 ) : WorldSimulation(world) {
 
     override fun doAgentSetup(agent: NeuralAgent) {
+        motorNeuronSetup(agent)
+    }
+
+    private fun motorNeuronSetup(agent: NeuralAgent) {
         // North
         agent.findMotorNeurons { idByte -> idByte in 0x00..0x1F }.forEach { neuron ->
             agent.addNeuronAction(neuron) {
