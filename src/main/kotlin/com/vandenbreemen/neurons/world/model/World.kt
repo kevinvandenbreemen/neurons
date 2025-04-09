@@ -70,6 +70,21 @@ class World(
         }
     }
 
+    fun getRandomEmptyCell(): AgentPosition {
+        val emptyCells = mutableListOf<AgentPosition>()
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                if (!isWall(x, y)) {
+                    emptyCells.add(AgentPosition(x, y))
+                }
+            }
+        }
+        if (emptyCells.isEmpty()) {
+            throw IllegalStateException("No empty cells available in the world.")
+        }
+        return emptyCells.random()
+    }
+
     companion object {
         /**
          * Creates a random world with walls
