@@ -18,11 +18,16 @@ import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.ui.NeuralNetworkDisplay
 import com.vandenbreemen.neurons.ui.NeuronLegendDialog
+import com.vandenbreemen.neurons.world.view.NeuralApplicationComposables
+import com.vandenbreemen.neurons.world.viewmodel.NeuronApplicationViewModel
 import kotlin.math.absoluteValue
 
 @Composable
 @Preview
 fun App() {
+
+    val applicationViewModel = NeuronApplicationViewModel()
+
     var showConnections by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showActivationColor by remember { mutableStateOf(true) }
