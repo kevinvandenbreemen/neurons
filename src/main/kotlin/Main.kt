@@ -93,7 +93,7 @@ fun App() {
                             showActivationColor = applicationViewModel.state.showActivationColor,
                             iterate = { applicationViewModel.iterate() },
                             onNeuronClick = { neuron ->
-                                neuron.stimulate(10.0)
+                                applicationViewModel.onSelectNeuron(neuron)
                             }
                         )
                     }
@@ -162,7 +162,9 @@ fun NeuralNetDisplayPreview() {
         }
     }
 
-    NeuralNetworkDisplay(NeuralNetworkDemoState(25))
+    NeuralNetworkDisplay(
+        NeuralNetworkDemoState(25),
+        iterate = {})
 }
 
 @Composable

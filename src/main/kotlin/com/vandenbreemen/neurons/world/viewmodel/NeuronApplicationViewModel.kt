@@ -2,6 +2,7 @@ package com.vandenbreemen.neurons.world.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import com.vandenbreemen.neurons.model.Neuron
 
 class NeuronApplicationViewModel() {
     private val _state = mutableStateOf(NeuralNetApplicationState())
@@ -24,6 +25,12 @@ class NeuronApplicationViewModel() {
     fun toggleShowConnections() {
         updateState {
             showConnections = !showConnections
+        }
+    }
+
+    fun onSelectNeuron(neuron: Neuron) {
+        updateState {
+            selectNeuron(neuron)
         }
     }
 

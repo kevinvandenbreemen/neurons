@@ -22,6 +22,13 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
             is NeuralNetworkDemoState -> {
                 // Display the neural network state
                 Text("Neural Network Demo")
+                state.selectedNeuron?.let { neuron ->
+                    Column {
+                        Text("Neuron type:  ${neuron.type}")
+                        Text("Neuron activation: ${neuron.activation}")
+                    }
+                }
+
             }
 
             else -> {

@@ -4,11 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.vandenbreemen.neurons.model.NeuralNet
+import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 
 open class NeuralNetApplicationState {
     var currentTurn by mutableStateOf(0)
-    var selectedNeuronType by mutableStateOf<NeuronType?>(null)
+    var selectedNeuron by mutableStateOf<NeuronInfoState?>(null)
     var showConnections by mutableStateOf(false)
     var showActivationColor by mutableStateOf(true)
 
@@ -19,7 +20,14 @@ open class NeuralNetApplicationState {
     fun iterate(): NeuralNetApplicationState {
         currentTurn++
         doIterate()
+        selectedNeuron?.let {
+            selectedNeuron = it.copy() // Copy the state to trigger recomposition
+        }
         return this
+    }
+
+    fun selectNeuron(neuron: Neuron) {
+        selectedNeuron = NeuronInfoState(neuron)
     }
 }
 
