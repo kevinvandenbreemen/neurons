@@ -14,13 +14,16 @@ import com.vandenbreemen.neurons.world.model.World
 @Preview
 @Composable
 fun WorldSimulationPreview() {
-    // Create a world with some walls
-    val world = World(100, 100).apply {
-        createWallRectangle(10, 10, 20, 20) // A square room
-        createWallLine(30, 30, 70, 70) // A diagonal wall
-        createWallLine(30, 70, 70, 30) // Another diagonal wall
-        createWallRectangle(80, 80, 90, 90) // Another square room
-    }
+    // Create a world with random walls
+    val world = World.randomWorld(
+        width = 100,
+        height = 100,
+        wallDensity = 0.001,
+        minRoomSize = 8,
+        maxRoomSize = 20,
+        numRooms = 4,
+        numRandomWalls = 5
+    )
 
     // Create a simulation with some agents
     val simulation = WorldSimulation(world).apply {

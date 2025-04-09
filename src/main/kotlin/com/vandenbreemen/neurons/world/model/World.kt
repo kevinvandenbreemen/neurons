@@ -69,4 +69,63 @@ class World(
             }
         }
     }
+
+    companion object {
+        /**
+         * Creates a random world with walls
+         * @param width The width of the world in grid cells
+         * @param height The height of the world in grid cells
+         * @param wallDensity The probability (0.0 to 1.0) of a cell being a wall
+         * @param minRoomSize The minimum size of rectangular rooms
+         * @param maxRoomSize The maximum size of rectangular rooms
+         * @param numRooms The number of rectangular rooms to generate
+         * @param numRandomWalls The number of random diagonal walls to generate
+         * @return A new World instance with random walls
+         */
+        fun randomWorld(
+            width: Int = 100,
+            height: Int = 100,
+            wallDensity: Double = 0.004,
+            minRoomSize: Int = 5,
+            maxRoomSize: Int = 15,
+            numRooms: Int = 5,
+            numRandomWalls: Int = 3
+        ): World {
+            require(wallDensity in 0.0..1.0) { "Wall density must be between 0 and 1" }
+            require(minRoomSize > 0) { "Minimum room size must be positive" }
+            require(maxRoomSize >= minRoomSize) { "Maximum room size must be greater than or equal to minimum room size" }
+
+            val world = World(width, height)
+            val random = kotlin.random.Random
+
+            // Generate random rectangular rooms
+            repeat(numRooms) {
+                val roomWidth = random.nextInt(minRoomSize, maxRoomSize)
+                val roomHeight = random.nextInt(minRoomSize, maxRoomSize)
+                val x1 = random.nextInt(0, width - roomWidth)
+                val y1 = random.nextInt(0, height - roomHeight)
+                world.createWallRectangle(x1, y1, x1 + roomWidth, y1 + roomHeight)
+            }
+
+            // Generate random diagonal walls
+            repeat(numRandomWalls) {
+                val x1 = random.nextInt(0, width)
+                val y1 = random.nextInt(0, height)
+                val x2 = random.nextInt(0, width)
+                val y2 = random.nextInt(0, height)
+                world.createWallLine(x1, y1, x2, y2)
+            }
+
+            // Add random scattered walls based on wall density
+            for (x in 0 until width) {
+                for (y in 0 until height) {
+                    if (random.nextDouble() < wallDensity) {
+                        world.setWall(x, y, true)
+                    }
+                }
+            }
+
+            return world
+        }
+    }
 } 

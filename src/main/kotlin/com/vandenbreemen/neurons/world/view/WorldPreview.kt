@@ -10,13 +10,15 @@ import com.vandenbreemen.neurons.world.model.World
 @Preview
 @Composable
 fun WorldPreview() {
-    val world = World(100, 100).apply {
-        // Create some walls for testing
-        createWallRectangle(10, 10, 20, 20) // A square room
-        createWallLine(30, 30, 70, 70) // A diagonal wall
-        createWallLine(30, 70, 70, 30) // Another diagonal wall
-        createWallRectangle(80, 80, 90, 90) // Another square room
-    }
+    val world = World.randomWorld(
+        width = 100,
+        height = 100,
+        wallDensity = 0.01,
+        minRoomSize = 8,
+        maxRoomSize = 20,
+        numRooms = 5,
+        numRandomWalls = 2
+    )
 
     WorldView(
         world = world,
