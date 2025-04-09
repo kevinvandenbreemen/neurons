@@ -59,7 +59,7 @@ class GeneticWorldDriver(
         val neuralNet = getRandomNeuralNetwork()
         val agent = NeuralAgent(neuralNet, 0.1)
         return Pair(NavigationWorldSimulation(world).apply {
-            addAgent(agent)
+            addAgent(agent, world.getRandomEmptyCell())
         }, neuralNet)
     }
 
@@ -78,7 +78,8 @@ class GeneticWorldDriver(
             val agent = NeuralAgent(neuralNet, 0.1)
             val simulation = NavigationWorldSimulation(world).also {
                 it.addAgent(
-                    agent
+                    agent,
+                    world.getRandomEmptyCell()
                 )
             }
 
