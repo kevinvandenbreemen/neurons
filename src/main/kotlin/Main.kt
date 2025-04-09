@@ -123,7 +123,9 @@ fun App() {
                             numGenes = params.numGenes,
                             numMovesPerTest = params.numMovesPerTest,
                             costOfNotMoving = params.costOfNotMoving
-                        )
+                        ).also {
+                            it.setup()
+                        }
                     )
                     showGeneticWorldDialog = false
                 }

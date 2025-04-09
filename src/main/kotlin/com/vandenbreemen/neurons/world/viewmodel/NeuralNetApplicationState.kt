@@ -75,12 +75,12 @@ class GeneticWorldState(
         costOfNotMoving = costOfNotMoving
     )
 
-    private val navigationSimulation: NavigationWorldSimulation
+    private lateinit var navigationSimulation: NavigationWorldSimulation
     var navSimulationForDisplay by mutableStateOf<NavigationWorldSimulation?>(null)
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
-    init {
+    fun setup() {
         driver.drive()
         neuralNet = driver.getRandomNeuralNetwork().also { neuralNet ->
             for (i in 0 until neuralNet.rows) {
@@ -100,6 +100,12 @@ class GeneticWorldState(
     }
 
     override fun doIterate() {
+
+        //  Don't do anything if navitgationSimulation is null
+        if (!::navigationSimulation.isInitialized) {
+            return
+        }
+
         navigationSimulation.step()
         navSimulationForDisplay = navigationSimulation
     }
