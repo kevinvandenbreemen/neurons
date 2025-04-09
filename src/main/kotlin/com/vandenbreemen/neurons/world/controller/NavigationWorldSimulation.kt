@@ -173,4 +173,9 @@ class NavigationWorldSimulation(
         return world.isWall(currentPos.x, currentPos.y)
     }
 
+    fun isAgentOutOfBounds(agent: NeuralAgent): Boolean {
+        val currentPos = getAgentPosition(agent) ?: return false
+        return world.isOutOfBounds(currentPos.x, currentPos.y)
+    }
+
 }

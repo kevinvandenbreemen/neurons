@@ -72,6 +72,7 @@ class GeneticWorldDriver(
 
             var numWallHitCount = 0.0
             var numIterationWithoutMovement = 0.0
+            var didAgentMove = false
 
             val world = randomWorlds.random()
             val neuralNet = NeuralNet(
@@ -93,16 +94,22 @@ class GeneticWorldDriver(
                 simulation.step()
                 if (simulation.getAgentPosition(agent) == currentAgentPos) {
                     numIterationWithoutMovement += costOfNotMoving
+                } else {
+                    didAgentMove = true
                 }
+
                 if (simulation.isAgentOnWall(agent)) {
                     numWallHitCount++
+                }
+                if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
+                    numWallHitCount += 100
                 }
 
             }
 
-            val score = (
+            val score = if (didAgentMove) (
                     max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
-                            / numMoves)
+                            / numMoves) else 0.0
             genePool.setFitness(indexInPool, score)
 
             println("fitness at index $indexInPool: $score")
