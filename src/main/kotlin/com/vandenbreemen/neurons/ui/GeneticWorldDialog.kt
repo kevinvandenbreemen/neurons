@@ -26,11 +26,11 @@ fun GeneticWorldDialog(
     onConfirm: (GeneticWorldParams) -> Unit
 ) {
     if (showDialog) {
-        var brainSizeX by remember { mutableStateOf("10") }
-        var brainSizeY by remember { mutableStateOf("10") }
-        var numGenes by remember { mutableStateOf("20") }
-        var numMovesPerTest by remember { mutableStateOf("100") }
-        var costOfNotMoving by remember { mutableStateOf("0.1") }
+        var brainSizeX by remember { mutableStateOf(LastUsedParams.brainSizeX.toString()) }
+        var brainSizeY by remember { mutableStateOf(LastUsedParams.brainSizeY.toString()) }
+        var numGenes by remember { mutableStateOf(LastUsedParams.numGenes.toString()) }
+        var numMovesPerTest by remember { mutableStateOf(LastUsedParams.numMovesPerTest.toString()) }
+        var costOfNotMoving by remember { mutableStateOf(LastUsedParams.costOfNotMoving.toString()) }
 
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -83,6 +83,8 @@ fun GeneticWorldDialog(
                                 numMovesPerTest = numMovesPerTest.toInt(),
                                 costOfNotMoving = costOfNotMoving.toDouble()
                             )
+                            // Update last used params
+                            LastUsedParams = params
                             onConfirm(params)
                         } catch (e: NumberFormatException) {
                             // Handle invalid input
@@ -99,4 +101,7 @@ fun GeneticWorldDialog(
             }
         )
     }
-} 
+}
+
+// Object to store the last used parameters
+private var LastUsedParams = GeneticWorldParams() 
