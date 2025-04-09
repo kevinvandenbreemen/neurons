@@ -1,12 +1,13 @@
 package com.vandenbreemen.neurons.world.viewmodel
 
-open class NeuralNetApplicationState {
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 
-}
+class NeuronApplicationViewModel {
+    private val _state = mutableStateOf(NeuralNetApplicationState())
+    val state: NeuralNetApplicationState by _state
 
-class NeuronApplicationViewModel() {
-
-    //  NeuralNetApplicationState
-    val state: NeuralNetApplicationState = NeuralNetApplicationState()
-
+    fun updateState(update: NeuralNetApplicationState.() -> Unit) {
+        _state.value = _state.value.apply(update)
+    }
 }
