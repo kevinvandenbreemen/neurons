@@ -1,5 +1,6 @@
 package com.vandenbreemen.neurons.evolution
 
+import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import kotlin.random.Random
 
 class GeneticPool(
@@ -56,14 +57,22 @@ class GeneticPool(
         return child
     }
 
-    fun setFitness(index: Int, fitness: Double) {
-        require(index in 0 until poolSize) { "Index out of bounds" }
-        fitnessScores = fitnessScores.toMutableList().apply { set(index, fitness) }
+    /**
+     * Iterates over the pool and applies the action to each genome.
+     *
+     */
+    fun forEachProvider(action: (indexInPool: Int, GeneticNeuronProvider) -> Unit) {
+        for (i in 0 until poolSize) {
+            val genome = pool[i]
+            val provider = GeneticNeuronProvider(genome)
+            action(i, provider)
+        }
     }
 
-    fun getFitness(index: Int): Double {
+    fun setFitness(index: Int, fitness: Double) {
         require(index in 0 until poolSize) { "Index out of bounds" }
-        return fitnessScores[index]
+        require(fitness >= 0) { "Fitness must be non-negative" }
+        fitnessScores = fitnessScores.toMutableList().apply { set(index, fitness) }
     }
 
     fun evolve(generationSize: Int, eliteSize: Int = 2) {

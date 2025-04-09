@@ -181,4 +181,12 @@ class NavigationWorldSimulation(
         return world.isWall(newPos.x, newPos.y)
     }
 
+    /**
+     * Checks if the agent is on a wall
+     */
+    fun isAgentOnWall(agent: NeuralAgent): Boolean {
+        val currentPos = getAgentPosition(agent) ?: return false
+        return world.isWall(currentPos.x, currentPos.y)
+    }
+
 }
