@@ -91,6 +91,7 @@ fun App() {
                             demoState = applicationViewModel.state as NeuralNetworkDemoState,
                             showConnections = applicationViewModel.state.showConnections,
                             showActivationColor = applicationViewModel.state.showActivationColor,
+                            iterate = { applicationViewModel.iterate() },
                             onNeuronClick = { neuron ->
                                 neuron.stimulate(10.0)
                             }

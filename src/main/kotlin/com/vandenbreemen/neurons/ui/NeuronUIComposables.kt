@@ -180,6 +180,7 @@ fun NeuralNetworkDisplay(
     turnWait: Long = 100,
     showConnections: Boolean = true,
     showActivationColor: Boolean = true,
+    iterate: () -> Unit,
     onNeuronClick: ((Neuron) -> Unit)? = null
 ) {
     val neuralNet = demoState.neuralNet
@@ -188,7 +189,7 @@ fun NeuralNetworkDisplay(
     LaunchedEffect(Unit) {
         while (true) {
             delay(turnWait)
-            demoState.iterate()
+            iterate()
         }
     }
 
