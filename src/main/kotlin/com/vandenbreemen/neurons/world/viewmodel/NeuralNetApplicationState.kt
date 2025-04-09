@@ -13,6 +13,8 @@ open class NeuralNetApplicationState {
     var showConnections by mutableStateOf(false)
     var showActivationColor by mutableStateOf(true)
 
+    open val neuralNet: NeuralNet? = null
+
     protected open fun doIterate() {
 
     }
@@ -33,7 +35,7 @@ open class NeuralNetApplicationState {
 
 class NeuralNetworkDemoState(dim: Int) : NeuralNetApplicationState() {
 
-    val neuralNet by mutableStateOf<NeuralNet>(
+    override val neuralNet by mutableStateOf<NeuralNet>(
         NeuralNet(
             dim, dim,
 

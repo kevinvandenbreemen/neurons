@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.model.*
-import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
+import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
@@ -176,7 +176,7 @@ fun NeuronLegendDialog(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NeuralNetworkDisplay(
-    demoState: NeuralNetworkDemoState,
+    demoState: NeuralNetApplicationState,
     turnWait: Long = 100,
     showConnections: Boolean = true,
     showActivationColor: Boolean = true,
@@ -184,6 +184,12 @@ fun NeuralNetworkDisplay(
     onNeuronClick: ((Neuron) -> Unit)? = null
 ) {
     val neuralNet = demoState.neuralNet
+
+    if (neuralNet == null) {
+        Text("Neural Network not initialized")
+        return
+    }
+
     var pointerInput by remember { mutableStateOf<PointerInputChange?>(null) }
 
     LaunchedEffect(Unit) {
