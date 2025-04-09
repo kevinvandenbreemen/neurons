@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 open class NeuralNetApplicationState {
     var currentTurn by mutableStateOf(0)
     var selectedNeuronType by mutableStateOf<NeuronType?>(null)
-    var showConnections by mutableStateOf(true)
+    var showConnections by mutableStateOf(false)
     var showActivationColor by mutableStateOf(true)
 }
 

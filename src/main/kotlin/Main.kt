@@ -28,7 +28,6 @@ fun App() {
 
     val applicationViewModel = NeuronApplicationViewModel()
 
-    var showConnections by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showLegend by remember { mutableStateOf(false) }
     val dim = 25
@@ -60,13 +59,13 @@ fun App() {
                     onDismissRequest = { showMenu = false }
                 ) {
                     DropdownMenuItem(onClick = {
-                        showConnections = true
+                        applicationViewModel.toggleShowConnections()
                         showMenu = false
                     }) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(
-                                checked = showConnections,
-                                onCheckedChange = { showConnections = it }
+                                checked = applicationViewModel.state.showConnections,
+                                onCheckedChange = { applicationViewModel.toggleShowConnections() }
                             )
                             Text("Show Connections")
                         }
@@ -103,7 +102,7 @@ fun App() {
                     NeuralNetworkDisplay(
                         turnWait = 50L,
                         neuralNet = neuralNet,
-                        showConnections = showConnections,
+                        showConnections = applicationViewModel.state.showConnections,
                         showActivationColor = applicationViewModel.state.showActivationColor,
                         onNeuronClick = { neuron ->
                             neuron.stimulate(10.0)

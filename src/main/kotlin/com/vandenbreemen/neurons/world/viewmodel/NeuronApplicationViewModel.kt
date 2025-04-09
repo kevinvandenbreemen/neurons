@@ -16,4 +16,10 @@ class NeuronApplicationViewModel {
             showActivationColor = !showActivationColor
         }
     }
+
+    fun toggleShowConnections() {
+        updateState {
+            showConnections = !showConnections
+        }
+    }
 }
