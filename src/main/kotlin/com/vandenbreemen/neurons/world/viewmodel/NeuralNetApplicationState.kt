@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
+import com.vandenbreemen.neurons.world.driver.GeneticWorldDriver
 
 open class NeuralNetApplicationState {
     var currentTurn by mutableStateOf(0)
@@ -56,13 +57,39 @@ class NeuralNetworkDemoState(dim: Int) : NeuralNetApplicationState() {
 
 }
 
-enum class NeuronType {
-    REGULAR,
-    INHIBITORY,
-    SINE,
-    FIXED_WEIGHT,
-    DEAD,
-    SENSORY,
-    MOTOR,
-    RELAY
+class GeneticWorldState(
+    numWorlds: Int = 5,
+    brainSizeX: Int = 10,
+    brainSizeY: Int = 10,
+    numGenes: Int = 20,
+    numMovesPerTest: Int = 100,
+    costOfNotMoving: Double = 0.1
+) : NeuralNetApplicationState() {
+    private val driver = GeneticWorldDriver(
+        numWorlds = numWorlds,
+        brainSizeX = brainSizeX,
+        brainSizeY = brainSizeY,
+        numGenes = numGenes,
+        numMovesPerTest = numMovesPerTest,
+        costOfNotMoving = costOfNotMoving
+    )
+
+    override var neuralNet by mutableStateOf<NeuralNet?>(null)
+
+    init {
+        driver.drive()
+        neuralNet = driver.getRandomNeuralNetwork().also { neuralNet ->
+            for (i in 0 until neuralNet.rows) {
+                for (j in 0 until neuralNet.cols) {
+                    neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
+                }
+            }
+            neuralNet.applyAll()
+        }
+    }
+
+    override fun doIterate() {
+        neuralNet?.fireAndUpdate()
+        neuralNet?.updateAllWeights(0.001)  // Update weights after firing
+    }
 }
