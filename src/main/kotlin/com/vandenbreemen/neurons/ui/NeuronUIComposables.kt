@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.model.*
+import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 
@@ -175,26 +176,24 @@ fun NeuronLegendDialog(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NeuralNetworkDisplay(
-    neuralNet: NeuralNet,
+    demoState: NeuralNetworkDemoState,
     turnWait: Long = 100,
     showConnections: Boolean = true,
     showActivationColor: Boolean = true,
     onNeuronClick: ((Neuron) -> Unit)? = null
 ) {
-    var fireCount by remember { mutableStateOf(0) }
+    val neuralNet = demoState.neuralNet
     var pointerInput by remember { mutableStateOf<PointerInputChange?>(null) }
 
     LaunchedEffect(Unit) {
         while (true) {
             delay(turnWait)
-            neuralNet.fireAndUpdate()
-            neuralNet.updateAllWeights(0.001)  // Update weights after firing
-            fireCount++ // Trigger recomposition
+            demoState.iterate()
         }
     }
 
     Column {
-        Text("Turns: $fireCount")
+        Text("Turns: ${demoState.currentTurn}")
         Canvas(
             modifier = Modifier
                 .fillMaxSize()

@@ -15,10 +15,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
-import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.ui.NeuralNetworkDisplay
 import com.vandenbreemen.neurons.ui.NeuronLegendDialog
 import com.vandenbreemen.neurons.world.view.NeuralApplicationComposables
+import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import com.vandenbreemen.neurons.world.viewmodel.NeuronApplicationViewModel
 import kotlin.math.absoluteValue
 
@@ -27,24 +27,10 @@ import kotlin.math.absoluteValue
 fun App() {
 
     val applicationViewModel = NeuronApplicationViewModel()
+    applicationViewModel.switchToApplication(NeuralNetworkDemoState(25))
 
     var showMenu by remember { mutableStateOf(false) }
     var showLegend by remember { mutableStateOf(false) }
-    val dim = 25
-
-    val neuralNet = NeuralNet(
-        dim, dim,
-        //RandomNeuronProvider(0.1, 0.01, fixedWeightNeuronPercentage = 0.01)
-
-        GeneticNeuronProvider.generateGeneticProvider(dim, dim)
-    )
-
-    for (i in 0 until neuralNet.rows) {
-        for (j in 0 until neuralNet.cols) {
-            neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
-        }
-    }
-    neuralNet.applyAll()
 
 
     MaterialTheme {
@@ -99,15 +85,17 @@ fun App() {
 
             Row {
                 Column(modifier = Modifier.weight(0.5f)) {
-                    NeuralNetworkDisplay(
-                        turnWait = 50L,
-                        neuralNet = neuralNet,
-                        showConnections = applicationViewModel.state.showConnections,
-                        showActivationColor = applicationViewModel.state.showActivationColor,
-                        onNeuronClick = { neuron ->
-                            neuron.stimulate(10.0)
-                        }
-                    )
+                    when (applicationViewModel.state) {
+                        is NeuralNetworkDemoState -> NeuralNetworkDisplay(
+                            turnWait = 50L,
+                            demoState = applicationViewModel.state as NeuralNetworkDemoState,
+                            showConnections = applicationViewModel.state.showConnections,
+                            showActivationColor = applicationViewModel.state.showActivationColor,
+                            onNeuronClick = { neuron ->
+                                neuron.stimulate(10.0)
+                            }
+                        )
+                    }
                 }
                 Column(modifier = Modifier.weight(0.5f)) {
                     NeuralApplicationComposables(applicationViewModel.state)
@@ -173,7 +161,7 @@ fun NeuralNetDisplayPreview() {
         }
     }
 
-    NeuralNetworkDisplay(neuralNet)
+    NeuralNetworkDisplay(NeuralNetworkDemoState(25))
 }
 
 @Composable
