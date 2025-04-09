@@ -19,9 +19,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(y = currentPos.y - 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -32,9 +30,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(x = currentPos.x + 1, y = currentPos.y - 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -45,9 +41,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(x = currentPos.x + 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -58,9 +52,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(x = currentPos.x + 1, y = currentPos.y + 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -71,9 +63,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(y = currentPos.y + 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -84,9 +74,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(x = currentPos.x - 1, y = currentPos.y + 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -97,9 +85,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(x = currentPos.x - 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
@@ -110,9 +96,7 @@ class NavigationWorldSimulation(
                 if (neuron.activation > 0.5) {
                     val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                     val newPos = currentPos.copy(x = currentPos.x - 1, y = currentPos.y - 1)
-                    if (!world.isWall(newPos.x, newPos.y)) {
-                        setAgentPosition(agent, newPos)
-                    }
+                    setAgentPosition(agent, newPos)
                 }
             }
         }
