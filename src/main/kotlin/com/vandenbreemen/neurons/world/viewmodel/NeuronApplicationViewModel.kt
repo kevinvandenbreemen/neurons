@@ -10,4 +10,10 @@ class NeuronApplicationViewModel {
     fun updateState(update: NeuralNetApplicationState.() -> Unit) {
         _state.value = _state.value.apply(update)
     }
+
+    fun toggleActivationColor() {
+        updateState {
+            showActivationColor = !showActivationColor
+        }
+    }
 }

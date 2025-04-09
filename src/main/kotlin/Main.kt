@@ -30,7 +30,6 @@ fun App() {
 
     var showConnections by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
-    var showActivationColor by remember { mutableStateOf(true) }
     var showLegend by remember { mutableStateOf(false) }
     val dim = 25
 
@@ -73,13 +72,13 @@ fun App() {
                         }
                     }
                     DropdownMenuItem(onClick = {
-                        showActivationColor = !showActivationColor
+                        applicationViewModel.toggleActivationColor()
                         showMenu = false
                     }) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(
-                                checked = showActivationColor,
-                                onCheckedChange = { showActivationColor = it }
+                                checked = applicationViewModel.state.showActivationColor,
+                                onCheckedChange = { applicationViewModel.toggleActivationColor() }
                             )
                             Text("Show Activation Color")
                         }
@@ -98,16 +97,23 @@ fun App() {
                 showLegend = showLegend,
                 onDismiss = { showLegend = false }
             )
-            
-            NeuralNetworkDisplay(
-                turnWait = 50L,
-                neuralNet = neuralNet,
-                showConnections = showConnections,
-                showActivationColor = showActivationColor,
-                onNeuronClick = { neuron ->
-                    neuron.stimulate(10.0)
+
+            Row {
+                Column(modifier = Modifier.weight(0.5f)) {
+                    NeuralNetworkDisplay(
+                        turnWait = 50L,
+                        neuralNet = neuralNet,
+                        showConnections = showConnections,
+                        showActivationColor = applicationViewModel.state.showActivationColor,
+                        onNeuronClick = { neuron ->
+                            neuron.stimulate(10.0)
+                        }
+                    )
                 }
-            )
+                Column(modifier = Modifier.weight(0.5f)) {
+                    NeuralApplicationComposables(applicationViewModel.state)
+                }
+            }
         }
     }
 }

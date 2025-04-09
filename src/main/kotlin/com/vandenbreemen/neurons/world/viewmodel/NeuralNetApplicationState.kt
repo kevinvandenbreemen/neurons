@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 open class NeuralNetApplicationState {
-    var isSimulationRunning by mutableStateOf(false)
     var currentTurn by mutableStateOf(0)
     var selectedNeuronType by mutableStateOf<NeuronType?>(null)
     var showConnections by mutableStateOf(true)
