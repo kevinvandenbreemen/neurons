@@ -15,7 +15,7 @@ data class GeneticWorldParams(
     val brainSizeY: Int = 10,
     val numGenes: Int = 20,
     val numMovesPerTest: Int = 100,
-    val costOfNotMoving: Double = 0.1,
+    val costOfNotMoving: Double = 1.0,
     val reuseGenePool: Boolean = false
 )
 
