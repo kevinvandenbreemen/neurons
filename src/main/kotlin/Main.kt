@@ -115,17 +115,26 @@ fun App() {
                 showDialog = showGeneticWorldDialog,
                 onDismiss = { showGeneticWorldDialog = false },
                 onConfirm = { params ->
+                    val currentState = applicationViewModel.state
+                    val currentGenePool = if (currentState is GeneticWorldState) {
+                        currentState.getGenePool()
+                    } else null
+
                     val state = GeneticWorldState(
                         brainSizeX = params.brainSizeX,
                         brainSizeY = params.brainSizeY,
                         numGenes = params.numGenes,
                         numMovesPerTest = params.numMovesPerTest,
-                        costOfNotMoving = params.costOfNotMoving
+                        costOfNotMoving = params.costOfNotMoving,
+                        existingGenePool = if (params.reuseGenePool) currentGenePool else null
                     )
                     applicationViewModel.switchToApplication(state)
                     state.setup(coroutineScope)
                     showGeneticWorldDialog = false
-                }
+                },
+                currentGenePool = if (applicationViewModel.state is GeneticWorldState) {
+                    (applicationViewModel.state as GeneticWorldState).getGenePool()
+                } else null
             )
 
             Row {

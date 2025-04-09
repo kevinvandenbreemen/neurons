@@ -2,28 +2,29 @@ package com.vandenbreemen.neurons.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.vandenbreemen.neurons.evolution.GeneticPool
 
 data class GeneticWorldParams(
     val brainSizeX: Int = 10,
     val brainSizeY: Int = 10,
     val numGenes: Int = 20,
     val numMovesPerTest: Int = 100,
-    val costOfNotMoving: Double = 0.1
+    val costOfNotMoving: Double = 0.1,
+    val reuseGenePool: Boolean = false
 )
 
 @Composable
 fun GeneticWorldDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onConfirm: (GeneticWorldParams) -> Unit
+    onConfirm: (GeneticWorldParams) -> Unit,
+    currentGenePool: GeneticPool? = null
 ) {
     if (showDialog) {
         var brainSizeX by remember { mutableStateOf(LastUsedParams.brainSizeX.toString()) }
@@ -31,6 +32,10 @@ fun GeneticWorldDialog(
         var numGenes by remember { mutableStateOf(LastUsedParams.numGenes.toString()) }
         var numMovesPerTest by remember { mutableStateOf(LastUsedParams.numMovesPerTest.toString()) }
         var costOfNotMoving by remember { mutableStateOf(LastUsedParams.costOfNotMoving.toString()) }
+        var reuseGenePool by remember { mutableStateOf(false) }
+
+        val canReuseGenePool = currentGenePool != null
+        val isReusingGenePool = reuseGenePool && canReuseGenePool
 
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -40,23 +45,36 @@ fun GeneticWorldDialog(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    if (canReuseGenePool) {
+                        Row {
+                            Checkbox(
+                                checked = reuseGenePool,
+                                onCheckedChange = { reuseGenePool = it }
+                            )
+                            Text("Continue evolving existing gene pool")
+                        }
+                    }
+
                     OutlinedTextField(
                         value = brainSizeX,
                         onValueChange = { brainSizeX = it },
                         label = { Text("Brain Size X") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isReusingGenePool
                     )
                     OutlinedTextField(
                         value = brainSizeY,
                         onValueChange = { brainSizeY = it },
                         label = { Text("Brain Size Y") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isReusingGenePool
                     )
                     OutlinedTextField(
                         value = numGenes,
                         onValueChange = { numGenes = it },
                         label = { Text("Number of Genes") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isReusingGenePool
                     )
                     OutlinedTextField(
                         value = numMovesPerTest,
@@ -81,7 +99,8 @@ fun GeneticWorldDialog(
                                 brainSizeY = brainSizeY.toInt(),
                                 numGenes = numGenes.toInt(),
                                 numMovesPerTest = numMovesPerTest.toInt(),
-                                costOfNotMoving = costOfNotMoving.toDouble()
+                                costOfNotMoving = costOfNotMoving.toDouble(),
+                                reuseGenePool = reuseGenePool
                             )
                             // Update last used params
                             LastUsedParams = params

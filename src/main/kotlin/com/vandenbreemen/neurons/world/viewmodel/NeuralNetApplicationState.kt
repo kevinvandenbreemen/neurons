@@ -3,6 +3,7 @@ package com.vandenbreemen.neurons.world.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.vandenbreemen.neurons.evolution.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
@@ -68,7 +69,8 @@ class GeneticWorldState(
     brainSizeY: Int = 10,
     numGenes: Int = 20,
     numMovesPerTest: Int = 100,
-    costOfNotMoving: Double = 0.1
+    costOfNotMoving: Double = 0.1,
+    private val existingGenePool: GeneticPool? = null
 ) : NeuralNetApplicationState() {
     private val driver = GeneticWorldDriver(
         numWorlds = numWorlds,
@@ -76,7 +78,8 @@ class GeneticWorldState(
         brainSizeY = brainSizeY,
         numGenes = numGenes,
         numMovesPerTest = numMovesPerTest,
-        costOfNotMoving = costOfNotMoving
+        costOfNotMoving = costOfNotMoving,
+        existingGenePool = existingGenePool
     )
 
     private var navigationSimulation: NavigationWorldSimulation? = null
@@ -86,6 +89,10 @@ class GeneticWorldState(
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
+    fun getGenePool(): GeneticPool? {
+        return driver.getGenePool()
+    }
+
     fun setup(coroutineScope: CoroutineScope) {
         isLoading = true
         setupProgress = "Initializing genetic algorithm..."
@@ -93,7 +100,11 @@ class GeneticWorldState(
         coroutineScope.launch {
             try {
                 withContext(Dispatchers.Default) {
-                    setupProgress = "Running genetic algorithm..."
+                    setupProgress = if (existingGenePool != null) {
+                        "Continuing evolution of existing gene pool..."
+                    } else {
+                        "Running genetic algorithm..."
+                    }
                     driver.drive()
 
                     setupProgress = "Creating neural network..."

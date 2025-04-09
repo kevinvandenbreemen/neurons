@@ -14,6 +14,7 @@ class GeneticWorldDriver(
     private val numGenes: Int,
     private val numMovesPerTest: Int = 100,
     private val costOfNotMoving: Double = 0.1,
+    existingGenePool: GeneticPool? = null
 ) {
 
     private val randomWorlds = MutableList(numWorlds) {
@@ -28,10 +29,13 @@ class GeneticWorldDriver(
         )
     }
 
-
-    private val genePool = GeneticPool(
+    private val genePool = existingGenePool ?: GeneticPool(
         brainSizeX, brainSizeY, numGenes
     )
+
+    fun getGenePool(): GeneticPool {
+        return genePool
+    }
 
     fun drive() {
         for (i in 0 until 10) {
