@@ -5,6 +5,7 @@ import com.vandenbreemen.neurons.evolution.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 import com.vandenbreemen.neurons.world.model.World
+import kotlin.math.max
 
 class GeneticWorldDriver(
     numWorlds: Int,
@@ -41,6 +42,7 @@ class GeneticWorldDriver(
         genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
 
             var numWallHitCount = 0.0
+            var numIterationWithoutMovement = 0.0
 
             val world = randomWorlds.random()
             val neuralNet = NeuralNet(
@@ -56,14 +58,21 @@ class GeneticWorldDriver(
             }
 
             for (i in 0 until numMoves) {
+
+                val currentAgentPos = simulation.getAgentPosition(agent)
                 simulation.step()
+                if (simulation.getAgentPosition(agent) == currentAgentPos) {
+                    numIterationWithoutMovement++
+                }
                 if (simulation.isAgentOnWall(agent)) {
                     numWallHitCount++
                 }
 
             }
 
-            val score = ((numMoves.toDouble() - numWallHitCount) / numMoves)
+            val score = (
+                    max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
+                            / numMoves)
             genePool.setFitness(indexInPool, score)
 
             println("fitness at index $indexInPool: $score")
