@@ -17,16 +17,8 @@ open class WorldSimulation(
     private val agentPositions = mutableMapOf<NeuralAgent, AgentPosition>()
 
     init {
-        with(agents) {
-            agents.addAll(this)
-            //  Do setup
-            for (agent in this) {
-                doAgentSetup(agent)
-            }
-        }
-        // Initialize positions for initial agents
         initialAgents.forEach { agent ->
-            agentPositions[agent] = AgentPosition(0, 0) // Default starting position
+            addAgent(agent)
         }
     }
 
