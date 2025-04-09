@@ -11,7 +11,9 @@ class GeneticWorldDriver(
     numWorlds: Int,
     private val brainSizeX: Int,
     private val brainSizeY: Int,
-    private val numGenes: Int
+    private val numGenes: Int,
+    private val numMovesPerTest: Int = 100,
+    private val costOfNotMoving: Double = 0.1,
 ) {
 
     private val randomWorlds = MutableList(numWorlds) {
@@ -33,7 +35,7 @@ class GeneticWorldDriver(
 
     fun drive() {
         for (i in 0 until 10) {
-            iterate(100)
+            iterate(numMovesPerTest)
             genePool.evolve(numGenes, (numGenes / 4))
         }
     }
@@ -62,7 +64,7 @@ class GeneticWorldDriver(
                 val currentAgentPos = simulation.getAgentPosition(agent)
                 simulation.step()
                 if (simulation.getAgentPosition(agent) == currentAgentPos) {
-                    numIterationWithoutMovement++
+                    numIterationWithoutMovement += costOfNotMoving
                 }
                 if (simulation.isAgentOnWall(agent)) {
                     numWallHitCount++
@@ -86,7 +88,8 @@ fun main() {
         numWorlds = 10,
         brainSizeX = 10,
         brainSizeY = 10,
-        numGenes = 100
+        numGenes = 100,
+        numMovesPerTest = 1000,
     )
 
     driver.drive()
