@@ -10,7 +10,7 @@ class GeneticWorldDriver(
     numWorlds: Int,
     private val brainSizeX: Int,
     private val brainSizeY: Int,
-    numGenes: Int
+    private val numGenes: Int
 ) {
 
     private val randomWorlds = MutableList(numWorlds) {
@@ -31,9 +31,13 @@ class GeneticWorldDriver(
     )
 
     fun drive() {
+        for (i in 0 until 10) {
+            iterate(100)
+            genePool.evolve(numGenes, (numGenes / 4))
+        }
+    }
 
-        val numMoves = 100
-
+    private fun iterate(numMoves: Int) {
         genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
 
             var numWallHitCount = 0.0
@@ -59,7 +63,7 @@ class GeneticWorldDriver(
 
             }
 
-            val score = ((numMoves.toDouble() - numWallHitCount) / numMoves).toDouble()
+            val score = ((numMoves.toDouble() - numWallHitCount) / numMoves)
             genePool.setFitness(indexInPool, score)
 
             println("fitness at index $indexInPool: $score")
