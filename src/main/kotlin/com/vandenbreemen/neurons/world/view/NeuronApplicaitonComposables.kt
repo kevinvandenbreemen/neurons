@@ -1,8 +1,12 @@
 package com.vandenbreemen.neurons.world.view
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
+import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 
 @Composable
 fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
@@ -11,6 +15,22 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
     // For example, you might want to include a navigation bar, a sidebar, or other components.
     // This function can be used as the entry point for your Compose UI.
 
-    Text("State is a ${state::class.simpleName}")
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text("State is a ${state::class.simpleName}")
+
+        when (state) {
+            is NeuralNetworkDemoState -> {
+                // Display the neural network state
+                Text("Neural Network Demo")
+            }
+
+            else -> {
+                // Handle other states if necessary
+                Text("Unknown state")
+            }
+        }
+
+    }
+
 
 }
