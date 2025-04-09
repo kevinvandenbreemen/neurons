@@ -45,6 +45,5 @@ fun NavigationWorldSimulationPreview() {
     NavigationWorldSimulationView(
         simulation = simulation,
         modifier = Modifier.size(400.dp),
-        turnWait = 100L // Slower turn rate for preview
     )
 } 
