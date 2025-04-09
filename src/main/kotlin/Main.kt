@@ -13,6 +13,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
+import com.vandenbreemen.neurons.ui.GeneticWorldDialog
 import com.vandenbreemen.neurons.ui.NeuralNetworkDisplay
 import com.vandenbreemen.neurons.ui.NeuronLegendDialog
 import com.vandenbreemen.neurons.world.view.NeuralApplicationComposables
@@ -31,6 +32,7 @@ fun App() {
     var showMenu by remember { mutableStateOf(false) }
     var showLegend by remember { mutableStateOf(false) }
     var showApplicationsMenu by remember { mutableStateOf(false) }
+    var showGeneticWorldDialog by remember { mutableStateOf(false) }
 
 
     MaterialTheme {
@@ -59,16 +61,7 @@ fun App() {
                             Text("Neural network demo")
                         }
                         DropdownMenuItem(onClick = {
-                            applicationViewModel.switchToApplication(
-                                GeneticWorldState(
-                                    numWorlds = 1,
-                                    brainSizeX = 10,
-                                    brainSizeY = 10,
-                                    numGenes = 10,
-                                    numMovesPerTest = 1000,
-                                    costOfNotMoving = 0.1
-                                )
-                            )
+                            showGeneticWorldDialog = true
                             showApplicationsMenu = false
                         }) {
                             Text("Genetic World")
@@ -116,6 +109,24 @@ fun App() {
             NeuronLegendDialog(
                 showLegend = showLegend,
                 onDismiss = { showLegend = false }
+            )
+
+            // Show the genetic world dialog
+            GeneticWorldDialog(
+                showDialog = showGeneticWorldDialog,
+                onDismiss = { showGeneticWorldDialog = false },
+                onConfirm = { params ->
+                    applicationViewModel.switchToApplication(
+                        GeneticWorldState(
+                            brainSizeX = params.brainSizeX,
+                            brainSizeY = params.brainSizeY,
+                            numGenes = params.numGenes,
+                            numMovesPerTest = params.numMovesPerTest,
+                            costOfNotMoving = params.costOfNotMoving
+                        )
+                    )
+                    showGeneticWorldDialog = false
+                }
             )
 
             Row {
