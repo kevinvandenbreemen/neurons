@@ -16,6 +16,7 @@ import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.ui.NeuralNetworkDisplay
 import com.vandenbreemen.neurons.ui.NeuronLegendDialog
 import com.vandenbreemen.neurons.world.view.NeuralApplicationComposables
+import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import com.vandenbreemen.neurons.world.viewmodel.NeuronApplicationViewModel
 import kotlin.math.absoluteValue
@@ -56,6 +57,21 @@ fun App() {
                             showApplicationsMenu = false
                         }) {
                             Text("Neural network demo")
+                        }
+                        DropdownMenuItem(onClick = {
+                            applicationViewModel.switchToApplication(
+                                GeneticWorldState(
+                                    numWorlds = 1,
+                                    brainSizeX = 10,
+                                    brainSizeY = 10,
+                                    numGenes = 10,
+                                    numMovesPerTest = 1000,
+                                    costOfNotMoving = 0.1
+                                )
+                            )
+                            showApplicationsMenu = false
+                        }) {
+                            Text("Genetic World")
                         }
                     }
                 }
@@ -115,6 +131,19 @@ fun App() {
                                 applicationViewModel.onSelectNeuron(neuron)
                             }
                         )
+                        is GeneticWorldState -> {
+                            val geneticWorldState = applicationViewModel.state as GeneticWorldState
+                            NeuralNetworkDisplay(
+                                turnWait = 50L,
+                                demoState = geneticWorldState,
+                                showConnections = geneticWorldState.showConnections,
+                                showActivationColor = geneticWorldState.showActivationColor,
+                                iterate = { applicationViewModel.iterate() },
+                                onNeuronClick = { neuron ->
+                                    applicationViewModel.onSelectNeuron(neuron)
+                                }
+                            )
+                        }
                     }
                 }
                 Column(modifier = Modifier.weight(0.5f)) {

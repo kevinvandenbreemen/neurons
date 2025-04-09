@@ -69,6 +69,11 @@ class GeneticPool(
         }
     }
 
+    fun getRandomProvider(): GeneticNeuronProvider {
+        val randomIndex = Random.nextInt(poolSize)
+        return GeneticNeuronProvider(pool[randomIndex])
+    }
+
     fun setFitness(index: Int, fitness: Double) {
         require(index in 0 until poolSize) { "Index out of bounds" }
         require(fitness >= 0) { "Fitness must be non-negative" }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
+import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 import com.vandenbreemen.neurons.world.driver.GeneticWorldDriver
 
 open class NeuralNetApplicationState {
@@ -74,6 +75,9 @@ class GeneticWorldState(
         costOfNotMoving = costOfNotMoving
     )
 
+    private val navigationSimulation: NavigationWorldSimulation
+    var navSimulationForDisplay by mutableStateOf<NavigationWorldSimulation?>(null)
+
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
     init {
@@ -86,10 +90,17 @@ class GeneticWorldState(
             }
             neuralNet.applyAll()
         }
+
+        val pairForDisplay = driver.createSimulationWithAgent()
+
+        // Initialize navigation simulation with a random world
+        navigationSimulation = pairForDisplay.first
+        navSimulationForDisplay = navigationSimulation
+        neuralNet = pairForDisplay.second
     }
 
     override fun doIterate() {
-        neuralNet?.fireAndUpdate()
-        neuralNet?.updateAllWeights(0.001)  // Update weights after firing
+        navigationSimulation.step()
+        navSimulationForDisplay = navigationSimulation
     }
 }

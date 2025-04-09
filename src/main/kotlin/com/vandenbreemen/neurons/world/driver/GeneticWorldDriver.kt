@@ -40,6 +40,29 @@ class GeneticWorldDriver(
         }
     }
 
+    fun getRandomNeuralNetwork(): NeuralNet {
+        return NeuralNet(
+            brainSizeX,
+            brainSizeY,
+            genePool.getRandomProvider()
+        )
+    }
+
+    /**
+     * Creates a NavigationWorldSimulation with a randomly selected world and a single neural agent.
+
+     */
+    fun createSimulationWithAgent(
+
+    ): Pair<NavigationWorldSimulation, NeuralNet> {
+        val world = randomWorlds.random()
+        val neuralNet = getRandomNeuralNetwork()
+        val agent = NeuralAgent(neuralNet, 0.1)
+        return Pair(NavigationWorldSimulation(world).apply {
+            addAgent(agent)
+        }, neuralNet)
+    }
+
     private fun iterate(numMoves: Int) {
         genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
 

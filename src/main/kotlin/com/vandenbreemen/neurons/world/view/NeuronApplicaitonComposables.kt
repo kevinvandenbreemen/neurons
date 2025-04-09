@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 
@@ -29,6 +30,14 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
                     }
                 }
 
+            }
+            is GeneticWorldState -> {
+                val simulationState = state.navSimulationForDisplay
+                simulationState?.let {
+                    NavigationWorldSimulationView(simulationState)
+                } ?: run {
+                    Text("No simulation state available")
+                }
             }
 
             else -> {
