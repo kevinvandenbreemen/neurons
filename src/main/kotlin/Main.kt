@@ -25,15 +25,14 @@ import kotlin.math.absoluteValue
 @Composable
 @Preview
 fun App() {
-
     val applicationViewModel = NeuronApplicationViewModel()
     applicationViewModel.switchToApplication(NeuralNetworkDemoState(25))
+    val coroutineScope = rememberCoroutineScope()
 
     var showMenu by remember { mutableStateOf(false) }
     var showLegend by remember { mutableStateOf(false) }
     var showApplicationsMenu by remember { mutableStateOf(false) }
     var showGeneticWorldDialog by remember { mutableStateOf(false) }
-
 
     MaterialTheme {
         Column {
@@ -116,46 +115,59 @@ fun App() {
                 showDialog = showGeneticWorldDialog,
                 onDismiss = { showGeneticWorldDialog = false },
                 onConfirm = { params ->
-                    applicationViewModel.switchToApplication(
-                        GeneticWorldState(
-                            brainSizeX = params.brainSizeX,
-                            brainSizeY = params.brainSizeY,
-                            numGenes = params.numGenes,
-                            numMovesPerTest = params.numMovesPerTest,
-                            costOfNotMoving = params.costOfNotMoving
-                        ).also {
-                            it.setup()
-                        }
+                    val state = GeneticWorldState(
+                        brainSizeX = params.brainSizeX,
+                        brainSizeY = params.brainSizeY,
+                        numGenes = params.numGenes,
+                        numMovesPerTest = params.numMovesPerTest,
+                        costOfNotMoving = params.costOfNotMoving
                     )
+                    applicationViewModel.switchToApplication(state)
+                    state.setup(coroutineScope)
                     showGeneticWorldDialog = false
                 }
             )
 
             Row {
                 Column(modifier = Modifier.weight(0.5f)) {
-                    when (applicationViewModel.state) {
+                    when (val state = applicationViewModel.state) {
                         is NeuralNetworkDemoState -> NeuralNetworkDisplay(
                             turnWait = 50L,
-                            demoState = applicationViewModel.state as NeuralNetworkDemoState,
-                            showConnections = applicationViewModel.state.showConnections,
-                            showActivationColor = applicationViewModel.state.showActivationColor,
+                            demoState = state,
+                            showConnections = state.showConnections,
+                            showActivationColor = state.showActivationColor,
                             iterate = { applicationViewModel.iterate() },
                             onNeuronClick = { neuron ->
                                 applicationViewModel.onSelectNeuron(neuron)
                             }
                         )
                         is GeneticWorldState -> {
-                            val geneticWorldState = applicationViewModel.state as GeneticWorldState
-                            NeuralNetworkDisplay(
-                                turnWait = 50L,
-                                demoState = geneticWorldState,
-                                showConnections = geneticWorldState.showConnections,
-                                showActivationColor = geneticWorldState.showActivationColor,
-                                iterate = { applicationViewModel.iterate() },
-                                onNeuronClick = { neuron ->
-                                    applicationViewModel.onSelectNeuron(neuron)
+                            if (state.isLoading) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(state.setupProgress)
+                                    }
                                 }
-                            )
+                            } else {
+                                NeuralNetworkDisplay(
+                                    turnWait = 50L,
+                                    demoState = state,
+                                    showConnections = state.showConnections,
+                                    showActivationColor = state.showActivationColor,
+                                    iterate = { applicationViewModel.iterate() },
+                                    onNeuronClick = { neuron ->
+                                        applicationViewModel.onSelectNeuron(neuron)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

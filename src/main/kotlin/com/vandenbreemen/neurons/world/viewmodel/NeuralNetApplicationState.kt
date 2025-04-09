@@ -8,6 +8,10 @@ import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 import com.vandenbreemen.neurons.world.driver.GeneticWorldDriver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 open class NeuralNetApplicationState {
     var currentTurn by mutableStateOf(0)
@@ -75,38 +79,48 @@ class GeneticWorldState(
         costOfNotMoving = costOfNotMoving
     )
 
-    private lateinit var navigationSimulation: NavigationWorldSimulation
+    private var navigationSimulation: NavigationWorldSimulation? = null
     var navSimulationForDisplay by mutableStateOf<NavigationWorldSimulation?>(null)
+    var isLoading by mutableStateOf(false)
+    var setupProgress by mutableStateOf("")
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
-    fun setup() {
-        driver.drive()
-        neuralNet = driver.getRandomNeuralNetwork().also { neuralNet ->
-            for (i in 0 until neuralNet.rows) {
-                for (j in 0 until neuralNet.cols) {
-                    neuralNet.getCellAt(i, j).stimulate(((-5..5).random()).toDouble())
+    fun setup(coroutineScope: CoroutineScope) {
+        isLoading = true
+        setupProgress = "Initializing genetic algorithm..."
+
+        coroutineScope.launch {
+            try {
+                withContext(Dispatchers.Default) {
+                    setupProgress = "Running genetic algorithm..."
+                    driver.drive()
+
+                    setupProgress = "Creating neural network..."
+                    neuralNet = driver.getRandomNeuralNetwork()
+
+                    setupProgress = "Setting up navigation simulation..."
+                    val pairForDisplay = driver.createSimulationWithAgent()
+                    navigationSimulation = pairForDisplay.first
+                    navSimulationForDisplay = navigationSimulation
+                    neuralNet = pairForDisplay.second
                 }
+            } finally {
+                isLoading = false
+                setupProgress = ""
             }
-            neuralNet.applyAll()
         }
-
-        val pairForDisplay = driver.createSimulationWithAgent()
-
-        // Initialize navigation simulation with a random world
-        navigationSimulation = pairForDisplay.first
-        navSimulationForDisplay = navigationSimulation
-        neuralNet = pairForDisplay.second
     }
 
     override fun doIterate() {
 
-        //  Don't do anything if navitgationSimulation is null
-        if (!::navigationSimulation.isInitialized) {
+        if (navigationSimulation == null) {
             return
         }
 
-        navigationSimulation.step()
+        neuralNet?.fireAndUpdate()
+        neuralNet?.updateAllWeights(0.001)  // Update weights after firing
+        navigationSimulation?.step()
         navSimulationForDisplay = navigationSimulation
     }
 }
