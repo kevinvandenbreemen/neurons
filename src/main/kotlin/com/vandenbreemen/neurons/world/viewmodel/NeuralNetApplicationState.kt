@@ -100,6 +100,8 @@ class GeneticWorldState(
     var navSimulationForDisplay by mutableStateOf<NavigationWorldSimulation?>(null)
     var isLoading by mutableStateOf(false)
     var setupProgress by mutableStateOf("")
+    var currentEpoch by mutableStateOf(0)
+    var totalEpochs by mutableStateOf(numEpochs)
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
@@ -110,6 +112,7 @@ class GeneticWorldState(
     fun setup(coroutineScope: CoroutineScope) {
         isLoading = true
         setupProgress = "Initializing genetic algorithm..."
+        currentEpoch = 0
 
         coroutineScope.launch {
             try {
@@ -120,7 +123,10 @@ class GeneticWorldState(
                         "Running genetic algorithm..."
                     }
                     driver.drive(
-                        fitnessFunction = driver::getFitness
+                        fitnessFunction = driver::getFitness,
+                        onEpochComplete = { epoch ->
+                            currentEpoch = epoch
+                        }
                     )
 
                     setupProgress = "Creating neural network..."

@@ -170,6 +170,13 @@ fun App() {
                                         CircularProgressIndicator()
                                         Spacer(modifier = Modifier.height(16.dp))
                                         Text(state.setupProgress)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        LinearProgressIndicator(
+                                            progress = state.currentEpoch.toFloat() / state.totalEpochs.toFloat(),
+                                            modifier = Modifier.fillMaxWidth(0.5f)
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text("Epoch ${state.currentEpoch} of ${state.totalEpochs}")
                                     }
                                 }
                             } else {
