@@ -15,6 +15,7 @@ class GeneticWorldDriver(
     private val numMovesPerTest: Int = 100,
     private val costOfNotMoving: Double = 0.1,
     private val mutationRate: Double = 0.1,
+    private val eliteSize: Int = 5,
     existingGenePool: GeneticPool? = null
 ) {
 
@@ -41,7 +42,7 @@ class GeneticWorldDriver(
     fun drive() {
         for (i in 0 until 10) {
             iterate(numMovesPerTest)
-            genePool.evolve(numGenes, (numGenes / 4))
+            genePool.evolve(numGenes, eliteSize)
         }
     }
 
