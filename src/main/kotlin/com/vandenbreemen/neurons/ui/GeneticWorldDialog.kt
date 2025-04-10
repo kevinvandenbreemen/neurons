@@ -24,6 +24,7 @@ data class GeneticWorldParams(
     val worldWidth: Int = 100,
     val worldHeight: Int = 100,
     val wallDensity: Double = 0.001,
+    val numEpochs: Int = 10,
     val reuseGenePool: Boolean = false
 )
 
@@ -46,6 +47,7 @@ fun GeneticWorldDialog(
         var worldWidth by remember { mutableStateOf(LastUsedParams.worldWidth.toString()) }
         var worldHeight by remember { mutableStateOf(LastUsedParams.worldHeight.toString()) }
         var wallDensity by remember { mutableStateOf(LastUsedParams.wallDensity.toString()) }
+        var numEpochs by remember { mutableStateOf(LastUsedParams.numEpochs.toString()) }
         var reuseGenePool by remember { mutableStateOf(false) }
 
         val canReuseGenePool = currentGenePool != null
@@ -120,6 +122,12 @@ fun GeneticWorldDialog(
                                 label = { Text("Learning Rate") },
                                 modifier = Modifier.fillMaxWidth()
                             )
+                            OutlinedTextField(
+                                value = numEpochs,
+                                onValueChange = { numEpochs = it },
+                                label = { Text("Number of Epochs") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
 
                         // Right column - World Parameters
@@ -178,6 +186,7 @@ fun GeneticWorldDialog(
                                 worldWidth = worldWidth.toInt(),
                                 worldHeight = worldHeight.toInt(),
                                 wallDensity = wallDensity.toDouble(),
+                                numEpochs = numEpochs.toInt(),
                                 reuseGenePool = reuseGenePool
                             )
                             // Update last used params

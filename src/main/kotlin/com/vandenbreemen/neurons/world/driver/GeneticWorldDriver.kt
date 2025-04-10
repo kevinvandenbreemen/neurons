@@ -21,6 +21,7 @@ class GeneticWorldDriver(
     private val worldWidth: Int = 100,
     private val worldHeight: Int = 100,
     private val wallDensity: Double = 0.001,
+    private val numEpochs: Int = 10,
     existingGenePool: GeneticPool? = null
 ) {
 
@@ -45,7 +46,7 @@ class GeneticWorldDriver(
     }
 
     fun drive(fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double) {
-        for (i in 0 until 10) {
+        for (i in 0 until numEpochs) {
             iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
                 fitnessFunction(geneticNeuronProvider, numMoves)
             }
