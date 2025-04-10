@@ -56,7 +56,10 @@ class GeneticPool(
     }
 
     fun getRandomProvider(): GeneticNeuronProvider {
-        val randomIndex = Random.nextInt(poolSize)
+        val topScoringIndices = fitnessScores.indices
+            .sortedByDescending { fitnessScores[it] }
+            .take(poolSize / 10) // Adjust the fraction as needed
+        val randomIndex = topScoringIndices.random()
         return GeneticNeuronProvider(pool[randomIndex])
     }
 
