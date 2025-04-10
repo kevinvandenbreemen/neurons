@@ -46,17 +46,6 @@ fun NeuronLegendDialog(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Canvas(modifier = Modifier.size(30.dp)) {
                             drawCircle(
-                                color = Color.Green,
-                                radius = size.width * 0.15f,
-                                center = Offset(size.width / 2, size.height / 2)
-                            )
-                        }
-                        Text("Sine Neuron - Oscillates activation over time")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(modifier = Modifier.size(30.dp)) {
-                            drawCircle(
                                 color = Color.Blue,
                                 radius = size.width * 0.15f,
                                 center = Offset(size.width / 2, size.height / 2)
@@ -279,14 +268,6 @@ fun NeuralNetworkDisplay(
                         is InhibitoryNeuron -> {
                             drawCircle(
                                 color = Color.Red,
-                                radius = dotRadius,
-                                center = Offset(centerX, centerY)
-                            )
-                        }
-
-                        is SineNeuron -> {
-                            drawCircle(
-                                color = Color.Green,
                                 radius = dotRadius,
                                 center = Offset(centerX, centerY)
                             )
