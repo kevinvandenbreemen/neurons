@@ -80,11 +80,8 @@ class GeneticWorldDriver(
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double
     ) {
         genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
-
             val score = fitnessFunction(geneticNeuronProvider, numMoves)
             genePool.setFitness(indexInPool, score)
-
-            println("fitness at index $indexInPool: $score")
         }
     }
 
