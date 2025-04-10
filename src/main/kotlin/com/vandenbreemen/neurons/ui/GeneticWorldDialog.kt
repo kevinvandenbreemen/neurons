@@ -16,6 +16,7 @@ data class GeneticWorldParams(
     val numGenes: Int = 20,
     val numMovesPerTest: Int = 100,
     val costOfNotMoving: Double = 1.0,
+    val mutationRate: Double = 0.1,
     val reuseGenePool: Boolean = false
 )
 
@@ -32,6 +33,7 @@ fun GeneticWorldDialog(
         var numGenes by remember { mutableStateOf(LastUsedParams.numGenes.toString()) }
         var numMovesPerTest by remember { mutableStateOf(LastUsedParams.numMovesPerTest.toString()) }
         var costOfNotMoving by remember { mutableStateOf(LastUsedParams.costOfNotMoving.toString()) }
+        var mutationRate by remember { mutableStateOf(LastUsedParams.mutationRate.toString()) }
         var reuseGenePool by remember { mutableStateOf(false) }
 
         val canReuseGenePool = currentGenePool != null
@@ -88,6 +90,12 @@ fun GeneticWorldDialog(
                         label = { Text("Cost of Not Moving") },
                         modifier = Modifier.fillMaxWidth()
                     )
+                    OutlinedTextField(
+                        value = mutationRate,
+                        onValueChange = { mutationRate = it },
+                        label = { Text("Mutation Rate") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             },
             confirmButton = {
@@ -100,6 +108,7 @@ fun GeneticWorldDialog(
                                 numGenes = numGenes.toInt(),
                                 numMovesPerTest = numMovesPerTest.toInt(),
                                 costOfNotMoving = costOfNotMoving.toDouble(),
+                                mutationRate = mutationRate.toDouble(),
                                 reuseGenePool = reuseGenePool
                             )
                             // Update last used params

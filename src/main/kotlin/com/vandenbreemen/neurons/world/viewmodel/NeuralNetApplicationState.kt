@@ -70,6 +70,7 @@ class GeneticWorldState(
     numGenes: Int = 20,
     numMovesPerTest: Int = 100,
     costOfNotMoving: Double = 0.1,
+    mutationRate: Double = 0.1,
     private val existingGenePool: GeneticPool? = null
 ) : NeuralNetApplicationState() {
     private val driver = GeneticWorldDriver(
@@ -79,6 +80,7 @@ class GeneticWorldState(
         numGenes = numGenes,
         numMovesPerTest = numMovesPerTest,
         costOfNotMoving = costOfNotMoving,
+        mutationRate = mutationRate,
         existingGenePool = existingGenePool
     )
 

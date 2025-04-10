@@ -6,7 +6,8 @@ import kotlin.random.Random
 class GeneticPool(
     private val rows: Int,
     private val cols: Int,
-    private val poolSize: Int
+    private val poolSize: Int,
+    private val mutationRate: Double = 0.1
 ) {
     private var pool: List<LongArray> = List(poolSize) { generateGenome() }
     private var fitnessScores: List<Double> = List(poolSize) { 0.0 }
@@ -88,7 +89,7 @@ class GeneticPool(
             val child = crossover(parent1Index, parent2Index)
 
             // Mutate child with some probability
-            if (Random.nextDouble() < 0.1) { // 10% mutation rate
+            if (Random.nextDouble() < mutationRate) {
                 mutateGenome(child)
             }
 
@@ -112,8 +113,8 @@ class GeneticPool(
     }
 
     companion object {
-        fun create(rows: Int, cols: Int, poolSize: Int): GeneticPool {
-            return GeneticPool(rows, cols, poolSize)
+        fun create(rows: Int, cols: Int, poolSize: Int, mutationRate: Double = 0.1): GeneticPool {
+            return GeneticPool(rows, cols, poolSize, mutationRate)
         }
     }
 } 
