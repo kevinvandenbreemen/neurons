@@ -20,6 +20,7 @@ data class GeneticWorldParams(
     val costOfNotMoving: Double = 1.0,
     val mutationRate: Double = 0.1,
     val eliteSize: Int = 5,
+    val learningRate: Double = 0.1,
     val reuseGenePool: Boolean = false
 )
 
@@ -38,6 +39,7 @@ fun GeneticWorldDialog(
         var costOfNotMoving by remember { mutableStateOf(LastUsedParams.costOfNotMoving.toString()) }
         var mutationRate by remember { mutableStateOf(LastUsedParams.mutationRate.toString()) }
         var eliteSize by remember { mutableStateOf(LastUsedParams.eliteSize.toString()) }
+        var learningRate by remember { mutableStateOf(LastUsedParams.learningRate.toString()) }
         var reuseGenePool by remember { mutableStateOf(false) }
 
         val canReuseGenePool = currentGenePool != null
@@ -108,6 +110,12 @@ fun GeneticWorldDialog(
                         label = { Text("Number of Elite Genomes") },
                         modifier = Modifier.fillMaxWidth()
                     )
+                    OutlinedTextField(
+                        value = learningRate,
+                        onValueChange = { learningRate = it },
+                        label = { Text("Learning Rate") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             },
             confirmButton = {
@@ -122,6 +130,7 @@ fun GeneticWorldDialog(
                                 costOfNotMoving = costOfNotMoving.toDouble(),
                                 mutationRate = mutationRate.toDouble(),
                                 eliteSize = eliteSize.toInt(),
+                                learningRate = learningRate.toDouble(),
                                 reuseGenePool = reuseGenePool
                             )
                             // Update last used params
