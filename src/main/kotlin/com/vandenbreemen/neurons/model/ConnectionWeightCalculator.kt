@@ -1,7 +1,6 @@
 package com.vandenbreemen.neurons.model
 
 import kotlin.math.max
-import kotlin.random.Random
 
 interface ConnectionWeightCalculator {
     /**
@@ -50,7 +49,7 @@ object DefaultConnectionWeightCalculator : ConnectionWeightCalculator {
         targetNeuron: Neuron
     ): Double {
         // For default calculator, start with a random weight between -0.5 and 0.5
-        return Random.nextDouble(-0.5, 0.5)
+        return 0.0
     }
 }
 
@@ -69,6 +68,6 @@ object StrengthBasedConnector : ConnectionWeightCalculator {
         targetNeuron: Neuron
     ): Double {
         // For strength-based connector, start with a random weight between 0 and 0.5
-        return Random.nextDouble(0.0, 0.5)
+        return 0.0
     }
 }
