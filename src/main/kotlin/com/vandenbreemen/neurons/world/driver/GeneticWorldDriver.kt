@@ -3,6 +3,7 @@ package com.vandenbreemen.neurons.world.driver
 import com.vandenbreemen.neurons.agent.NeuralAgent
 import com.vandenbreemen.neurons.evolution.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
+import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 import com.vandenbreemen.neurons.world.model.World
 import kotlin.math.max
@@ -43,9 +44,11 @@ class GeneticWorldDriver(
         return genePool
     }
 
-    fun drive() {
+    fun drive(fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double) {
         for (i in 0 until 10) {
-            iterate(numMovesPerTest)
+            iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
+                fitnessFunction(geneticNeuronProvider, numMoves)
+            }
             genePool.evolve(numGenes, eliteSize)
         }
     }
@@ -71,54 +74,63 @@ class GeneticWorldDriver(
         }, neuralNet)
     }
 
-    private fun iterate(numMoves: Int) {
+    private fun iterate(
+        numMoves: Int,
+        fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double
+    ) {
         genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
 
-            var numWallHitCount = 0.0
-            var numIterationWithoutMovement = 0.0
-            var didAgentMove = false
-
-            val world = randomWorlds.random()
-            val neuralNet = NeuralNet(
-                brainSizeX,
-                brainSizeY,
-                geneticNeuronProvider
-            )
-            val agent = NeuralAgent(neuralNet, learningRate)
-            val simulation = NavigationWorldSimulation(world).also {
-                it.addAgent(
-                    agent,
-                    world.getRandomEmptyCell()
-                )
-            }
-
-            for (i in 0 until numMoves) {
-
-                val currentAgentPos = simulation.getAgentPosition(agent)
-                simulation.step()
-                if (simulation.getAgentPosition(agent) == currentAgentPos) {
-                    numIterationWithoutMovement += costOfNotMoving
-                } else {
-                    didAgentMove = true
-                }
-
-                if (simulation.isAgentOnWall(agent)) {
-                    numWallHitCount++
-                }
-                if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
-                    genePool.setFitness(indexInPool, 0.0)
-                    return@forEachProvider
-                }
-
-            }
-
-            val score = if (didAgentMove) (
-                    max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
-                            / numMoves) else 0.0
+            val score = fitnessFunction(geneticNeuronProvider, numMoves)
             genePool.setFitness(indexInPool, score)
 
             println("fitness at index $indexInPool: $score")
         }
+    }
+
+
+    fun getFitness(geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int): Double {
+        var numWallHitCount = 0.0
+        var numIterationWithoutMovement = 0.0
+        var didAgentMove = false
+
+        val world = randomWorlds.random()
+        val neuralNet = NeuralNet(
+            brainSizeX,
+            brainSizeY,
+            geneticNeuronProvider
+        )
+        val agent = NeuralAgent(neuralNet, learningRate)
+        val simulation = NavigationWorldSimulation(world).also {
+            it.addAgent(
+                agent,
+                world.getRandomEmptyCell()
+            )
+        }
+
+        for (i in 0 until numMoves) {
+
+            val currentAgentPos = simulation.getAgentPosition(agent)
+            simulation.step()
+            if (simulation.getAgentPosition(agent) == currentAgentPos) {
+                numIterationWithoutMovement += costOfNotMoving
+            } else {
+                didAgentMove = true
+            }
+
+            if (simulation.isAgentOnWall(agent)) {
+                numWallHitCount++
+            }
+            if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
+                return 0.0
+            }
+
+        }
+
+        val score = if (didAgentMove) (
+                max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
+                        / numMoves) else 0.0
+
+        return score
     }
 
 }
@@ -132,5 +144,9 @@ fun main() {
         numMovesPerTest = 1000,
     )
 
-    driver.drive()
+    driver.drive(
+        fitnessFunction = { geneticNeuronProvider, numMoves ->
+            driver.getFitness(geneticNeuronProvider, numMoves)
+        }
+    )
 }

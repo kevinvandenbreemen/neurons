@@ -117,7 +117,9 @@ class GeneticWorldState(
                     } else {
                         "Running genetic algorithm..."
                     }
-                    driver.drive()
+                    driver.drive(
+                        fitnessFunction = driver::getFitness
+                    )
 
                     setupProgress = "Creating neural network..."
                     neuralNet = driver.getRandomNeuralNetwork()
