@@ -25,6 +25,8 @@ data class GeneticWorldParams(
     val worldHeight: Int = 100,
     val wallDensity: Double = 0.001,
     val numEpochs: Int = 10,
+    val numRooms: Int = 2,
+    val numRandomWalls: Int = 2,
     val reuseGenePool: Boolean = false
 )
 
@@ -48,6 +50,8 @@ fun GeneticWorldDialog(
         var worldHeight by remember { mutableStateOf(LastUsedParams.worldHeight.toString()) }
         var wallDensity by remember { mutableStateOf(LastUsedParams.wallDensity.toString()) }
         var numEpochs by remember { mutableStateOf(LastUsedParams.numEpochs.toString()) }
+        var numRooms by remember { mutableStateOf(LastUsedParams.numRooms.toString()) }
+        var numRandomWalls by remember { mutableStateOf(LastUsedParams.numRandomWalls.toString()) }
         var reuseGenePool by remember { mutableStateOf(false) }
 
         val canReuseGenePool = currentGenePool != null
@@ -166,6 +170,18 @@ fun GeneticWorldDialog(
                                 label = { Text("Cost of Not Moving") },
                                 modifier = Modifier.fillMaxWidth()
                             )
+                            OutlinedTextField(
+                                value = numRooms,
+                                onValueChange = { numRooms = it },
+                                label = { Text("Number of Rooms") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = numRandomWalls,
+                                onValueChange = { numRandomWalls = it },
+                                label = { Text("Number of Random Walls") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     }
                 }
@@ -187,6 +203,8 @@ fun GeneticWorldDialog(
                                 worldHeight = worldHeight.toInt(),
                                 wallDensity = wallDensity.toDouble(),
                                 numEpochs = numEpochs.toInt(),
+                                numRooms = numRooms.toInt(),
+                                numRandomWalls = numRandomWalls.toInt(),
                                 reuseGenePool = reuseGenePool
                             )
                             // Update last used params

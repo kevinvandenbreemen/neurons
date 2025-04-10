@@ -133,6 +133,8 @@ fun App() {
                         worldHeight = params.worldHeight,
                         wallDensity = params.wallDensity,
                         numEpochs = params.numEpochs,
+                        numRooms = params.numRooms,
+                        numRandomWalls = params.numRandomWalls,
                         existingGenePool = if (params.reuseGenePool) currentGenePool else null
                     )
                     applicationViewModel.switchToApplication(state)

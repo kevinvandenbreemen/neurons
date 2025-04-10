@@ -77,6 +77,8 @@ class GeneticWorldState(
     worldHeight: Int = 100,
     wallDensity: Double = 0.001,
     numEpochs: Int = 10,
+    numRooms: Int = 2,
+    numRandomWalls: Int = 2,
     private val existingGenePool: GeneticPool? = null
 ) : NeuralNetApplicationState() {
     private val driver = GeneticWorldDriver(
@@ -93,6 +95,8 @@ class GeneticWorldState(
         worldHeight = worldHeight,
         wallDensity = wallDensity,
         numEpochs = numEpochs,
+        numRooms = numRooms,
+        numRandomWalls = numRandomWalls,
         existingGenePool = existingGenePool
     )
 

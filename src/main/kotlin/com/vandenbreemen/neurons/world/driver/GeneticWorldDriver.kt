@@ -22,6 +22,8 @@ class GeneticWorldDriver(
     private val worldHeight: Int = 100,
     private val wallDensity: Double = 0.001,
     private val numEpochs: Int = 10,
+    private val numRooms: Int = 2,
+    private val numRandomWalls: Int = 2,
     existingGenePool: GeneticPool? = null
 ) {
 
@@ -32,8 +34,8 @@ class GeneticWorldDriver(
             wallDensity = wallDensity,
             minRoomSize = 8,
             maxRoomSize = 20,
-            numRooms = 2,
-            numRandomWalls = 2
+            numRooms = numRooms,
+            numRandomWalls = numRandomWalls
         )
     }
 
