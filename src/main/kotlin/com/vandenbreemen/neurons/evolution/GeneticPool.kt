@@ -26,21 +26,6 @@ class GeneticPool(
 
     fun getAllGenomes(): List<LongArray> = pool
 
-    fun mutateGenome(index: Int, mutationRate: Double = 0.1) {
-        require(index in 0 until poolSize) { "Index out of bounds" }
-        require(mutationRate in 0.0..1.0) { "Mutation rate must be between 0 and 1" }
-
-        val genome = pool[index].copyOf()
-        for (i in genome.indices) {
-            if (Random.nextDouble() < mutationRate) {
-                // Flip a random bit in the long value
-                val bitPosition = Random.nextInt(64)
-                genome[i] = genome[i] xor (1L shl bitPosition)
-            }
-        }
-        pool = pool.toMutableList().apply { set(index, genome) }
-    }
-
     fun crossover(parent1Index: Int, parent2Index: Int): LongArray {
         require(parent1Index in 0 until poolSize && parent2Index in 0 until poolSize) { "Parent indices out of bounds" }
 
