@@ -161,6 +161,40 @@ fun NeuronLegendDialog(
                         }
                         Text("Sensory Neuron - Processes specific types of sensory data")
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(30.dp)) {
+                            val centerX = size.width / 2
+                            val centerY = size.height / 2
+                            val chevronSize = size.width * 0.3f
+                            // Draw a chevron pointing right
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX - chevronSize, centerY),
+                                end = Offset(centerX, centerY - chevronSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX, centerY - chevronSize),
+                                end = Offset(centerX + chevronSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX + chevronSize, centerY),
+                                end = Offset(centerX, centerY + chevronSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX, centerY + chevronSize),
+                                end = Offset(centerX - chevronSize, centerY),
+                                strokeWidth = 2f
+                            )
+                        }
+                        Text("Clinker Neuron - Activates periodically after a set number of turns")
+                    }
                 }
             },
             confirmButton = {
@@ -413,6 +447,36 @@ fun NeuralNetworkDisplay(
                                     )
                                 }
                             }
+                        }
+
+                        is BlinkerNeuron -> {
+                            // Draw a magenta chevron at the center of the neuron
+                            val chevronSize = minOf(cellWidth, cellHeight) * 0.3f
+                            // Draw a chevron pointing right
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX - chevronSize, centerY),
+                                end = Offset(centerX, centerY - chevronSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX, centerY - chevronSize),
+                                end = Offset(centerX + chevronSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX + chevronSize, centerY),
+                                end = Offset(centerX, centerY + chevronSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Magenta,
+                                start = Offset(centerX, centerY + chevronSize),
+                                end = Offset(centerX - chevronSize, centerY),
+                                strokeWidth = 2f
+                            )
                         }
 
                         else -> {} // Regular neuron, no indicator needed

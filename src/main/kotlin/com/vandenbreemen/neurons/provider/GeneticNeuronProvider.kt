@@ -90,6 +90,11 @@ class GeneticNeuronProvider(
             5L -> DeadNeuron(weightCalculator)
             6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
+            8L -> {
+                // For ClinkerNeuron, use bits 27-30 to determine turnsBeforeActivation (10-100 in increments of 10)
+                val incrementValue = ((gene shr 27) and 0xF).toInt()
+                BlinkerNeuron(10 + (incrementValue * 10), weightCalculator)
+            }
             else -> Neuron(weightCalculator)
         }
 
