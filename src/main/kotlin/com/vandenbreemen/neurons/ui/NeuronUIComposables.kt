@@ -193,7 +193,7 @@ fun NeuronLegendDialog(
                                 strokeWidth = 2f
                             )
                         }
-                        Text("Clinker Neuron - Activates periodically after a set number of turns")
+                        Text("Blinker Neuron - Activates periodically after a set number of turns")
                     }
                 }
             },
