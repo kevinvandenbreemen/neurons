@@ -83,7 +83,7 @@ class GeneticNeuronProvider(
             2L -> Neuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
             3L -> FixedWeightNeuron(weightCalculator)
             4L -> RelayNeuron(weightCalculator)
-            5L -> DeadNeuron(weightCalculator)
+            5L -> Neuron(weightCalculator)
             6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             8L -> {
@@ -91,7 +91,7 @@ class GeneticNeuronProvider(
                 val incrementValue = ((gene shr 27) and 0xF).toInt()
                 BlinkerNeuron(10 + (incrementValue * 10), weightCalculator)
             }
-            else -> Neuron(weightCalculator)
+            else -> DeadNeuron(weightCalculator)
         }
 
         // If it's a RelayNeuron, store the direction in its metadata
