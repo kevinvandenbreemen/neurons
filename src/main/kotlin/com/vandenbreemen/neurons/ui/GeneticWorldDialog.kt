@@ -21,6 +21,8 @@ data class GeneticWorldParams(
     val mutationRate: Double = 0.1,
     val eliteSize: Int = 5,
     val learningRate: Double = 0.1,
+    val worldWidth: Int = 100,
+    val worldHeight: Int = 100,
     val reuseGenePool: Boolean = false
 )
 
@@ -40,6 +42,8 @@ fun GeneticWorldDialog(
         var mutationRate by remember { mutableStateOf(LastUsedParams.mutationRate.toString()) }
         var eliteSize by remember { mutableStateOf(LastUsedParams.eliteSize.toString()) }
         var learningRate by remember { mutableStateOf(LastUsedParams.learningRate.toString()) }
+        var worldWidth by remember { mutableStateOf(LastUsedParams.worldWidth.toString()) }
+        var worldHeight by remember { mutableStateOf(LastUsedParams.worldHeight.toString()) }
         var reuseGenePool by remember { mutableStateOf(false) }
 
         val canReuseGenePool = currentGenePool != null
@@ -116,6 +120,18 @@ fun GeneticWorldDialog(
                         label = { Text("Learning Rate") },
                         modifier = Modifier.fillMaxWidth()
                     )
+                    OutlinedTextField(
+                        value = worldWidth,
+                        onValueChange = { worldWidth = it },
+                        label = { Text("World Width") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = worldHeight,
+                        onValueChange = { worldHeight = it },
+                        label = { Text("World Height") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             },
             confirmButton = {
@@ -131,6 +147,8 @@ fun GeneticWorldDialog(
                                 mutationRate = mutationRate.toDouble(),
                                 eliteSize = eliteSize.toInt(),
                                 learningRate = learningRate.toDouble(),
+                                worldWidth = worldWidth.toInt(),
+                                worldHeight = worldHeight.toInt(),
                                 reuseGenePool = reuseGenePool
                             )
                             // Update last used params

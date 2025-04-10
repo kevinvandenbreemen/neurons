@@ -73,6 +73,8 @@ class GeneticWorldState(
     mutationRate: Double = 0.1,
     eliteSize: Int = 5,
     learningRate: Double = 0.1,
+    worldWidth: Int = 100,
+    worldHeight: Int = 100,
     private val existingGenePool: GeneticPool? = null
 ) : NeuralNetApplicationState() {
     private val driver = GeneticWorldDriver(
@@ -85,6 +87,8 @@ class GeneticWorldState(
         mutationRate = mutationRate,
         eliteSize = eliteSize,
         learningRate = learningRate,
+        worldWidth = worldWidth,
+        worldHeight = worldHeight,
         existingGenePool = existingGenePool
     )
 

@@ -17,13 +17,15 @@ class GeneticWorldDriver(
     private val mutationRate: Double = 0.1,
     private val eliteSize: Int = 5,
     private val learningRate: Double = 0.1,
+    private val worldWidth: Int = 100,
+    private val worldHeight: Int = 100,
     existingGenePool: GeneticPool? = null
 ) {
 
     private val randomWorlds = MutableList(numWorlds) {
         World.randomWorld(
-            width = 100,
-            height = 100,
+            width = worldWidth,
+            height = worldHeight,
             wallDensity = 0.001,
             minRoomSize = 8,
             maxRoomSize = 20,
