@@ -23,6 +23,7 @@ data class GeneticWorldParams(
     val learningRate: Double = 0.1,
     val worldWidth: Int = 100,
     val worldHeight: Int = 100,
+    val wallDensity: Double = 0.001,
     val reuseGenePool: Boolean = false
 )
 
@@ -44,6 +45,7 @@ fun GeneticWorldDialog(
         var learningRate by remember { mutableStateOf(LastUsedParams.learningRate.toString()) }
         var worldWidth by remember { mutableStateOf(LastUsedParams.worldWidth.toString()) }
         var worldHeight by remember { mutableStateOf(LastUsedParams.worldHeight.toString()) }
+        var wallDensity by remember { mutableStateOf(LastUsedParams.wallDensity.toString()) }
         var reuseGenePool by remember { mutableStateOf(false) }
 
         val canReuseGenePool = currentGenePool != null
@@ -69,69 +71,95 @@ fun GeneticWorldDialog(
                         }
                     }
 
-                    OutlinedTextField(
-                        value = brainSizeX,
-                        onValueChange = { brainSizeX = it },
-                        label = { Text("Brain Size X") },
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = !isReusingGenePool
-                    )
-                    OutlinedTextField(
-                        value = brainSizeY,
-                        onValueChange = { brainSizeY = it },
-                        label = { Text("Brain Size Y") },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !isReusingGenePool
-                    )
-                    OutlinedTextField(
-                        value = numGenes,
-                        onValueChange = { numGenes = it },
-                        label = { Text("Number of Genes") },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !isReusingGenePool
-                    )
-                    OutlinedTextField(
-                        value = numMovesPerTest,
-                        onValueChange = { numMovesPerTest = it },
-                        label = { Text("Moves per Test") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = costOfNotMoving,
-                        onValueChange = { costOfNotMoving = it },
-                        label = { Text("Cost of Not Moving") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = mutationRate,
-                        onValueChange = { mutationRate = it },
-                        label = { Text("Mutation Rate") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = eliteSize,
-                        onValueChange = { eliteSize = it },
-                        label = { Text("Number of Elite Genomes") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = learningRate,
-                        onValueChange = { learningRate = it },
-                        label = { Text("Learning Rate") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = worldWidth,
-                        onValueChange = { worldWidth = it },
-                        label = { Text("World Width") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = worldHeight,
-                        onValueChange = { worldHeight = it },
-                        label = { Text("World Height") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Left column - Genetic Algorithm Parameters
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("Genetic Algorithm", style = MaterialTheme.typography.subtitle1)
+                            OutlinedTextField(
+                                value = brainSizeX,
+                                onValueChange = { brainSizeX = it },
+                                label = { Text("Brain Size X") },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !isReusingGenePool
+                            )
+                            OutlinedTextField(
+                                value = brainSizeY,
+                                onValueChange = { brainSizeY = it },
+                                label = { Text("Brain Size Y") },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !isReusingGenePool
+                            )
+                            OutlinedTextField(
+                                value = numGenes,
+                                onValueChange = { numGenes = it },
+                                label = { Text("Number of Genes") },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !isReusingGenePool
+                            )
+                            OutlinedTextField(
+                                value = mutationRate,
+                                onValueChange = { mutationRate = it },
+                                label = { Text("Mutation Rate") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = eliteSize,
+                                onValueChange = { eliteSize = it },
+                                label = { Text("Number of Elite Genomes") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = learningRate,
+                                onValueChange = { learningRate = it },
+                                label = { Text("Learning Rate") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        // Right column - World Parameters
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("World Parameters", style = MaterialTheme.typography.subtitle1)
+                            OutlinedTextField(
+                                value = worldWidth,
+                                onValueChange = { worldWidth = it },
+                                label = { Text("World Width") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = worldHeight,
+                                onValueChange = { worldHeight = it },
+                                label = { Text("World Height") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = wallDensity,
+                                onValueChange = { wallDensity = it },
+                                label = { Text("Wall Density") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = numMovesPerTest,
+                                onValueChange = { numMovesPerTest = it },
+                                label = { Text("Moves per Test") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = costOfNotMoving,
+                                onValueChange = { costOfNotMoving = it },
+                                label = { Text("Cost of Not Moving") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                 }
             },
             confirmButton = {
@@ -149,6 +177,7 @@ fun GeneticWorldDialog(
                                 learningRate = learningRate.toDouble(),
                                 worldWidth = worldWidth.toInt(),
                                 worldHeight = worldHeight.toInt(),
+                                wallDensity = wallDensity.toDouble(),
                                 reuseGenePool = reuseGenePool
                             )
                             // Update last used params

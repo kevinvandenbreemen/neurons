@@ -19,6 +19,7 @@ class GeneticWorldDriver(
     private val learningRate: Double = 0.1,
     private val worldWidth: Int = 100,
     private val worldHeight: Int = 100,
+    private val wallDensity: Double = 0.001,
     existingGenePool: GeneticPool? = null
 ) {
 
@@ -26,7 +27,7 @@ class GeneticWorldDriver(
         World.randomWorld(
             width = worldWidth,
             height = worldHeight,
-            wallDensity = 0.001,
+            wallDensity = wallDensity,
             minRoomSize = 8,
             maxRoomSize = 20,
             numRooms = 2,
@@ -105,7 +106,8 @@ class GeneticWorldDriver(
                     numWallHitCount++
                 }
                 if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
-                    numWallHitCount += 100
+                    genePool.setFitness(indexInPool, 0.0)
+                    return@forEachProvider
                 }
 
             }
