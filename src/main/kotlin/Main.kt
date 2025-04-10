@@ -177,6 +177,8 @@ fun App() {
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Text("Epoch ${state.currentEpoch} of ${state.totalEpochs}")
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text("Best Score: %.2f".format(state.bestScore))
                                     }
                                 }
                             } else {

@@ -47,14 +47,18 @@ class GeneticWorldDriver(
 
     fun drive(
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double,
-        onEpochComplete: (Int) -> Unit = {}
+        onEpochComplete: (Int, Double) -> Unit = { _, _ -> }
     ) {
+        var bestScore = 0.0
         for (i in 0 until numEpochs) {
-            iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
+            val score = iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
                 fitnessFunction(geneticNeuronProvider, numMoves)
             }
+            if (score > bestScore) {
+                bestScore = score
+            }
             genePool.evolve(numGenes, eliteSize)
-            onEpochComplete(i + 1)
+            onEpochComplete(i + 1, bestScore)
         }
     }
 

@@ -102,6 +102,7 @@ class GeneticWorldState(
     var setupProgress by mutableStateOf("")
     var currentEpoch by mutableStateOf(0)
     var totalEpochs by mutableStateOf(numEpochs)
+    var bestScore by mutableStateOf(0.0)
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
@@ -113,6 +114,7 @@ class GeneticWorldState(
         isLoading = true
         setupProgress = "Initializing genetic algorithm..."
         currentEpoch = 0
+        bestScore = 0.0
 
         coroutineScope.launch {
             try {
@@ -124,8 +126,11 @@ class GeneticWorldState(
                     }
                     driver.drive(
                         fitnessFunction = driver::getFitness,
-                        onEpochComplete = { epoch ->
+                        onEpochComplete = { epoch, score ->
                             currentEpoch = epoch
+                            if (score > bestScore) {
+                                bestScore = score
+                            }
                         }
                     )
 
