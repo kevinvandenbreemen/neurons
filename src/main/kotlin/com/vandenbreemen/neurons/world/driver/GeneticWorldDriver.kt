@@ -46,12 +46,24 @@ class GeneticWorldDriver(
     }
 
     fun drive(fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double) {
+
+        var bestScore = 0.0
+
         for (i in 0 until numEpochs) {
-            iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
+            val score = iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
                 fitnessFunction(geneticNeuronProvider, numMoves)
             }
+
+            if (score > bestScore) {
+                bestScore = score
+            }
+
+            println("score for epoch $i: $score")
+
             genePool.evolve(numGenes, eliteSize)
         }
+
+        println("Best score after $numEpochs epochs: $bestScore")
     }
 
     fun getRandomNeuralNetwork(): NeuralNet {
@@ -78,11 +90,19 @@ class GeneticWorldDriver(
     private fun iterate(
         numMoves: Int,
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double
-    ) {
+    ): Double {
+
+        var bestScore = 0.0
+
         genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
             val score = fitnessFunction(geneticNeuronProvider, numMoves)
+            if (score > bestScore) {
+                bestScore = score
+            }
             genePool.setFitness(indexInPool, score)
         }
+
+        return bestScore
     }
 
 
