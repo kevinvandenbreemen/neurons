@@ -80,11 +80,7 @@ class GeneticNeuronProvider(
         val neuron = when (neuronType) {
             0L -> Neuron(weightCalculator)
             1L -> InhibitoryNeuron(weightCalculator)
-            2L -> {
-                // For SineNeuron, use bits 27-30 to determine time increment value (0-9)
-                val timeIncrementValue = ((gene shr 27) and 0xF).toInt()
-                SineNeuron(0.01f + (timeIncrementValue * 0.01f), weightCalculator)
-            }
+            2L -> Neuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
             3L -> FixedWeightNeuron(weightCalculator)
             4L -> RelayNeuron(weightCalculator)
             5L -> DeadNeuron(weightCalculator)
