@@ -549,17 +549,25 @@ fun NeuralNetworkDisplay(
                             )
                         }
 
-                        else -> {} // Regular neuron, no indicator needed
+                        else -> {
+                            // Draw a dot in the top left corner based on sigmoidNumeratorMultiplier
+                            val dotX = j * cellWidth + cellWidth * 0.2f
+                            val dotY = i * cellHeight + cellHeight * 0.2f
+                            val dotColor = if (neuron.sigmoidMultiplier > 0) {
+                                // Green for positive values, brighter for higher values
+                                Color(0f, neuron.sigmoidMultiplier.coerceIn(0.0, 1.0).toFloat(), 0f)
+                            } else {
+                                // Red for negative values, brighter for lower values
+                                Color(neuron.sigmoidMultiplier.absoluteValue.coerceIn(0.0, 1.0).toFloat(), 0f, 0f)
+                            }
+                            drawCircle(
+                                color = dotColor,
+                                radius = dotRadius * 0.5f,
+                                center = Offset(dotX, dotY)
+                            )
+                        }
 
 
-                    }
-
-                    if (neuron.isNegativeSigmoidFunction) {
-                        drawCircle(
-                            color = Color.Red,
-                            radius = dotRadius,
-                            center = Offset(centerX, centerY)
-                        )
                     }
 
                     if (showConnections) {

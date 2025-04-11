@@ -28,6 +28,8 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     }
     val isNegativeSigmoidFunction: Boolean
         get() = sigmoidNumeratorMultiplier < 0
+    val sigmoidMultiplier: Double
+        get() = sigmoidNumeratorMultiplier
 
     /**
      * Current amount of stimulation this neuron has received.  Note that this is not the same as the value of the neuron.
