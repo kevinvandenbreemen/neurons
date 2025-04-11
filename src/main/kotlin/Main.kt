@@ -1,5 +1,6 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -20,6 +21,7 @@ import com.vandenbreemen.neurons.ui.NeuronLegendDialog
 import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import com.vandenbreemen.neurons.world.viewmodel.NeuronApplicationViewModel
+import com.vandenbreemen.neurons.world.viewmodel.StaticNeuralNetworkAppState
 import kotlin.math.absoluteValue
 
 @Composable
@@ -165,22 +167,32 @@ fun App() {
                                     modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.Center
                                 ) {
+
+                                    state.bestNeuralNetForDisplay?.let { bestNet ->
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text("Best Neural Network So Far:")
+                                        NeuralNetworkDisplay(
+                                            turnWait = 50L,
+                                            demoState = StaticNeuralNetworkAppState(bestNet),
+                                            showConnections = state.showConnections,
+                                            showActivationColor = state.showActivationColor,
+                                            iterate = { /* No iteration for best network display */ },
+                                            onNeuronClick = { /* No neuron selection for best network display */ }
+                                        )
+                                    }
+
                                     Column(
                                         horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
+                                        verticalArrangement = Arrangement.Center,
+                                        modifier = Modifier.background(Color.Gray.copy(alpha = 0.5f))
                                     ) {
                                         CircularProgressIndicator()
                                         Spacer(modifier = Modifier.height(16.dp))
                                         Text(state.setupProgress)
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        LinearProgressIndicator(
-                                            progress = state.currentEpoch.toFloat() / state.totalEpochs.toFloat(),
-                                            modifier = Modifier.fillMaxWidth(0.5f)
-                                        )
-                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Spacer(modifier = Modifier.height(16.dp))
                                         Text("Epoch ${state.currentEpoch} of ${state.totalEpochs}")
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        Text("Best Score: %.2f".format(state.bestScore))
+                                        Text("Best Score: ${state.bestScore}")
+
                                     }
                                 }
                             } else {

@@ -63,10 +63,20 @@ class NeuralNetworkDemoState(dim: Int) : NeuralNetApplicationState() {
 
 }
 
+class StaticNeuralNetworkAppState(
+    neuralNet: NeuralNet
+) : NeuralNetApplicationState() {
+    override val neuralNet by mutableStateOf(neuralNet)
+
+    override fun doIterate() {
+        // Static network doesn't iterate
+    }
+}
+
 class GeneticWorldState(
     numWorlds: Int = 5,
-    brainSizeX: Int = 10,
-    brainSizeY: Int = 10,
+    private val brainSizeX: Int = 10,
+    private val brainSizeY: Int = 10,
     numGenes: Int = 20,
     numMovesPerTest: Int = 100,
     costOfNotMoving: Double = 0.1,
@@ -107,6 +117,8 @@ class GeneticWorldState(
     var currentEpoch by mutableStateOf(0)
     var totalEpochs by mutableStateOf(numEpochs)
     var bestScore by mutableStateOf(0.0)
+    private var bestNeuralNet: NeuralNet? = null
+    var bestNeuralNetForDisplay by mutableStateOf<NeuralNet?>(null)
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
@@ -119,6 +131,8 @@ class GeneticWorldState(
         setupProgress = "Initializing genetic algorithm..."
         currentEpoch = 0
         bestScore = 0.0
+        bestNeuralNet = null
+        bestNeuralNetForDisplay = null
 
         coroutineScope.launch {
             try {
@@ -129,7 +143,20 @@ class GeneticWorldState(
                         "Running genetic algorithm..."
                     }
                     driver.drive(
-                        fitnessFunction = driver::getFitness,
+                        fitnessFunction = { geneticNeuronProvider, numMoves ->
+                            val score = driver.getFitness(geneticNeuronProvider, numMoves)
+                            if (score > bestScore) {
+                                bestScore = score
+                                // Create and store the best neural network
+                                bestNeuralNet = NeuralNet(
+                                    this@GeneticWorldState.brainSizeX,
+                                    this@GeneticWorldState.brainSizeY,
+                                    geneticNeuronProvider
+                                )
+                                bestNeuralNetForDisplay = bestNeuralNet
+                            }
+                            score
+                        },
                         onEpochComplete = { epoch, score ->
                             currentEpoch = epoch
                             if (score > bestScore) {
@@ -155,7 +182,6 @@ class GeneticWorldState(
     }
 
     override fun doIterate() {
-
         if (navigationSimulation == null) {
             return
         }
