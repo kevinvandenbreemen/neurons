@@ -1,6 +1,7 @@
 package com.vandenbreemen.neurons.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import com.vandenbreemen.neurons.world.view.NavigationWorldSimulationView
 import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
+import com.vandenbreemen.neurons.world.viewmodel.NeuronInfoState
 
 @Composable
 fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
@@ -25,10 +27,7 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
                 // Display the neural network state
                 Text("Neural Network Demo")
                 state.selectedNeuron?.let { neuron ->
-                    Column {
-                        Text("Neuron type:  ${neuron.type}")
-                        Text("Neuron activation: ${neuron.activation}")
-                    }
+                    NeuronDetailsUI(neuron)
                 }
 
             }
@@ -50,4 +49,19 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
     }
 
 
+}
+
+@Composable
+private fun NeuronDetailsUI(neuron: NeuronInfoState) {
+    Row {
+        Column {
+            Text("Neuron type:  ${neuron.type}")
+            Text("Neuron activation: ${neuron.activation}")
+        }
+        Column {
+            Text("More details:")
+
+            Text("Neuron activation: ${neuron.activation}")
+        }
+    }
 }
