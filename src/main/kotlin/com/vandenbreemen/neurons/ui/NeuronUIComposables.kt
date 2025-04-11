@@ -35,17 +35,6 @@ fun NeuronLegendDialog(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Canvas(modifier = Modifier.size(30.dp)) {
                             drawCircle(
-                                color = Color.Red,
-                                radius = size.width * 0.15f,
-                                center = Offset(size.width / 2, size.height / 2)
-                            )
-                        }
-                        Text("Inhibitory Neuron - Reduces activation of connected neurons")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(modifier = Modifier.size(30.dp)) {
-                            drawCircle(
                                 color = Color.Blue,
                                 radius = size.width * 0.15f,
                                 center = Offset(size.width / 2, size.height / 2)
@@ -322,13 +311,7 @@ fun NeuralNetworkDisplay(
                     val dotRadius = minOf(cellWidth, cellHeight) * 0.15f
 
                     when (neuron) {
-                        is InhibitoryNeuron -> {
-                            drawCircle(
-                                color = Color.Red,
-                                radius = dotRadius,
-                                center = Offset(centerX, centerY)
-                            )
-                        }
+
 
                         is FixedWeightNeuron -> {
                             drawCircle(
@@ -567,6 +550,16 @@ fun NeuralNetworkDisplay(
                         }
 
                         else -> {} // Regular neuron, no indicator needed
+
+
+                    }
+
+                    if (neuron.isNegativeSigmoidFunction) {
+                        drawCircle(
+                            color = Color.Red,
+                            radius = dotRadius,
+                            center = Offset(centerX, centerY)
+                        )
                     }
 
                     if (showConnections) {
