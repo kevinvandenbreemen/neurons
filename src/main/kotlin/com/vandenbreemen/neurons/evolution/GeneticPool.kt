@@ -101,9 +101,7 @@ class GeneticPool(
             }
 
             // Mutate child with some probability (except for completely new genes)
-            if (Random.nextDouble() < mutationRate) {
-                mutateGenome(child)
-            }
+            mutateGenome(child)
 
             newPool.add(child)
         }
@@ -119,9 +117,15 @@ class GeneticPool(
     }
 
     private fun mutateGenome(genome: LongArray) {
-        val mutationPoint = Random.nextInt(genome.size)
-        val bitPosition = Random.nextInt(64)
-        genome[mutationPoint] = genome[mutationPoint] xor (1L shl bitPosition)
+        for (i in genome.indices) {
+            var gene = genome[i]
+            for (bit in 0 until 64) {
+                if (Random.nextDouble() < mutationRate) {
+                    gene = gene xor (1L shl bit)
+                }
+            }
+            genome[i] = gene
+        }
     }
 
     fun reinitialize() {
