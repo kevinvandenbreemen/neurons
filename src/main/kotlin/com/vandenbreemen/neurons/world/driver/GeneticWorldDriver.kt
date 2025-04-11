@@ -60,7 +60,7 @@ class GeneticWorldDriver(
     ) {
         var bestScore = 0.0
         for (i in 0 until numEpochs) {
-            val score = iterate(numMovesPerTest, numWorldsToTest) { geneticNeuronProvider, numMoves ->
+            val score = iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
                 fitnessFunction(geneticNeuronProvider, numMoves)
             }
             if (score > bestScore) {
@@ -103,7 +103,6 @@ class GeneticWorldDriver(
 
     private fun iterate(
         numMoves: Int,
-        numWorldsToTest: Int = 1,
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double
     ): Double {
 
