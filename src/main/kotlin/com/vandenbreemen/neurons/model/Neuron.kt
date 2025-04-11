@@ -13,6 +13,11 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     open val activation: Double
         get() = value
 
+    private var sigmoidExpDelta = 0.0
+    fun setSigmaExpDelta(delta: Double) {
+        sigmoidExpDelta = delta
+    }
+
     private var learningRate: Double = 0.0
     val learningRateOverride: Double
         get() = learningRate
@@ -47,7 +52,7 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     }
 
     fun sigmoid(x: Double): Double {
-        return 1 / (1 + exp(-x))
+        return 1 / (1 + exp(-(x + sigmoidExpDelta)))
     }
 
     /**

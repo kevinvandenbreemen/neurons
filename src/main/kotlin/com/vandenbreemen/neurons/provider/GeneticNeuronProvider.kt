@@ -72,6 +72,12 @@ class GeneticNeuronProvider(
         return (incrementValue * (1.0 / 128.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
     }
 
+    private fun getSigmoidExpDeltaFromGene(gene: Long): Double {
+        // Use bits 41-48 (8 bits) to determine sigmoidExpDelta (-3.0 to 3.0)
+        val incrementValue = ((gene shr 41) and 0xFF).toInt() // 8 bits = 256 possible values
+        return (incrementValue * (6.0 / 255.0) - 3.0).coerceIn(-3.0, 3.0) // Map to range -3.0 to 3.0
+    }
+
     private fun assembleNeuronBasedOnGene(gene: Long): Neuron {
         //  Use the first 4 bits to determine the type of weight calculation
         val weightCalculatorType = gene and 0xF
@@ -140,7 +146,10 @@ class GeneticNeuronProvider(
                     (thresholdIncrement * (1.0 / 32.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
                 ThresholdNeuron(threshold, weightCalculator)
             }
-        }.also { it.setLearningRate(learningRate) }
+        }.also {
+            it.setLearningRate(learningRate)
+            it.setSigmaExpDelta(getSigmoidExpDeltaFromGene(gene))
+        }
 
         // If it's a RelayNeuron, store the direction in its metadata
         if (neuron is RelayNeuron) {
