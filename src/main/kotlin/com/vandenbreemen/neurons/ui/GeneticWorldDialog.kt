@@ -40,21 +40,20 @@ fun GeneticWorldDialog(
 ) {
     var brainSizeX by remember { mutableStateOf("10") }
     var brainSizeY by remember { mutableStateOf("10") }
-    var numGenes by remember { mutableStateOf("20") }
+    var numGenes by remember { mutableStateOf("100") }
     var numMovesPerTest by remember { mutableStateOf("100") }
     var costOfNotMoving by remember { mutableStateOf("1.0") }
-    var mutationRate by remember { mutableStateOf("0.1") }
-    var eliteSize by remember { mutableStateOf("5") }
-    var learningRate by remember { mutableStateOf("0.1") }
+    var mutationRate by remember { mutableStateOf("0.25") }
+    var eliteSize by remember { mutableStateOf("25") }
     var worldWidth by remember { mutableStateOf("100") }
     var worldHeight by remember { mutableStateOf("100") }
     var wallDensity by remember { mutableStateOf("0.001") }
-    var numEpochs by remember { mutableStateOf("10") }
+    var numEpochs by remember { mutableStateOf("1000") }
     var numRooms by remember { mutableStateOf("2") }
     var numRandomWalls by remember { mutableStateOf("2") }
     var numWorldsToTest by remember { mutableStateOf("3") }
     var newGeneProbability by remember { mutableStateOf("0.1") }
-    var painTolerance by remember { mutableStateOf("0.5") }
+    var painTolerance by remember { mutableStateOf("5") }
     var isReusingGenePool by remember { mutableStateOf(currentGenePool != null) }
 
     if (showDialog) {
@@ -71,12 +70,12 @@ fun GeneticWorldDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Left column - Genetic Algorithm Parameters
+
                         Column(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).padding(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text("Genetic Algorithm", style = MaterialTheme.typography.subtitle1)
+                            Text("Organism Parameers", style = MaterialTheme.typography.subtitle1)
                             OutlinedTextField(
                                 value = brainSizeX,
                                 onValueChange = { brainSizeX = it },
@@ -110,44 +109,21 @@ fun GeneticWorldDialog(
                                 label = { Text("Elite Size") },
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            OutlinedTextField(
-                                value = learningRate,
-                                onValueChange = { learningRate = it },
-                                label = { Text("Learning Rate") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
+
+                        }
+
+                        // Left column - Genetic Algorithm Parameters
+                        Column(
+                            modifier = Modifier.weight(1f).padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("World Parameters", style = MaterialTheme.typography.subtitle1)
                             OutlinedTextField(
                                 value = numWorldsToTest,
                                 onValueChange = { numWorldsToTest = it },
                                 label = { Text("Number of Worlds to Test") },
                                 modifier = Modifier.fillMaxWidth()
                             )
-                            OutlinedTextField(
-                                value = numEpochs,
-                                onValueChange = { numEpochs = it },
-                                label = { Text("Number of Epochs") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
-                                value = newGeneProbability,
-                                onValueChange = { newGeneProbability = it },
-                                label = { Text("New Gene Probability") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
-                                value = painTolerance,
-                                onValueChange = { painTolerance = it },
-                                label = { Text("Pain Tolerance") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-
-                        // Right column - World Parameters
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text("World Parameters", style = MaterialTheme.typography.subtitle1)
                             OutlinedTextField(
                                 value = worldWidth,
                                 onValueChange = { worldWidth = it },
@@ -184,13 +160,46 @@ fun GeneticWorldDialog(
                                 label = { Text("Number of Moves per Test") },
                                 modifier = Modifier.fillMaxWidth()
                             )
+                        }
+
+                        // Right column - World Parameters
+                        Column(
+                            modifier = Modifier.weight(1f).padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+
+                            Text("Genetic Algorithm Parameters", style = MaterialTheme.typography.subtitle1)
+
+
+                            OutlinedTextField(
+                                value = numEpochs,
+                                onValueChange = { numEpochs = it },
+                                label = { Text("Number of Epochs") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = newGeneProbability,
+                                onValueChange = { newGeneProbability = it },
+                                label = { Text("New Gene Probability") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = painTolerance,
+                                onValueChange = { painTolerance = it },
+                                label = { Text("Pain Tolerance") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
                             OutlinedTextField(
                                 value = costOfNotMoving,
                                 onValueChange = { costOfNotMoving = it },
                                 label = { Text("Cost of Not Moving") },
                                 modifier = Modifier.fillMaxWidth()
                             )
+
+
                         }
+
+
                     }
 
                     if (currentGenePool != null) {
@@ -220,7 +229,7 @@ fun GeneticWorldDialog(
                                 costOfNotMoving = costOfNotMoving.toDoubleOrNull() ?: 1.0,
                                 mutationRate = mutationRate.toDoubleOrNull() ?: 0.1,
                                 eliteSize = eliteSize.toIntOrNull() ?: 5,
-                                learningRate = learningRate.toDoubleOrNull() ?: 0.1,
+                                learningRate = 0.1,
                                 worldWidth = worldWidth.toIntOrNull() ?: 100,
                                 worldHeight = worldHeight.toIntOrNull() ?: 100,
                                 wallDensity = wallDensity.toDoubleOrNull() ?: 0.001,
