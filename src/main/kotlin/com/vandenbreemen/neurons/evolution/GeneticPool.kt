@@ -115,6 +115,11 @@ class GeneticPool(
         genome[mutationPoint] = genome[mutationPoint] xor (1L shl bitPosition)
     }
 
+    fun reinitialize() {
+        pool = List(poolSize) { generateGenome() }
+        fitnessScores = List(poolSize) { 0.0 }
+    }
+
     companion object {
         fun create(rows: Int, cols: Int, poolSize: Int, mutationRate: Double = 0.1): GeneticPool {
             return GeneticPool(rows, cols, poolSize, mutationRate)

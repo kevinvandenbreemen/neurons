@@ -60,7 +60,16 @@ class GeneticWorldDriver(
             if (score > bestScore) {
                 bestScore = score
             }
-            genePool.evolve(numGenes, eliteSize)
+
+            //  If there has been no non-zero score then none of the genes is anywhere close so dump the pool
+            if (score <= 0.0) {
+                genePool.reinitialize()
+            } else {
+                //  If the score is non-zero then we can keep the pool
+                genePool.evolve(numGenes, eliteSize)
+            }
+
+
             onEpochComplete(i + 1, bestScore)
         }
     }
@@ -146,6 +155,10 @@ class GeneticWorldDriver(
                     numWallHitCount++
                 }
                 if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
+                    return 0.0
+                }
+
+                if ((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement) <= 0) {
                     return 0.0
                 }
             }
