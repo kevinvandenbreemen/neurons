@@ -69,11 +69,34 @@ class GeneticPool(
         fitnessScores = fitnessScores.toMutableList().apply { set(index, fitness) }
     }
 
+    private fun prune(genome: LongArray): LongArray {
+        val prunedGenome = genome.copyOf()
+        for (i in prunedGenome.indices) {
+            if (Random.nextDouble() < mutationRate) {
+                // Get the current gene
+                var gene = prunedGenome[i]
+
+                // Clear bits 4-7 (neuron type bits)
+                // 0xF0 is 11110000 in binary, we want to clear these bits
+                val mask = 0xF0L
+                gene = gene and mask.inv()
+
+                // Set neuron type to 1 (DeadNeuron)
+                gene = gene or (1L shl 4)
+
+                // Update the gene in the genome
+                prunedGenome[i] = gene
+            }
+        }
+        return prunedGenome
+    }
+
     fun evolve(generationSize: Int, eliteSize: Int = 2, newGeneProbability: Double = 0.1) {
         require(eliteSize < generationSize) { "Elite size must be less than generation size" }
 
         // Create new generation
         val newPool = mutableListOf<LongArray>()
+        val prunedPool = mutableListOf<LongArray>()
 
         // Keep elite genomes
         val eliteIndices = fitnessScores.indices
@@ -81,6 +104,12 @@ class GeneticPool(
             .sortedByDescending { fitnessScores[it] }
             .take(eliteSize)
         newPool.addAll(eliteIndices.map { pool[it] })
+
+        val worstIndices = fitnessScores.indices
+            .filter { !fitnessScores[it].isNaN() } // Exclude NaN values
+            .sortedBy { fitnessScores[it] }
+            .take(eliteSize / 2)
+        newPool.addAll(worstIndices.map { prune(pool[it]) })
 
         // Generate rest of new generation through crossover, mutation, and new genes
         while (newPool.size < generationSize) {
