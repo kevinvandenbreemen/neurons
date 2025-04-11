@@ -77,9 +77,9 @@ class GeneticPool(
 
         // Keep elite genomes
         val eliteIndices = fitnessScores.indices
+            .filter { !fitnessScores[it].isNaN() } // Exclude NaN values
             .sortedByDescending { fitnessScores[it] }
             .take(eliteSize)
-
         newPool.addAll(eliteIndices.map { pool[it] })
 
         // Generate rest of new generation through crossover, mutation, and new genes
