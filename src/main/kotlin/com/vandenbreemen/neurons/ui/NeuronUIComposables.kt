@@ -207,6 +207,40 @@ fun NeuronLegendDialog(
                         }
                         Text("Threshold Neuron - Only fires when stimulation reaches a certain threshold")
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(30.dp)) {
+                            val centerX = size.width / 2
+                            val centerY = size.height / 2
+                            val pSize = size.width * 0.2f
+                            // Draw a P shape for pain receptor
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - pSize, centerY - pSize),
+                                end = Offset(centerX - pSize, centerY + pSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - pSize, centerY - pSize),
+                                end = Offset(centerX + pSize, centerY - pSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - pSize, centerY),
+                                end = Offset(centerX + pSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX + pSize, centerY - pSize),
+                                end = Offset(centerX + pSize, centerY),
+                                strokeWidth = 2f
+                            )
+                        }
+                        Text("Pain Receptor Neuron - Sends a signal of 1.0 when stimulated by the environment")
+                    }
                 }
             },
             confirmButton = {
@@ -498,6 +532,36 @@ fun NeuralNetworkDisplay(
                                 color = Color.Yellow,
                                 start = Offset(centerX, centerY - tSize),
                                 end = Offset(centerX, centerY + tSize),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        is PainReceptorNeuron -> {
+                            // Draw a red P at the center of the neuron
+                            val pSize = minOf(cellWidth, cellHeight) * 0.2f
+                            // Draw a P shape for pain receptor
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - pSize, centerY - pSize),
+                                end = Offset(centerX - pSize, centerY + pSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - pSize, centerY - pSize),
+                                end = Offset(centerX + pSize, centerY - pSize),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX - pSize, centerY),
+                                end = Offset(centerX + pSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            drawLine(
+                                color = Color.Red,
+                                start = Offset(centerX + pSize, centerY - pSize),
+                                end = Offset(centerX + pSize, centerY),
                                 strokeWidth = 2f
                             )
                         }

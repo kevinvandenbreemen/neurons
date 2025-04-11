@@ -1,9 +1,6 @@
 package com.vandenbreemen.neurons.agent
 
-import com.vandenbreemen.neurons.model.MotorNeuron
-import com.vandenbreemen.neurons.model.NeuralNet
-import com.vandenbreemen.neurons.model.Neuron
-import com.vandenbreemen.neurons.model.SensoryNeuron
+import com.vandenbreemen.neurons.model.*
 
 /**
  * An agent that manages a neural network and provides methods for iteration and learning
@@ -69,6 +66,23 @@ class NeuralAgent(
             for (j in 0 until neuralNet.cols) {
                 val neuron = neuralNet.getCellAt(i, j)
                 if (neuron is SensoryNeuron && filter(neuron.sensorId)) {
+                    result.add(neuron)
+                }
+            }
+        }
+        return result
+    }
+
+    /**
+     * Finds all pain receptor neurons in the network
+     * @return A list of pain receptor neurons in the order they are found in the network
+     */
+    fun findPainReceptorNeurons(): List<PainReceptorNeuron> {
+        val result = mutableListOf<PainReceptorNeuron>()
+        for (i in 0 until neuralNet.rows) {
+            for (j in 0 until neuralNet.cols) {
+                val neuron = neuralNet.getCellAt(i, j)
+                if (neuron is PainReceptorNeuron) {
                     result.add(neuron)
                 }
             }

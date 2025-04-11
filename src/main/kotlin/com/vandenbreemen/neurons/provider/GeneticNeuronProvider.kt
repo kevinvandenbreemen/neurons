@@ -80,10 +80,10 @@ class GeneticNeuronProvider(
         val neuron = when (neuronType) {
             0L -> Neuron(weightCalculator)
             1L -> InhibitoryNeuron(weightCalculator)
-            2L -> Neuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
+            2L -> InhibitoryNeuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
             3L -> FixedWeightNeuron(weightCalculator)
             4L -> RelayNeuron(weightCalculator)
-            5L -> Neuron(weightCalculator)
+            5L -> InhibitoryNeuron(weightCalculator)
             6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             8L -> {
@@ -98,7 +98,9 @@ class GeneticNeuronProvider(
                     (thresholdIncrement * (1.0 / 32.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
                 ThresholdNeuron(threshold, weightCalculator)
             }
-
+            10L -> {
+                PainReceptorNeuron(weightCalculator)
+            }
             else -> Neuron(weightCalculator)
         }
 

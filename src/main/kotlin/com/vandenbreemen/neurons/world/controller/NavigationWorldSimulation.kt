@@ -11,6 +11,7 @@ class NavigationWorldSimulation(
     override fun doAgentSetup(agent: NeuralAgent) {
         motorNeuronSetup(agent)
         sensoryNeuronSetup(agent)
+        painReceptorSetup(agent)
     }
 
     private fun motorNeuronSetup(agent: NeuralAgent) {
@@ -174,6 +175,16 @@ class NavigationWorldSimulation(
                 neuron.stimulateFromEnvironment(1.0)
             } else {
                 neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, -1))
+            }
+        }
+    }
+
+    private fun painReceptorSetup(agent: NeuralAgent) {
+        agent.findPainReceptorNeurons().forEach { neuron ->
+            agent.addNeuronAction(neuron) {
+                if (isAgentOnWall(agent)) {
+                    neuron.stimulateFromEnvironment(1.0)
+                }
             }
         }
     }

@@ -117,27 +117,37 @@ class World(
             val world = World(width, height)
             val random = kotlin.random.Random
 
+            // Create border walls
+            for (x in 0 until width) {
+                world.setWall(x, 0, true) // Top border
+                world.setWall(x, height - 1, true) // Bottom border
+            }
+            for (y in 0 until height) {
+                world.setWall(0, y, true) // Left border
+                world.setWall(width - 1, y, true) // Right border
+            }
+
             // Generate random rectangular rooms
             repeat(numRooms) {
                 val roomWidth = random.nextInt(minRoomSize, maxRoomSize)
                 val roomHeight = random.nextInt(minRoomSize, maxRoomSize)
-                val x1 = random.nextInt(0, width - roomWidth)
-                val y1 = random.nextInt(0, height - roomHeight)
+                val x1 = random.nextInt(1, width - roomWidth - 1) // Leave space for border
+                val y1 = random.nextInt(1, height - roomHeight - 1) // Leave space for border
                 world.createWallRectangle(x1, y1, x1 + roomWidth, y1 + roomHeight)
             }
 
             // Generate random diagonal walls
             repeat(numRandomWalls) {
-                val x1 = random.nextInt(0, width)
-                val y1 = random.nextInt(0, height)
-                val x2 = random.nextInt(0, width)
-                val y2 = random.nextInt(0, height)
+                val x1 = random.nextInt(1, width - 1) // Leave space for border
+                val y1 = random.nextInt(1, height - 1) // Leave space for border
+                val x2 = random.nextInt(1, width - 1) // Leave space for border
+                val y2 = random.nextInt(1, height - 1) // Leave space for border
                 world.createWallLine(x1, y1, x2, y2)
             }
 
             // Add random scattered walls based on wall density
-            for (x in 0 until width) {
-                for (y in 0 until height) {
+            for (x in 1 until width - 1) { // Leave space for border
+                for (y in 1 until height - 1) { // Leave space for border
                     if (random.nextDouble() < wallDensity) {
                         world.setWall(x, y, true)
                     }
