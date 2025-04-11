@@ -49,11 +49,12 @@ class GeneticWorldDriver(
 
     fun drive(
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double,
-        onEpochComplete: (Int, Double) -> Unit = { _, _ -> }
+        onEpochComplete: (Int, Double) -> Unit = { _, _ -> },
+        numWorldsToTest: Int = 1
     ) {
         var bestScore = 0.0
         for (i in 0 until numEpochs) {
-            val score = iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
+            val score = iterate(numMovesPerTest, numWorldsToTest) { geneticNeuronProvider, numMoves ->
                 fitnessFunction(geneticNeuronProvider, numMoves)
             }
             if (score > bestScore) {
@@ -87,6 +88,7 @@ class GeneticWorldDriver(
 
     private fun iterate(
         numMoves: Int,
+        numWorldsToTest: Int = 1,
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double
     ): Double {
 
@@ -104,49 +106,59 @@ class GeneticWorldDriver(
     }
 
 
-    fun getFitness(geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int): Double {
-        var numWallHitCount = 0.0
-        var numIterationWithoutMovement = 0.0
-        var didAgentMove = false
+    fun getFitness(
+        geneticNeuronProvider: GeneticNeuronProvider,
+        numMoves: Int,
+        numWorldsToTest: Int = 1
+    ): Double {
+        var totalScore = 0.0
 
-        val world = randomWorlds.random()
-        val neuralNet = NeuralNet(
-            brainSizeX,
-            brainSizeY,
-            geneticNeuronProvider
-        )
-        val agent = NeuralAgent(neuralNet, learningRate)
-        val simulation = NavigationWorldSimulation(world).also {
-            it.addAgent(
-                agent,
-                world.getRandomEmptyCell()
+        // Test the neural network on multiple random worlds
+        for (worldIndex in 0 until numWorldsToTest) {
+            var numWallHitCount = 0.0
+            var numIterationWithoutMovement = 0.0
+            var didAgentMove = false
+
+            val world = randomWorlds.random()
+            val neuralNet = NeuralNet(
+                brainSizeX,
+                brainSizeY,
+                geneticNeuronProvider
             )
+            val agent = NeuralAgent(neuralNet, learningRate)
+            val simulation = NavigationWorldSimulation(world).also {
+                it.addAgent(
+                    agent,
+                    world.getRandomEmptyCell()
+                )
+            }
+
+            for (i in 0 until numMoves) {
+                val currentAgentPos = simulation.getAgentPosition(agent)
+                simulation.step()
+                if (simulation.getAgentPosition(agent) == currentAgentPos) {
+                    numIterationWithoutMovement += costOfNotMoving
+                } else {
+                    didAgentMove = true
+                }
+
+                if (simulation.isAgentOnWall(agent)) {
+                    numWallHitCount++
+                }
+                if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
+                    return 0.0
+                }
+            }
+
+            val score = if (didAgentMove) (
+                    max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
+                            / numMoves) else 0.0
+
+            totalScore += score
         }
 
-        for (i in 0 until numMoves) {
-
-            val currentAgentPos = simulation.getAgentPosition(agent)
-            simulation.step()
-            if (simulation.getAgentPosition(agent) == currentAgentPos) {
-                numIterationWithoutMovement += costOfNotMoving
-            } else {
-                didAgentMove = true
-            }
-
-            if (simulation.isAgentOnWall(agent)) {
-                numWallHitCount++
-            }
-            if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
-                return 0.0
-            }
-
-        }
-
-        val score = if (didAgentMove) (
-                max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
-                        / numMoves) else 0.0
-
-        return score
+        // Return the average score across all tested worlds
+        return totalScore / numWorldsToTest
     }
 
 }

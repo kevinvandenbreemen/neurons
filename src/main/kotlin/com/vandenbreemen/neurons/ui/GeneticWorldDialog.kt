@@ -1,13 +1,11 @@
 package com.vandenbreemen.neurons.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.evolution.GeneticPool
@@ -27,6 +25,7 @@ data class GeneticWorldParams(
     val numEpochs: Int = 10,
     val numRooms: Int = 2,
     val numRandomWalls: Int = 2,
+    val numWorldsToTest: Int = 3,
     val reuseGenePool: Boolean = false
 )
 
@@ -37,26 +36,24 @@ fun GeneticWorldDialog(
     onConfirm: (GeneticWorldParams) -> Unit,
     currentGenePool: GeneticPool? = null
 ) {
+    var brainSizeX by remember { mutableStateOf("10") }
+    var brainSizeY by remember { mutableStateOf("10") }
+    var numGenes by remember { mutableStateOf("20") }
+    var numMovesPerTest by remember { mutableStateOf("100") }
+    var costOfNotMoving by remember { mutableStateOf("1.0") }
+    var mutationRate by remember { mutableStateOf("0.1") }
+    var eliteSize by remember { mutableStateOf("5") }
+    var learningRate by remember { mutableStateOf("0.1") }
+    var worldWidth by remember { mutableStateOf("100") }
+    var worldHeight by remember { mutableStateOf("100") }
+    var wallDensity by remember { mutableStateOf("0.001") }
+    var numEpochs by remember { mutableStateOf("10") }
+    var numRooms by remember { mutableStateOf("2") }
+    var numRandomWalls by remember { mutableStateOf("2") }
+    var numWorldsToTest by remember { mutableStateOf("3") }
+    var isReusingGenePool by remember { mutableStateOf(currentGenePool != null) }
+
     if (showDialog) {
-        var brainSizeX by remember { mutableStateOf(LastUsedParams.brainSizeX.toString()) }
-        var brainSizeY by remember { mutableStateOf(LastUsedParams.brainSizeY.toString()) }
-        var numGenes by remember { mutableStateOf(LastUsedParams.numGenes.toString()) }
-        var numMovesPerTest by remember { mutableStateOf(LastUsedParams.numMovesPerTest.toString()) }
-        var costOfNotMoving by remember { mutableStateOf(LastUsedParams.costOfNotMoving.toString()) }
-        var mutationRate by remember { mutableStateOf(LastUsedParams.mutationRate.toString()) }
-        var eliteSize by remember { mutableStateOf(LastUsedParams.eliteSize.toString()) }
-        var learningRate by remember { mutableStateOf(LastUsedParams.learningRate.toString()) }
-        var worldWidth by remember { mutableStateOf(LastUsedParams.worldWidth.toString()) }
-        var worldHeight by remember { mutableStateOf(LastUsedParams.worldHeight.toString()) }
-        var wallDensity by remember { mutableStateOf(LastUsedParams.wallDensity.toString()) }
-        var numEpochs by remember { mutableStateOf(LastUsedParams.numEpochs.toString()) }
-        var numRooms by remember { mutableStateOf(LastUsedParams.numRooms.toString()) }
-        var numRandomWalls by remember { mutableStateOf(LastUsedParams.numRandomWalls.toString()) }
-        var reuseGenePool by remember { mutableStateOf(false) }
-
-        val canReuseGenePool = currentGenePool != null
-        val isReusingGenePool = reuseGenePool && canReuseGenePool
-
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text("Genetic World Parameters") },
@@ -64,22 +61,11 @@ fun GeneticWorldDialog(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    if (canReuseGenePool) {
-                        Row {
-                            Checkbox(
-                                checked = reuseGenePool,
-                                onCheckedChange = { reuseGenePool = it }
-                            )
-                            Text("Continue evolving existing gene pool")
-                        }
-                    }
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         // Left column - Genetic Algorithm Parameters
                         Column(
@@ -117,13 +103,19 @@ fun GeneticWorldDialog(
                             OutlinedTextField(
                                 value = eliteSize,
                                 onValueChange = { eliteSize = it },
-                                label = { Text("Number of Elite Genomes") },
+                                label = { Text("Elite Size") },
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
                                 value = learningRate,
                                 onValueChange = { learningRate = it },
                                 label = { Text("Learning Rate") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = numWorldsToTest,
+                                onValueChange = { numWorldsToTest = it },
+                                label = { Text("Number of Worlds to Test") },
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
@@ -159,18 +151,6 @@ fun GeneticWorldDialog(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
-                                value = numMovesPerTest,
-                                onValueChange = { numMovesPerTest = it },
-                                label = { Text("Moves per Test") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
-                                value = costOfNotMoving,
-                                onValueChange = { costOfNotMoving = it },
-                                label = { Text("Cost of Not Moving") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
                                 value = numRooms,
                                 onValueChange = { numRooms = it },
                                 label = { Text("Number of Rooms") },
@@ -182,44 +162,66 @@ fun GeneticWorldDialog(
                                 label = { Text("Number of Random Walls") },
                                 modifier = Modifier.fillMaxWidth()
                             )
+                            OutlinedTextField(
+                                value = numMovesPerTest,
+                                onValueChange = { numMovesPerTest = it },
+                                label = { Text("Number of Moves per Test") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = costOfNotMoving,
+                                onValueChange = { costOfNotMoving = it },
+                                label = { Text("Cost of Not Moving") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
+                    if (currentGenePool != null) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = isReusingGenePool,
+                                onCheckedChange = { isReusingGenePool = it }
+                            )
+                            Text("Reuse existing gene pool")
                         }
                     }
                 }
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
-                        try {
-                            val params = GeneticWorldParams(
-                                brainSizeX = brainSizeX.toInt(),
-                                brainSizeY = brainSizeY.toInt(),
-                                numGenes = numGenes.toInt(),
-                                numMovesPerTest = numMovesPerTest.toInt(),
-                                costOfNotMoving = costOfNotMoving.toDouble(),
-                                mutationRate = mutationRate.toDouble(),
-                                eliteSize = eliteSize.toInt(),
-                                learningRate = learningRate.toDouble(),
-                                worldWidth = worldWidth.toInt(),
-                                worldHeight = worldHeight.toInt(),
-                                wallDensity = wallDensity.toDouble(),
-                                numEpochs = numEpochs.toInt(),
-                                numRooms = numRooms.toInt(),
-                                numRandomWalls = numRandomWalls.toInt(),
-                                reuseGenePool = reuseGenePool
+                        onConfirm(
+                            GeneticWorldParams(
+                                brainSizeX = brainSizeX.toIntOrNull() ?: 10,
+                                brainSizeY = brainSizeY.toIntOrNull() ?: 10,
+                                numGenes = numGenes.toIntOrNull() ?: 20,
+                                numMovesPerTest = numMovesPerTest.toIntOrNull() ?: 100,
+                                costOfNotMoving = costOfNotMoving.toDoubleOrNull() ?: 1.0,
+                                mutationRate = mutationRate.toDoubleOrNull() ?: 0.1,
+                                eliteSize = eliteSize.toIntOrNull() ?: 5,
+                                learningRate = learningRate.toDoubleOrNull() ?: 0.1,
+                                worldWidth = worldWidth.toIntOrNull() ?: 100,
+                                worldHeight = worldHeight.toIntOrNull() ?: 100,
+                                wallDensity = wallDensity.toDoubleOrNull() ?: 0.001,
+                                numEpochs = numEpochs.toIntOrNull() ?: 10,
+                                numRooms = numRooms.toIntOrNull() ?: 2,
+                                numRandomWalls = numRandomWalls.toIntOrNull() ?: 2,
+                                numWorldsToTest = numWorldsToTest.toIntOrNull() ?: 3,
+                                reuseGenePool = isReusingGenePool
                             )
-                            // Update last used params
-                            LastUsedParams = params
-                            onConfirm(params)
-                        } catch (e: NumberFormatException) {
-                            // Handle invalid input
-                        }
+                        )
                     }
                 ) {
                     Text("Start")
                 }
             },
             dismissButton = {
-                TextButton(onClick = onDismiss) {
+                Button(onClick = onDismiss) {
                     Text("Cancel")
                 }
             }
