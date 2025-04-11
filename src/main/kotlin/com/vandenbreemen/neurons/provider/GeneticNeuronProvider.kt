@@ -66,6 +66,12 @@ class GeneticNeuronProvider(
         return ((gene shr 19) and 0xFF).toByte()
     }
 
+    private fun getLearningRateFromGene(gene: Long): Double {
+        // Use bits 34-40 (7 bits) to determine learning rate (0-1.27 in increments of 0.01)
+        val incrementValue = ((gene shr 34) and 0x7F).toInt() // 7 bits = 128 possible values
+        return (incrementValue * (1.0 / 128.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
+    }
+
     private fun assembleNeuronBasedOnGene(gene: Long): Neuron {
         //  Use the first 4 bits to determine the type of weight calculation
         val weightCalculatorType = gene and 0xF
@@ -75,15 +81,17 @@ class GeneticNeuronProvider(
             else -> DefaultConnectionWeightCalculator
         }
 
+        val learningRate = getLearningRateFromGene(gene)
+
         //  Use the next four bits to determine the type of neuron
         val neuronType = (gene shr 4) and 0xF
         val neuron = when (neuronType) {
             0L -> Neuron(weightCalculator)
             1L -> InhibitoryNeuron(weightCalculator)
-            2L -> InhibitoryNeuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
+            2L -> DeadNeuron(weightCalculator)
             3L -> FixedWeightNeuron(weightCalculator)
             4L -> RelayNeuron(weightCalculator)
-            5L -> InhibitoryNeuron(weightCalculator)
+            5L -> DeadNeuron(weightCalculator)
             6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             8L -> {
@@ -101,17 +109,8 @@ class GeneticNeuronProvider(
             10L -> {
                 PainReceptorNeuron(weightCalculator)
             }
-
-            //
-            //  Temporary space for future neuron types.  For now using these to recapitulate the same types as before
-            11L -> Neuron(weightCalculator)
-            12L -> InhibitoryNeuron(weightCalculator)
-            13L -> InhibitoryNeuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
-            14L -> FixedWeightNeuron(weightCalculator)
-            15L -> RelayNeuron(weightCalculator)
-
             else -> DeadNeuron(weightCalculator)
-        }
+        }.also { it.setLearningRate(learningRate) }
 
         // If it's a RelayNeuron, store the direction in its metadata
         if (neuron is RelayNeuron) {

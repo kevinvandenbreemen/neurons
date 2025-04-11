@@ -13,6 +13,11 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     open val activation: Double
         get() = value
 
+    private var learningRate: Double = 0.0
+    val learningRateOverride: Double
+        get() = learningRate
+
+
     /**
      * Current amount of stimulation this neuron has received.  Note that this is not the same as the value of the neuron.
      */
@@ -23,6 +28,10 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
         //  Don't allow more than one connection to same neuron
         if (connections.any { it.neuron == neuron }) return
         connections.add(Connection(neuron, strength))
+    }
+
+    fun setLearningRate(learningRate: Double) {
+        this.learningRate = learningRate
     }
 
     open fun stimulate(input: Double) {
