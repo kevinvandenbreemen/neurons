@@ -111,7 +111,8 @@ class GeneticWorldState(
         numEpochs = numEpochs,
         numRooms = numRooms,
         numRandomWalls = numRandomWalls,
-        existingGenePool = existingGenePool
+        existingGenePool = existingGenePool,
+        newGeneProbability = newGeneProbability,
     )
 
     private var navigationSimulation: NavigationWorldSimulation? = null

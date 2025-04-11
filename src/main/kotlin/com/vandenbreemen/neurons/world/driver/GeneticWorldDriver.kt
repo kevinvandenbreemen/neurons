@@ -24,6 +24,7 @@ class GeneticWorldDriver(
     private val numEpochs: Int = 10,
     private val numRooms: Int = 2,
     private val numRandomWalls: Int = 2,
+    private val newGeneProbability: Double = 0.1,
     existingGenePool: GeneticPool? = null
 ) {
 
@@ -70,7 +71,7 @@ class GeneticWorldDriver(
                 genePool.reinitialize()
             } else {
                 //  If the score is non-zero then we can keep the pool
-                genePool.evolve(numGenes, eliteSize)
+                genePool.evolve(numGenes, eliteSize, newGeneProbability = newGeneProbability)
             }
 
 
@@ -129,7 +130,6 @@ class GeneticWorldDriver(
 
         // Test the neural network on multiple random worlds
         for (worldIndex in 0 until numWorldsToTest) {
-            var numWallHitCount = 0.0
             var numIterationWithoutMovement = 0.0
             var didAgentMove = false
 
@@ -156,14 +156,11 @@ class GeneticWorldDriver(
                     didAgentMove = true
                 }
 
-                if (simulation.isAgentOnWall(agent)) {
-                    numWallHitCount++
-                }
                 if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
                     return 0.0
                 }
 
-                if ((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement) <= 0) {
+                if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
                     return 0.0
                 }
 
@@ -174,7 +171,7 @@ class GeneticWorldDriver(
             }
 
             val score = if (didAgentMove) (
-                    max((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement), 0.0)
+                    max((numMoves.toDouble() - simulation.getPainAmount() - numIterationWithoutMovement), 0.0)
                             / numMoves) else 0.0
 
             totalScore += score
