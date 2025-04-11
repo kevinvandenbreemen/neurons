@@ -1,5 +1,6 @@
 package com.vandenbreemen.neurons.model
 
+@Deprecated("Why not just randomly flip the sign of the numerator of the sigmoid??")
 class InhibitoryNeuron(weightCalculator: ConnectionWeightCalculator = StrengthBasedConnector) :
     Neuron(weightCalculator) {
 
