@@ -14,9 +14,9 @@ import androidx.compose.ui.window.application
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.ui.GeneticWorldDialog
+import com.vandenbreemen.neurons.ui.NeuralApplicationComposables
 import com.vandenbreemen.neurons.ui.NeuralNetworkDisplay
 import com.vandenbreemen.neurons.ui.NeuronLegendDialog
-import com.vandenbreemen.neurons.world.view.NeuralApplicationComposables
 import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import com.vandenbreemen.neurons.world.viewmodel.NeuronApplicationViewModel
