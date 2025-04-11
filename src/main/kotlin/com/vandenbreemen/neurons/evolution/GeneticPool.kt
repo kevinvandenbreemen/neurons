@@ -69,7 +69,7 @@ class GeneticPool(
         fitnessScores = fitnessScores.toMutableList().apply { set(index, fitness) }
     }
 
-    fun evolve(generationSize: Int, eliteSize: Int = 2) {
+    fun evolve(generationSize: Int, eliteSize: Int = 2, newGeneProbability: Double = 0.1) {
         require(eliteSize < generationSize) { "Elite size must be less than generation size" }
 
         // Create new generation
@@ -82,16 +82,25 @@ class GeneticPool(
 
         newPool.addAll(eliteIndices.map { pool[it] })
 
-        // Generate rest of new generation through crossover and mutation
+        // Generate rest of new generation through crossover, mutation, and new genes
         while (newPool.size < generationSize) {
-            // Tournament selection
-            val parent1Index = tournamentSelect()
-            val parent2Index = tournamentSelect()
+            val child = when {
+                Random.nextDouble() < newGeneProbability -> {
+                    // Create a completely new random gene
+                    generateGenome()
+                }
 
-            // Create child through crossover
-            val child = crossover(parent1Index, parent2Index)
+                else -> {
+                    // Tournament selection
+                    val parent1Index = tournamentSelect()
+                    val parent2Index = tournamentSelect()
 
-            // Mutate child with some probability
+                    // Create child through crossover
+                    crossover(parent1Index, parent2Index)
+                }
+            }
+
+            // Mutate child with some probability (except for completely new genes)
             if (Random.nextDouble() < mutationRate) {
                 mutateGenome(child)
             }
