@@ -17,6 +17,7 @@ class GeneticWorldDriver(
     private val numMovesPerTest: Int = 100,
     private val costOfNotMoving: Double = 0.1,
     private val mutationRate: Double = 0.1,
+    private val pruningRate: Double = 0.05,
     private val eliteSize: Int = 5,
     private val learningRate: Double = 0.1,
     private val worldWidth: Int = 100,
@@ -42,7 +43,7 @@ class GeneticWorldDriver(
     }
 
     private val genePool = existingGenePool ?: GeneticPool(
-        brainSizeX, brainSizeY, numGenes, mutationRate
+        brainSizeX, brainSizeY, numGenes, mutationRate, pruningRate
     )
 
     fun getGenePool(): GeneticPool {
@@ -214,6 +215,7 @@ fun main() {
         numMovesPerTest = 1000,
         costOfNotMoving = 0.1,
         mutationRate = 0.1,
+        pruningRate = 0.05,
         eliteSize = 5,
         learningRate = 0.1,
         worldWidth = 100,

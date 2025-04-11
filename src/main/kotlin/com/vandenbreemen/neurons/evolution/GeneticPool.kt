@@ -7,8 +7,14 @@ class GeneticPool(
     private val rows: Int,
     private val cols: Int,
     private val poolSize: Int,
-    private val mutationRate: Double = 0.1
+    private val mutationRate: Double = 0.1,
+    private val pruningRate: Double = 0.05
 ) {
+
+    init {
+        println("Pruning rate = $pruningRate")
+    }
+
     private var pool: List<LongArray> = List(poolSize) { generateGenome() }
     private var fitnessScores: List<Double> = List(poolSize) { 0.0 }
 
@@ -72,7 +78,7 @@ class GeneticPool(
     private fun prune(genome: LongArray): LongArray {
         val prunedGenome = genome.copyOf()
         for (i in prunedGenome.indices) {
-            if (Random.nextDouble() < mutationRate) {
+            if (Random.nextDouble() < pruningRate) {
                 // Get the current gene
                 var gene = prunedGenome[i]
 
@@ -108,7 +114,7 @@ class GeneticPool(
         val worstIndices = fitnessScores.indices
             .filter { !fitnessScores[it].isNaN() } // Exclude NaN values
             .sortedBy { fitnessScores[it] }
-            .take(eliteSize / 2)
+            .take(eliteSize)
         newPool.addAll(worstIndices.map { prune(pool[it]) })
 
         // Generate rest of new generation through crossover, mutation, and new genes
@@ -125,12 +131,12 @@ class GeneticPool(
                     val parent2Index = tournamentSelect()
 
                     // Create child through crossover
-                    crossover(parent1Index, parent2Index)
+                    val offspring = crossover(parent1Index, parent2Index)
+
+                    // Mutate child with some probability (except for completely new genes)
+                    return mutateGenome(offspring)
                 }
             }
-
-            // Mutate child with some probability (except for completely new genes)
-            mutateGenome(child)
 
             newPool.add(child)
         }
@@ -163,8 +169,14 @@ class GeneticPool(
     }
 
     companion object {
-        fun create(rows: Int, cols: Int, poolSize: Int, mutationRate: Double = 0.1): GeneticPool {
-            return GeneticPool(rows, cols, poolSize, mutationRate)
+        fun create(
+            rows: Int,
+            cols: Int,
+            poolSize: Int,
+            mutationRate: Double = 0.1,
+            pruningRate: Double = 0.05
+        ): GeneticPool {
+            return GeneticPool(rows, cols, poolSize, mutationRate, pruningRate)
         }
     }
 } 

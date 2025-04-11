@@ -129,6 +129,7 @@ fun App() {
                         numMovesPerTest = params.numMovesPerTest,
                         costOfNotMoving = params.costOfNotMoving,
                         mutationRate = params.mutationRate,
+                        pruningRate = params.pruningRate,
                         eliteSize = params.eliteSize,
                         learningRate = params.learningRate,
                         worldWidth = params.worldWidth,
