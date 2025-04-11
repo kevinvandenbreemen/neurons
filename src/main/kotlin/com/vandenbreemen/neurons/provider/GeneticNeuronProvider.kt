@@ -91,25 +91,55 @@ class GeneticNeuronProvider(
             2L -> DeadNeuron(weightCalculator)
             3L -> FixedWeightNeuron(weightCalculator)
             4L -> RelayNeuron(weightCalculator)
-            5L -> DeadNeuron(weightCalculator)
-            6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
-            7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
-            8L -> {
+            5L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
+            6L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
+            7L -> {
                 // For BlinkerNeuron, use bits 27-33 to determine turnsBeforeActivation (2-200 in increments of 2)
                 val incrementValue = ((gene shr 27) and 0x7F).toInt() // 7 bits = 128 possible values
                 BlinkerNeuron(2 + (incrementValue * 2), weightCalculator)
             }
-            9L -> {
+            8L -> {
                 // For ThresholdNeuron, use bits 27-31 to determine threshold (0-1 in increments of 0.05)
                 val thresholdIncrement = ((gene shr 27) and 0x1F).toInt() // 5 bits = 32 possible values
                 val threshold =
                     (thresholdIncrement * (1.0 / 32.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
                 ThresholdNeuron(threshold, weightCalculator)
             }
-            10L -> {
+            9L -> {
                 PainReceptorNeuron(weightCalculator)
             }
-            else -> DeadNeuron(weightCalculator)
+            10L -> {
+                Neuron(weightCalculator)
+            }
+
+            11L -> {
+                InhibitoryNeuron(weightCalculator)
+            }
+
+            12L -> {
+                DeadNeuron(weightCalculator)
+            }
+
+            13L -> {
+                FixedWeightNeuron(weightCalculator)
+            }
+
+            14L -> {
+                RelayNeuron(weightCalculator)
+            }
+
+            15L -> {
+                // For RelayNeuron, use bits 27-33 to determine turnsBeforeActivation (2-200 in increments of 2)
+                val incrementValue = ((gene shr 27) and 0x7F).toInt() // 7 bits = 128 possible values
+                BlinkerNeuron(2 + (incrementValue * 2), weightCalculator)
+            }
+
+            else -> {
+                val thresholdIncrement = ((gene shr 27) and 0x1F).toInt() // 5 bits = 32 possible values
+                val threshold =
+                    (thresholdIncrement * (1.0 / 32.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
+                ThresholdNeuron(threshold, weightCalculator)
+            }
         }.also { it.setLearningRate(learningRate) }
 
         // If it's a RelayNeuron, store the direction in its metadata
