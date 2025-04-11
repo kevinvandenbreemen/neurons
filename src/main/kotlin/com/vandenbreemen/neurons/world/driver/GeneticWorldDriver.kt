@@ -5,6 +5,7 @@ import com.vandenbreemen.neurons.evolution.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
+import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
 import kotlin.math.max
 
@@ -125,9 +126,12 @@ class GeneticWorldDriver(
         numMoves: Int,
         numWorldsToTest: Int = 1,
         painTolerance: Double = 5.0,
-        minViability: Double = 0.1
+        minViability: Double = 0.1,
+        minDistinctPointsInPath: Int = 10
     ): Double {
         var totalScore = 0.0
+
+        val pointsVisitedPath = mutableListOf<AgentPosition>()
 
         // Test the neural network on multiple random worlds
         for (worldIndex in 0 until numWorldsToTest) {
@@ -149,13 +153,22 @@ class GeneticWorldDriver(
             }
 
             for (i in 0 until numMoves) {
-                val currentAgentPos = simulation.getAgentPosition(agent)
+
+                if (pointsVisitedPath.size > minDistinctPointsInPath) {
+                    pointsVisitedPath.removeFirst()
+                }
+
+                simulation.getAgentPosition(agent)?.let {
+                    pointsVisitedPath.add(it)
+                }
+
                 simulation.step()
-                if (simulation.getAgentPosition(agent) == currentAgentPos) {
+                if (pointsVisitedPath.contains(simulation.getAgentPosition(agent))) {
                     numIterationWithoutMovement += costOfNotMoving
                 } else {
                     didAgentMove = true
                 }
+
 
                 if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
                     return 0.0
