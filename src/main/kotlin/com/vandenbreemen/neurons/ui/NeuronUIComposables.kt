@@ -184,6 +184,29 @@ fun NeuronLegendDialog(
                         }
                         Text("Blinker Neuron - Activates periodically after a set number of turns")
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Canvas(modifier = Modifier.size(30.dp)) {
+                            val centerX = size.width / 2
+                            val centerY = size.height / 2
+                            val tSize = size.width * 0.2f
+                            // Draw the horizontal bar of the T
+                            drawLine(
+                                color = Color.Yellow,
+                                start = Offset(centerX - tSize, centerY),
+                                end = Offset(centerX + tSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            // Draw the vertical bar of the T
+                            drawLine(
+                                color = Color.Yellow,
+                                start = Offset(centerX, centerY - tSize),
+                                end = Offset(centerX, centerY + tSize),
+                                strokeWidth = 2f
+                            )
+                        }
+                        Text("Threshold Neuron - Only fires when stimulation reaches a certain threshold")
+                    }
                 }
             },
             confirmButton = {
@@ -456,6 +479,25 @@ fun NeuralNetworkDisplay(
                                 color = Color.Magenta,
                                 start = Offset(centerX, centerY + chevronSize),
                                 end = Offset(centerX - chevronSize, centerY),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        is ThresholdNeuron -> {
+                            // Draw a yellow T at the center of the neuron
+                            val tSize = minOf(cellWidth, cellHeight) * 0.2f
+                            // Draw the horizontal bar of the T
+                            drawLine(
+                                color = Color.Yellow,
+                                start = Offset(centerX - tSize, centerY),
+                                end = Offset(centerX + tSize, centerY),
+                                strokeWidth = 2f
+                            )
+                            // Draw the vertical bar of the T
+                            drawLine(
+                                color = Color.Yellow,
+                                start = Offset(centerX, centerY - tSize),
+                                end = Offset(centerX, centerY + tSize),
                                 strokeWidth = 2f
                             )
                         }
