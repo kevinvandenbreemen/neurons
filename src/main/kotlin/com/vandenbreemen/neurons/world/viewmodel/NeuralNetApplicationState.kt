@@ -92,6 +92,7 @@ class GeneticWorldState(
     numRandomWalls: Int = 2,
     private val numWorldsToTest: Int = 3,
     private val newGeneProbability: Double = 0.1,
+    private val painTolerance: Double = 0.5,
     private val existingGenePool: GeneticPool? = null
 ) : NeuralNetApplicationState() {
     private val driver = GeneticWorldDriver(
@@ -176,7 +177,8 @@ class GeneticWorldState(
                     }
                     driver.drive(
                         fitnessFunction = { geneticNeuronProvider, numMoves ->
-                            val score = driver.getFitness(geneticNeuronProvider, numMoves, numWorldsToTest)
+                            val score =
+                                driver.getFitness(geneticNeuronProvider, numMoves, numWorldsToTest, painTolerance)
                             if (score > bestScore) {
                                 bestScore = score
                                 // Create and store the best neural network

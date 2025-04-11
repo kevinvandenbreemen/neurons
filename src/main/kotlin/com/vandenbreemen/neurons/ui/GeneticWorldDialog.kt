@@ -27,6 +27,7 @@ data class GeneticWorldParams(
     val numRandomWalls: Int = 2,
     val numWorldsToTest: Int = 3,
     val newGeneProbability: Double = 0.1,
+    val painTolerance: Double = 0.5,
     val reuseGenePool: Boolean = false
 )
 
@@ -53,6 +54,7 @@ fun GeneticWorldDialog(
     var numRandomWalls by remember { mutableStateOf("2") }
     var numWorldsToTest by remember { mutableStateOf("3") }
     var newGeneProbability by remember { mutableStateOf("0.1") }
+    var painTolerance by remember { mutableStateOf("0.5") }
     var isReusingGenePool by remember { mutableStateOf(currentGenePool != null) }
 
     if (showDialog) {
@@ -130,6 +132,12 @@ fun GeneticWorldDialog(
                                 value = newGeneProbability,
                                 onValueChange = { newGeneProbability = it },
                                 label = { Text("New Gene Probability") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = painTolerance,
+                                onValueChange = { painTolerance = it },
+                                label = { Text("Pain Tolerance") },
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -221,6 +229,7 @@ fun GeneticWorldDialog(
                                 numRandomWalls = numRandomWalls.toIntOrNull() ?: 2,
                                 numWorldsToTest = numWorldsToTest.toIntOrNull() ?: 3,
                                 newGeneProbability = newGeneProbability.toDoubleOrNull() ?: 0.1,
+                                painTolerance = painTolerance.toDoubleOrNull() ?: 0.5,
                                 reuseGenePool = isReusingGenePool
                             )
                         )
