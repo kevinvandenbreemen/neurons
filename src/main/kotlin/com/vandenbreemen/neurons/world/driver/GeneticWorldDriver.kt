@@ -193,6 +193,16 @@ fun main() {
         brainSizeY = 10,
         numGenes = 100,
         numMovesPerTest = 1000,
+        costOfNotMoving = 0.1,
+        mutationRate = 0.1,
+        eliteSize = 5,
+        learningRate = 0.1,
+        worldWidth = 100,
+        worldHeight = 100,
+        wallDensity = 0.001,
+        numEpochs = 10,
+        numRooms = 2,
+        numRandomWalls = 2,
     )
 
     driver.drive(
