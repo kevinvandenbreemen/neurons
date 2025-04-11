@@ -78,6 +78,12 @@ class GeneticNeuronProvider(
         return (incrementValue * (6.0 / 255.0) - 3.0).coerceIn(-3.0, 3.0) // Map to range -3.0 to 3.0
     }
 
+    private fun getSigmoidNumeratorMultiplierFromGene(gene: Long): Double {
+        // Use bits 49-56 (8 bits) to determine sigmoidNumeratorMultiplier (-5.0 to 5.0)
+        val incrementValue = ((gene shr 49) and 0xFF).toInt() // 8 bits = 256 possible values
+        return (incrementValue * (10.0 / 255.0) - 5.0).coerceIn(-5.0, 5.0) // Map to range -5.0 to 5.0
+    }
+
     private fun assembleNeuronBasedOnGene(gene: Long): Neuron {
         //  Use the first 4 bits to determine the type of weight calculation
         val weightCalculatorType = gene and 0xF
@@ -149,6 +155,7 @@ class GeneticNeuronProvider(
         }.also {
             it.setLearningRate(learningRate)
             it.setSigmaExpDelta(getSigmoidExpDeltaFromGene(gene))
+            it.setSigmoidNumeratorMultiplier(getSigmoidNumeratorMultiplierFromGene(gene))
         }
 
         // If it's a RelayNeuron, store the direction in its metadata
