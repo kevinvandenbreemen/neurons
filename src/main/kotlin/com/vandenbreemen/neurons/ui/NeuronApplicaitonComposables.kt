@@ -1,11 +1,13 @@
 package com.vandenbreemen.neurons.ui
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.world.view.NavigationWorldSimulationView
 import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
@@ -53,15 +55,58 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
 
 @Composable
 private fun NeuronDetailsUI(neuron: NeuronInfoState) {
-    Row {
-        Column {
-            Text("Neuron type:  ${neuron.type}")
-            Text("Neuron activation: ${neuron.activation}")
-        }
-        Column {
-            Text("More details:")
+    Column {
+        Text("Neuron type: ${neuron.type}")
+        Text("Neuron activation: ${neuron.activation}")
 
-            Text("Neuron activation: ${neuron.activation}")
+        neuron.threshold?.let { threshold ->
+            Text("Threshold: $threshold")
+        }
+
+        Text("Connections:")
+        Box(
+            modifier = Modifier
+                .size(200.dp)
+                .padding(16.dp)
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val centerX = size.width / 2
+                val centerY = size.height / 2
+                val radius = minOf(size.width, size.height) * 0.4f
+
+                // Draw the center neuron
+                drawCircle(
+                    color = Color.Gray,
+                    radius = 10f,
+                    center = Offset(centerX, centerY)
+                )
+
+                // Draw connections in a circle around the center
+                neuron.connections.forEachIndexed { index, connection ->
+                    val angle = (index * 2 * Math.PI / neuron.connections.size).toFloat()
+                    val targetX = centerX + radius * kotlin.math.cos(angle)
+                    val targetY = centerY + radius * kotlin.math.sin(angle)
+
+                    // Draw connection line
+                    val color = if (connection.weight > 0) Color.Green else Color.Red
+                    drawLine(
+                        color = color.copy(alpha = kotlin.math.abs(connection.weight).toFloat()),
+                        start = Offset(centerX, centerY),
+                        end = Offset(targetX, targetY),
+                        strokeWidth = 2f
+                    )
+
+                    // Draw target neuron
+                    drawCircle(
+                        color = Color.Gray,
+                        radius = 8f,
+                        center = Offset(targetX, targetY)
+                    )
+
+                    // Draw weight value
+
+                }
+            }
         }
     }
 }
