@@ -31,6 +31,11 @@ open class WorldSimulation(
 
     }
 
+    open fun getPainAmount(): Double {
+        return 0.0
+
+    }
+
     /**
      * Updates the simulation by one step
      * This causes all agents to perform one iteration of their neural networks

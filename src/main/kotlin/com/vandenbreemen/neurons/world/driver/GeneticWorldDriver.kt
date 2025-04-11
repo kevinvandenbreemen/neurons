@@ -118,7 +118,8 @@ class GeneticWorldDriver(
     fun getFitness(
         geneticNeuronProvider: GeneticNeuronProvider,
         numMoves: Int,
-        numWorldsToTest: Int = 1
+        numWorldsToTest: Int = 1,
+        painTolerance: Double = 5.0,
     ): Double {
         var totalScore = 0.0
 
@@ -161,6 +162,11 @@ class GeneticWorldDriver(
                 if ((numMoves.toDouble() - numWallHitCount - numIterationWithoutMovement) <= 0) {
                     return 0.0
                 }
+
+                if (simulation.getPainAmount() > painTolerance) {
+                    return 0.0
+                }
+
             }
 
             val score = if (didAgentMove) (
