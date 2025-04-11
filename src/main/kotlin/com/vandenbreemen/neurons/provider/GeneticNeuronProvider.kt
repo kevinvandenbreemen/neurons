@@ -101,6 +101,15 @@ class GeneticNeuronProvider(
             10L -> {
                 PainReceptorNeuron(weightCalculator)
             }
+
+            //
+            //  Temporary space for future neuron types.  For now using these to recapitulate the same types as before
+            11L -> Neuron(weightCalculator)
+            12L -> InhibitoryNeuron(weightCalculator)
+            13L -> InhibitoryNeuron(weightCalculator) // Skip SineNeuron, return regular neuron instead
+            14L -> FixedWeightNeuron(weightCalculator)
+            15L -> RelayNeuron(weightCalculator)
+
             else -> DeadNeuron(weightCalculator)
         }
 
