@@ -91,7 +91,15 @@ class GeneticNeuronProvider(
                 val incrementValue = ((gene shr 27) and 0xF).toInt()
                 BlinkerNeuron(10 + (incrementValue * 10), weightCalculator)
             }
-            else -> DeadNeuron(weightCalculator)
+            9L -> {
+                // For ThresholdNeuron, use bits 27-31 to determine threshold (0-1 in increments of 0.05)
+                val thresholdIncrement = ((gene shr 27) and 0x1F).toInt() // 5 bits = 32 possible values
+                val threshold =
+                    (thresholdIncrement * (1.0 / 32.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
+                ThresholdNeuron(threshold, weightCalculator)
+            }
+
+            else -> Neuron(weightCalculator)
         }
 
         // If it's a RelayNeuron, store the direction in its metadata
