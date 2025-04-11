@@ -87,9 +87,9 @@ class GeneticNeuronProvider(
             6L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             7L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             8L -> {
-                // For ClinkerNeuron, use bits 27-30 to determine turnsBeforeActivation (10-100 in increments of 10)
-                val incrementValue = ((gene shr 27) and 0xF).toInt()
-                BlinkerNeuron(10 + (incrementValue * 10), weightCalculator)
+                // For BlinkerNeuron, use bits 27-33 to determine turnsBeforeActivation (2-200 in increments of 2)
+                val incrementValue = ((gene shr 27) and 0x7F).toInt() // 7 bits = 128 possible values
+                BlinkerNeuron(2 + (incrementValue * 2), weightCalculator)
             }
             9L -> {
                 // For ThresholdNeuron, use bits 27-31 to determine threshold (0-1 in increments of 0.05)
