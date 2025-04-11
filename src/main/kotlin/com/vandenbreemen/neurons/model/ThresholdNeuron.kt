@@ -4,7 +4,9 @@ package com.vandenbreemen.neurons.model
  * A neuron that only fires when its stimulation reaches a certain threshold.
  * The threshold is a value between 0 and 1, and the neuron will only fire
  * when the stimulation reaches or exceeds this threshold.
+ * @deprecated  It would be better simply to modify the sigmoid function in the supertype for this
  */
+@Deprecated("It would be better simply to modify the sigmoid function in the supertype for this")
 class ThresholdNeuron(
     val threshold: Double,
     weightCalculator: ConnectionWeightCalculator = StrengthBasedConnector
