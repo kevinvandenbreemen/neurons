@@ -101,7 +101,7 @@ class GeneticNeuronProvider(
             10L -> {
                 PainReceptorNeuron(weightCalculator)
             }
-            else -> Neuron(weightCalculator)
+            else -> DeadNeuron(weightCalculator)
         }
 
         // If it's a RelayNeuron, store the direction in its metadata
