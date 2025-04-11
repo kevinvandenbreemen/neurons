@@ -179,6 +179,13 @@ fun App() {
                                             iterate = { /* No iteration for best network display */ },
                                             onNeuronClick = { /* No neuron selection for best network display */ }
                                         )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Button(
+                                            onClick = { state.useBestGenome() },
+                                            enabled = state.hasFoundBestNeuralNet
+                                        ) {
+                                            Text("Use Best Genome")
+                                        }
                                     }
 
                                     Column(

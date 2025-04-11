@@ -47,6 +47,10 @@ class GeneticWorldDriver(
         return genePool
     }
 
+    fun getRandomWorld(): World {
+        return randomWorlds.random()
+    }
+
     fun drive(
         fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double,
         onEpochComplete: (Int, Double) -> Unit = { _, _ -> },

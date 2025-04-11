@@ -5,7 +5,7 @@ import com.vandenbreemen.neurons.world.model.World
 
 class NavigationWorldSimulation(
     world: World = World(),
-    private val maxMovementDelta: Int = 2
+    private val maxMovementDelta: Int = 1
 ) : WorldSimulation(world) {
 
     private var painAmount: Double = 0.0

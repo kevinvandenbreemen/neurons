@@ -3,6 +3,7 @@ package com.vandenbreemen.neurons.world.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.vandenbreemen.neurons.agent.NeuralAgent
 import com.vandenbreemen.neurons.evolution.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
@@ -82,7 +83,7 @@ class GeneticWorldState(
     costOfNotMoving: Double = 0.1,
     mutationRate: Double = 0.1,
     eliteSize: Int = 5,
-    learningRate: Double = 0.1,
+    private val learningRate: Double = 0.1,
     worldWidth: Int = 100,
     worldHeight: Int = 100,
     wallDensity: Double = 0.001,
@@ -90,6 +91,7 @@ class GeneticWorldState(
     numRooms: Int = 2,
     numRandomWalls: Int = 2,
     private val numWorldsToTest: Int = 3,
+    private val newGeneProbability: Double = 0.1,
     private val existingGenePool: GeneticPool? = null
 ) : NeuralNetApplicationState() {
     private val driver = GeneticWorldDriver(
@@ -119,7 +121,12 @@ class GeneticWorldState(
     var totalEpochs by mutableStateOf(numEpochs)
     var bestScore by mutableStateOf(0.0)
     private var bestNeuralNet: NeuralNet? = null
+    val hasFoundBestNeuralNet: Boolean
+        get() = bestNeuralNet != null
+
     var bestNeuralNetForDisplay by mutableStateOf<NeuralNet?>(null)
+    var isUsingBestGenome by mutableStateOf(false)
+    private var setupJob: kotlinx.coroutines.Job? = null
 
     override var neuralNet by mutableStateOf<NeuralNet?>(null)
 
@@ -127,15 +134,39 @@ class GeneticWorldState(
         return driver.getGenePool()
     }
 
+    fun useBestGenome() {
+        if (bestNeuralNet != null) {
+            // Cancel any ongoing setup
+            setupJob?.cancel()
+            setupJob = null
+
+            isUsingBestGenome = true
+            neuralNet = bestNeuralNet
+            // Create a new simulation with the best neural network
+            val world = driver.getRandomWorld()
+            val agent = NeuralAgent(bestNeuralNet!!, learningRate)
+            navigationSimulation = NavigationWorldSimulation(world).apply {
+                addAgent(agent, world.getRandomEmptyCell())
+            }
+            navSimulationForDisplay = navigationSimulation
+            isLoading = false
+            setupProgress = ""
+        }
+    }
+
     fun setup(coroutineScope: CoroutineScope) {
+        // Cancel any existing setup job
+        setupJob?.cancel()
+        
         isLoading = true
         setupProgress = "Initializing genetic algorithm..."
         currentEpoch = 0
         bestScore = 0.0
         bestNeuralNet = null
         bestNeuralNetForDisplay = null
+        isUsingBestGenome = false
 
-        coroutineScope.launch {
+        setupJob = coroutineScope.launch {
             try {
                 withContext(Dispatchers.Default) {
                     setupProgress = if (existingGenePool != null) {
@@ -166,18 +197,22 @@ class GeneticWorldState(
                         }
                     )
 
-                    setupProgress = "Creating neural network..."
-                    neuralNet = driver.getRandomNeuralNetwork()
+                    if (!isUsingBestGenome) {
+                        setupProgress = "Creating neural network..."
+                        neuralNet = driver.getRandomNeuralNetwork()
 
-                    setupProgress = "Setting up navigation simulation..."
-                    val pairForDisplay = driver.createSimulationWithAgent()
-                    navigationSimulation = pairForDisplay.first
-                    navSimulationForDisplay = navigationSimulation
-                    neuralNet = pairForDisplay.second
+                        setupProgress = "Setting up navigation simulation..."
+                        val pairForDisplay = driver.createSimulationWithAgent()
+                        navigationSimulation = pairForDisplay.first
+                        navSimulationForDisplay = navigationSimulation
+                        neuralNet = pairForDisplay.second
+                    }
                 }
             } finally {
-                isLoading = false
-                setupProgress = ""
+                if (!isUsingBestGenome) {
+                    isLoading = false
+                    setupProgress = ""
+                }
             }
         }
     }
