@@ -102,7 +102,6 @@ class GeneticPool(
 
         // Create new generation
         val newPool = mutableListOf<LongArray>()
-        val prunedPool = mutableListOf<LongArray>()
 
         // Keep elite genomes
         val eliteIndices = fitnessScores.indices
@@ -111,11 +110,10 @@ class GeneticPool(
             .take(eliteSize)
         newPool.addAll(eliteIndices.map { pool[it] })
 
-        val worstIndices = fitnessScores.indices
-            .filter { !fitnessScores[it].isNaN() } // Exclude NaN values
-            .sortedBy { fitnessScores[it] }
+        val prunableIndices = fitnessScores.indices
+            .filter { !eliteIndices.contains(it) }
             .take(eliteSize)
-        newPool.addAll(worstIndices.map { prune(pool[it]) })
+        newPool.addAll(prunableIndices.map { prune(pool[it]) })
 
         // Generate rest of new generation through crossover, mutation, and new genes
         while (newPool.size < generationSize) {
