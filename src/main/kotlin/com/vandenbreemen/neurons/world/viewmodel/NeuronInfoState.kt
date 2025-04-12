@@ -10,6 +10,7 @@ class NeuronInfoState(private val neuron: Neuron) {
     val activation: Double get() = neuron.activation
     val connections: List<ConnectionInfo> get() = neuron.connections.map { ConnectionInfo(it.neuron, it.weight) }
     val sigmoidNumeratorMultiplier get() = neuron.sigmoidMultiplier
+    val learningRate: Double get() = neuron.learningRateOverride
     val weightCalculatorTypeName: String
         get() = neuron.weightCalculator::class.simpleName ?: "Unknown"
 

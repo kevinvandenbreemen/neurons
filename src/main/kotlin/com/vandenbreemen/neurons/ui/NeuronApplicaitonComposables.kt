@@ -65,6 +65,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
         Text("Neuron type: ${neuron.type}")
         Text("Neuron activation: ${neuron.activation}")
         Text("Sigmoid Numerator Multiplier:  ${neuron.sigmoidNumeratorMultiplier}")
+        Text("Learning Rate: ${neuron.learningRate}")
         Text("Weight Calculator: ${neuron.weightCalculatorTypeName}")
         Text("Connections:")
         Box(
