@@ -1,6 +1,6 @@
 package com.vandenbreemen.neurons.model
 
-import kotlin.math.max
+import com.vandenbreemen.neurons.math.combinedSigmoidV1
 
 interface ConnectionWeightCalculator {
     /**
@@ -30,6 +30,17 @@ interface ConnectionWeightCalculator {
     ): Double
 }
 
+private fun defaultSigmoidCalculation(sourceNeuron: Neuron, targetNeuron: Neuron): Double {
+    return combinedSigmoidV1(
+        sourceNeuron.activation,
+        targetNeuron.activation,
+        sourceNeuron.sigmoidMultiplier + targetNeuron.sigmoidMultiplier,
+        1.0 / (sourceNeuron.sigmoidMultiplier + targetNeuron.sigmoidMultiplier),
+        1.0,
+        0.0
+    )
+}
+
 object DefaultConnectionWeightCalculator : ConnectionWeightCalculator {
     override fun calculateWeight(
         sourceNeuron: Neuron,
@@ -37,11 +48,10 @@ object DefaultConnectionWeightCalculator : ConnectionWeightCalculator {
         currentStrength: Double,
         learningRate: Double
     ): Double {
-        val myStrength = sourceNeuron.activation
-        val theirStrength = targetNeuron.activation
-        val rawDiff = myStrength - theirStrength
-        val delta = rawDiff
-        return (currentStrength + delta)
+        return defaultSigmoidCalculation(
+            sourceNeuron,
+            targetNeuron
+        )
     }
 
     override fun calculateStartingConnectionWeight(
@@ -60,7 +70,11 @@ object StrengthBasedConnector : ConnectionWeightCalculator {
         currentStrength: Double,
         learningRate: Double
     ): Double {
-        return currentStrength + learningRate * max(sourceNeuron.activation, targetNeuron.activation)
+        //return currentStrength + learningRate * max(sourceNeuron.activation, targetNeuron.activation)
+        return defaultSigmoidCalculation(
+            sourceNeuron,
+            targetNeuron
+        )
     }
 
     override fun calculateStartingConnectionWeight(
