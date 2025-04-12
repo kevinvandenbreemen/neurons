@@ -59,10 +59,6 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
         Text("Neuron type: ${neuron.type}")
         Text("Neuron activation: ${neuron.activation}")
 
-        neuron.threshold?.let { threshold ->
-            Text("Threshold: $threshold")
-        }
-
         Text("Connections:")
         Box(
             modifier = Modifier

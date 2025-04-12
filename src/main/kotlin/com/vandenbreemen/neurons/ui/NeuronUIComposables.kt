@@ -500,25 +500,6 @@ fun NeuralNetworkDisplay(
                             )
                         }
 
-                        is ThresholdNeuron -> {
-                            // Draw a yellow T at the center of the neuron
-                            val tSize = minOf(cellWidth, cellHeight) * 0.2f
-                            // Draw the horizontal bar of the T
-                            drawLine(
-                                color = Color.Yellow,
-                                start = Offset(centerX - tSize, centerY),
-                                end = Offset(centerX + tSize, centerY),
-                                strokeWidth = 2f
-                            )
-                            // Draw the vertical bar of the T
-                            drawLine(
-                                color = Color.Yellow,
-                                start = Offset(centerX, centerY - tSize),
-                                end = Offset(centerX, centerY + tSize),
-                                strokeWidth = 2f
-                            )
-                        }
-
                         is PainReceptorNeuron -> {
                             // Draw a red P at the center of the neuron
                             val pSize = minOf(cellWidth, cellHeight) * 0.2f
