@@ -8,7 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vandenbreemen.neurons.evolution.model.GeneticWorldState
 import com.vandenbreemen.neurons.world.view.NavigationWorldSimulationView
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
@@ -66,6 +71,9 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
                 .size(200.dp)
                 .padding(16.dp)
         ) {
+
+            val measurer = rememberTextMeasurer()
+
             Canvas(
                 modifier = Modifier.fillMaxSize()
                     .background(Color.Black)
@@ -111,6 +119,25 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
                     )
 
                     // Draw weight value
+                    val result = measurer.measure(
+                        AnnotatedString(
+                            text = "%.2f".format(connection.weight),
+                            spanStyles = listOf()
+                        ),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            color = Color.White
+                        ),
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                    drawText(
+                        result,
+                        topLeft = Offset(
+                            x = targetX - result.size.width / 2,
+                            y = targetY - result.size.height / 2
+                        )
+                    )
 
                 }
             }
