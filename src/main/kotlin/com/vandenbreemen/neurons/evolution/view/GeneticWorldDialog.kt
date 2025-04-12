@@ -1,4 +1,4 @@
-package com.vandenbreemen.neurons.ui
+package com.vandenbreemen.neurons.evolution.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -266,4 +266,4 @@ fun GeneticWorldDialog(
 }
 
 // Object to store the last used parameters
-private var LastUsedParams = GeneticWorldParams() 
+private var LastUsedParams = GeneticWorldParams()
