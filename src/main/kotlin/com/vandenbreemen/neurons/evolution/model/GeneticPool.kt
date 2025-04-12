@@ -11,10 +11,6 @@ class GeneticPool(
     private val pruningRate: Double = 0.05
 ) {
 
-    init {
-        println("Pruning rate = $pruningRate")
-    }
-
     private var pool: List<LongArray> = List(poolSize) { generateGenome() }
     private var fitnessScores: List<Double> = List(poolSize) { 0.0 }
 
@@ -26,14 +22,7 @@ class GeneticPool(
         return geneList
     }
 
-    fun getGenome(index: Int): LongArray {
-        require(index in 0 until poolSize) { "Index out of bounds" }
-        return pool[index]
-    }
-
-    fun getAllGenomes(): List<LongArray> = pool
-
-    fun crossover(parent1Index: Int, parent2Index: Int): LongArray {
+    private fun crossover(parent1Index: Int, parent2Index: Int): LongArray {
         require(parent1Index in 0 until poolSize && parent2Index in 0 until poolSize) { "Parent indices out of bounds" }
 
         val parent1 = pool[parent1Index]
