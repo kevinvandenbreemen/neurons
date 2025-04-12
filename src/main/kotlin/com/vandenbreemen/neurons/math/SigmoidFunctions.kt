@@ -24,3 +24,11 @@ fun combinedSigmoidV1(x: Double, y: Double, m: Double, a: Double, b: Double, c: 
     val z = a * proximity + b * magnitude - c
     return sigmoid(z)
 }
+
+/**
+ * Sigmoid function that starts at roughly 0 when x is 0 and approaches 1 as x increases to 1.0.
+ */
+//  Tweaked this using https://www.desmos.com/calculator/coknirwubg
+fun sigmoidFromZero(x: Double): Double {
+    return 1 / (1 + exp(-(6.5 * x - 3.5)))
+}
