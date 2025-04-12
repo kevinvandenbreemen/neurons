@@ -1,6 +1,7 @@
 package com.vandenbreemen.neurons.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -65,7 +66,10 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
                 .size(200.dp)
                 .padding(16.dp)
         ) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
+            Canvas(
+                modifier = Modifier.fillMaxSize()
+                    .background(Color.Black)
+            ) {
                 val centerX = size.width / 2
                 val centerY = size.height / 2
                 val radius = minOf(size.width, size.height) * 0.4f
@@ -84,7 +88,14 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
                     val targetY = centerY + radius * kotlin.math.sin(angle)
 
                     // Draw connection line
-                    val color = if (connection.weight > 0) Color.Green else Color.Red
+                    val color = if (connection.weight > 0) Color.Green.copy(
+                        alpha = kotlin.math.abs(
+                            connection.weight.coerceIn(
+                                0.0,
+                                1.0
+                            )
+                        ).toFloat()
+                    ) else Color.Red.copy(alpha = kotlin.math.abs(connection.weight.coerceIn(0.0, 1.0)).toFloat())
                     drawLine(
                         color = color.copy(alpha = kotlin.math.abs(connection.weight).toFloat()),
                         start = Offset(centerX, centerY),
