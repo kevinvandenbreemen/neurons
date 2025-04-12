@@ -224,22 +224,9 @@ class NavigationWorldSimulation(
     }
 
     /**
-     * Checks if there is a wall in a specified direction relative to an agent's current position
-     * @param agent The neural agent whose position will be used as the reference point
-     * @param dx The change in x-coordinate (-1 for west, 0 for no change, 1 for east)
-     * @param dy The change in y-coordinate (-1 for north, 0 for no change, 1 for south)
-     * @return true if there is a wall in the specified direction, false otherwise or if agent position is unknown
-     */
-    private fun isWallInDirection(agent: NeuralAgent, dx: Int, dy: Int): Boolean {
-        val currentPos = getAgentPosition(agent) ?: return false
-        val newPos = currentPos.copy(x = currentPos.x + dx, y = currentPos.y + dy)
-        return world.isWall(newPos.x, newPos.y)
-    }
-
-    /**
      * Checks if the agent is on a wall
      */
-    fun isAgentOnWall(agent: NeuralAgent): Boolean {
+    private fun isAgentOnWall(agent: NeuralAgent): Boolean {
         val currentPos = getAgentPosition(agent) ?: return false
         return world.isWall(currentPos.x, currentPos.y)
     }
