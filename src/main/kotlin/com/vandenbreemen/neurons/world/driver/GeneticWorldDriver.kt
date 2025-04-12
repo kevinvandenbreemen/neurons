@@ -1,6 +1,7 @@
 package com.vandenbreemen.neurons.world.driver
 
 import com.vandenbreemen.neurons.agent.NeuralAgent
+import com.vandenbreemen.neurons.evolution.fitness.GeneticFitnessDriver
 import com.vandenbreemen.neurons.evolution.model.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
@@ -14,7 +15,6 @@ class GeneticWorldDriver(
     private val brainSizeX: Int,
     private val brainSizeY: Int,
     private val numGenes: Int,
-    private val numMovesPerTest: Int = 100,
     private val costOfNotMoving: Double = 0.1,
     private val mutationRate: Double = 0.1,
     private val pruningRate: Double = 0.05,
@@ -28,6 +28,16 @@ class GeneticWorldDriver(
     private val numRandomWalls: Int = 2,
     private val newGeneProbability: Double = 0.1,
     existingGenePool: GeneticPool? = null
+) : GeneticFitnessDriver(
+    brainSizeX = brainSizeX,
+    brainSizeY = brainSizeY,
+    numGenes = numGenes,
+    mutationRate = mutationRate,
+    pruningRate = pruningRate,
+    eliteSize = eliteSize,
+    numEpochs = numEpochs,
+    newGeneProbability = newGeneProbability,
+    existingGenePool = existingGenePool
 ) {
 
     private val randomWorlds = MutableList(numWorlds) {
@@ -42,51 +52,8 @@ class GeneticWorldDriver(
         )
     }
 
-    private val genePool = existingGenePool ?: GeneticPool(
-        brainSizeX, brainSizeY, numGenes, mutationRate, pruningRate
-    )
-
-    fun getGenePool(): GeneticPool {
-        return genePool
-    }
-
     fun getRandomWorld(): World {
         return randomWorlds.random()
-    }
-
-    fun drive(
-        fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double,
-        onEpochComplete: (Int, Double) -> Unit = { _, _ -> },
-        numWorldsToTest: Int = 1
-    ) {
-        var bestScore = 0.0
-        for (i in 0 until numEpochs) {
-            val score = iterate(numMovesPerTest) { geneticNeuronProvider, numMoves ->
-                fitnessFunction(geneticNeuronProvider, numMoves)
-            }
-            if (score > bestScore) {
-                bestScore = score
-            }
-
-            //  If there has been no non-zero score then none of the genes is anywhere close so dump the pool
-            if (score <= 0.0) {
-                genePool.reinitialize()
-            } else {
-                //  If the score is non-zero then we can keep the pool
-                genePool.evolve(numGenes, eliteSize, newGeneProbability = newGeneProbability)
-            }
-
-
-            onEpochComplete(i + 1, bestScore)
-        }
-    }
-
-    fun getRandomNeuralNetwork(): NeuralNet {
-        return NeuralNet(
-            brainSizeX,
-            brainSizeY,
-            genePool.getRandomProvider()
-        )
     }
 
     /**
@@ -102,24 +69,6 @@ class GeneticWorldDriver(
         }, neuralNet)
     }
 
-    private fun iterate(
-        numMoves: Int,
-        fitnessFunction: (geneticNeuronProvider: GeneticNeuronProvider, numMoves: Int) -> Double
-    ): Double {
-
-        var bestScore = 0.0
-
-        genePool.forEachProvider { indexInPool, geneticNeuronProvider ->
-            val score = fitnessFunction(geneticNeuronProvider, numMoves)
-            if (score > bestScore) {
-                bestScore = score
-            }
-            genePool.setFitness(indexInPool, score)
-        }
-
-        return bestScore
-    }
-
 
     fun getFitness(
         geneticNeuronProvider: GeneticNeuronProvider,
@@ -127,7 +76,7 @@ class GeneticWorldDriver(
         numWorldsToTest: Int = 1,
         painTolerance: Double = 5.0,
         minViability: Double = 0.1,
-        minDistinctPointsInPath: Int = 10
+        minDistinctPointsInPath: Int = 10,
     ): Double {
         var totalScore = 0.0
 
@@ -212,7 +161,6 @@ fun main() {
         brainSizeX = 10,
         brainSizeY = 10,
         numGenes = 100,
-        numMovesPerTest = 1000,
         costOfNotMoving = 0.1,
         mutationRate = 0.1,
         pruningRate = 0.05,
@@ -227,8 +175,15 @@ fun main() {
     )
 
     driver.drive(
-        fitnessFunction = { geneticNeuronProvider, numMoves ->
-            driver.getFitness(geneticNeuronProvider, numMoves)
+        fitnessFunction = {
+            driver.getFitness(
+                geneticNeuronProvider = it,
+                numMoves = 1000,
+                numWorldsToTest = 10,
+                painTolerance = 5.0,
+                minViability = 0.1,
+                minDistinctPointsInPath = 10
+            )
         }
     )
 }

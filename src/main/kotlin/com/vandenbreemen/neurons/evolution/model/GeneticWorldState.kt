@@ -18,7 +18,7 @@ class GeneticWorldState(
     private val brainSizeX: Int = 10,
     private val brainSizeY: Int = 10,
     numGenes: Int = 20,
-    numMovesPerTest: Int = 100,
+    private val numMovesPerTest: Int = 100,
     costOfNotMoving: Double = 0.1,
     mutationRate: Double = 0.1,
     pruningRate: Double = 0.05,
@@ -40,7 +40,6 @@ class GeneticWorldState(
         brainSizeX = brainSizeX,
         brainSizeY = brainSizeY,
         numGenes = numGenes,
-        numMovesPerTest = numMovesPerTest,
         costOfNotMoving = costOfNotMoving,
         mutationRate = mutationRate,
         pruningRate = pruningRate,
@@ -118,9 +117,14 @@ class GeneticWorldState(
                         "Running genetic algorithm..."
                     }
                     driver.drive(
-                        fitnessFunction = { geneticNeuronProvider, numMoves ->
+                        fitnessFunction = { geneticNeuronProvider ->
                             val score =
-                                driver.getFitness(geneticNeuronProvider, numMoves, numWorldsToTest, painTolerance)
+                                driver.getFitness(
+                                    geneticNeuronProvider,
+                                    numMovesPerTest,
+                                    numWorldsToTest,
+                                    painTolerance
+                                )
                             if (score > bestScore) {
                                 bestScore = score
                                 // Create and store the best neural network
