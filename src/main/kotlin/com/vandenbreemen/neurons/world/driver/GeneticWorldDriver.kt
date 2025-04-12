@@ -1,7 +1,7 @@
 package com.vandenbreemen.neurons.world.driver
 
 import com.vandenbreemen.neurons.agent.NeuralAgent
-import com.vandenbreemen.neurons.evolution.GeneticPool
+import com.vandenbreemen.neurons.evolution.model.GeneticPool
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation

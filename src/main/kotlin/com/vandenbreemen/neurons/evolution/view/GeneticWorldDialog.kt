@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vandenbreemen.neurons.evolution.GeneticPool
+import com.vandenbreemen.neurons.evolution.model.GeneticPool
 
 data class GeneticWorldParams(
     val brainSizeX: Int = 10,

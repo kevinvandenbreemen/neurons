@@ -1,4 +1,4 @@
-package com.vandenbreemen.neurons.evolution
+package com.vandenbreemen.neurons.evolution.model
 
 import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import kotlin.random.Random
@@ -164,17 +164,5 @@ class GeneticPool(
     fun reinitialize() {
         pool = List(poolSize) { generateGenome() }
         fitnessScores = List(poolSize) { 0.0 }
-    }
-
-    companion object {
-        fun create(
-            rows: Int,
-            cols: Int,
-            poolSize: Int,
-            mutationRate: Double = 0.1,
-            pruningRate: Double = 0.05
-        ): GeneticPool {
-            return GeneticPool(rows, cols, poolSize, mutationRate, pruningRate)
-        }
     }
 } 
