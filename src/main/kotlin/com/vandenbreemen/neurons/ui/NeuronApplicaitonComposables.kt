@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.vandenbreemen.neurons.evolution.model.GeneticWorldState
 import com.vandenbreemen.neurons.world.view.NavigationWorldSimulationView
-import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import com.vandenbreemen.neurons.world.viewmodel.NeuronInfoState

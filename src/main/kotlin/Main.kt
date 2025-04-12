@@ -12,13 +12,13 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.vandenbreemen.neurons.evolution.model.GeneticWorldState
 import com.vandenbreemen.neurons.evolution.view.GeneticWorldDialog
 import com.vandenbreemen.neurons.model.NeuralNet
 import com.vandenbreemen.neurons.model.Neuron
 import com.vandenbreemen.neurons.ui.NeuralApplicationComposables
 import com.vandenbreemen.neurons.ui.NeuralNetworkDisplay
 import com.vandenbreemen.neurons.ui.NeuronLegendDialog
-import com.vandenbreemen.neurons.world.viewmodel.GeneticWorldState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
 import com.vandenbreemen.neurons.world.viewmodel.NeuronApplicationViewModel
 import com.vandenbreemen.neurons.world.viewmodel.StaticNeuralNetworkAppState
