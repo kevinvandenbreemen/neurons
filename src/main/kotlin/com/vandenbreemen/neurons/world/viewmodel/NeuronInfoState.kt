@@ -9,6 +9,9 @@ class NeuronInfoState(private val neuron: Neuron) {
     val type: String get() = neuron::class.simpleName ?: "Unknown"
     val activation: Double get() = neuron.activation
     val connections: List<ConnectionInfo> get() = neuron.connections.map { ConnectionInfo(it.neuron, it.weight) }
+    val weightCalculatorTypeName: String
+        get() = neuron.weightCalculator::class.simpleName ?: "Unknown"
+
 
     fun copy(): NeuronInfoState {
         return NeuronInfoState(neuron)
