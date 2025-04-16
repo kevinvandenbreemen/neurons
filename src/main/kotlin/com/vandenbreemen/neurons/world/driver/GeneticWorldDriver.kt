@@ -118,11 +118,6 @@ class GeneticWorldDriver(
                     didAgentMove = true
                 }
 
-
-                if (simulation.isAgentOutOfBounds(agent)) {  //  Going out of bounds is right off
-                    return 0.0
-                }
-
                 if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
                     return 0.0
                 }
