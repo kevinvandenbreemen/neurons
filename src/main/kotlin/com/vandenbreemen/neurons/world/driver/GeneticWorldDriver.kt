@@ -75,7 +75,7 @@ class GeneticWorldDriver(
         numMoves: Int,
         numWorldsToTest: Int = 1,
         painTolerance: Double = 5.0,
-        minViability: Double = 0.1,
+        minViability: Double = 0.01,
         minDistinctPointsInPath: Int = 10,
     ): Double {
         var totalScore = 0.0
