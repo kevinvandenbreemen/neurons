@@ -101,7 +101,7 @@ class GeneticPool(
 
         val prunableIndices = fitnessScores.indices
             .filter { !eliteIndices.contains(it) }
-            .take(eliteSize)
+            .take((eliteSize * pruningRate).toInt())
         newPool.addAll(prunableIndices.map { prune(pool[it]) })
 
         // Generate rest of new generation through crossover, mutation, and new genes

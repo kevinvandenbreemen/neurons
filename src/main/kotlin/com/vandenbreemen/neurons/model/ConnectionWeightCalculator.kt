@@ -1,5 +1,6 @@
 package com.vandenbreemen.neurons.model
 
+import kotlin.math.abs
 import com.vandenbreemen.neurons.math.combinedSigmoidV1
 
 interface ConnectionWeightCalculator {
@@ -30,15 +31,18 @@ interface ConnectionWeightCalculator {
     ): Double
 }
 
-private fun defaultSigmoidCalculation(sourceNeuron: Neuron, targetNeuron: Neuron): Double {
-    return combinedSigmoidV1(
-        sourceNeuron.activation,
-        targetNeuron.activation,
-        sourceNeuron.sigmoidMultiplier + targetNeuron.sigmoidMultiplier,
-        1.0 / (sourceNeuron.sigmoidMultiplier + targetNeuron.sigmoidMultiplier),
-        1.0,
-        0.0
-    )
+private fun normalizedStrengthUpdate(
+    sourceNeuron: Neuron,
+    targetNeuron: Neuron,
+    currentStrength: Double,
+    learningRate: Double
+): Double {
+    val maxPossibleSrc = abs(sourceNeuron.sigmoidMultiplier)
+    val maxPossibleTgt = abs(targetNeuron.sigmoidMultiplier)
+    val proxSrc = abs(sourceNeuron.activation) / maxPossibleSrc
+    val proxTgt = abs(targetNeuron.activation) / maxPossibleTgt
+    val delta = (proxSrc * proxTgt) - currentStrength // Avoid division by zero
+    return currentStrength + (learningRate * delta)
 }
 
 object DefaultConnectionWeightCalculator : ConnectionWeightCalculator {
@@ -48,11 +52,11 @@ object DefaultConnectionWeightCalculator : ConnectionWeightCalculator {
         currentStrength: Double,
         learningRate: Double
     ): Double {
-        return defaultSigmoidCalculation(
-            sourceNeuron,
-            targetNeuron
-        )
+
+        return normalizedStrengthUpdate(sourceNeuron, targetNeuron, currentStrength, learningRate)
+
     }
+
 
     override fun calculateStartingConnectionWeight(
         sourceNeuron: Neuron,
@@ -70,11 +74,7 @@ object StrengthBasedConnector : ConnectionWeightCalculator {
         currentStrength: Double,
         learningRate: Double
     ): Double {
-        //return currentStrength + learningRate * max(sourceNeuron.activation, targetNeuron.activation)
-        return defaultSigmoidCalculation(
-            sourceNeuron,
-            targetNeuron
-        )
+        return normalizedStrengthUpdate(sourceNeuron, targetNeuron, currentStrength, learningRate)
     }
 
     override fun calculateStartingConnectionWeight(

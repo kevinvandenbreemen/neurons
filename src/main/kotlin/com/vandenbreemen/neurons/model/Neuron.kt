@@ -60,7 +60,7 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     }
 
     fun sigmoid(x: Double): Double {
-        return sigmoidNumeratorMultiplier / (1 + exp(-(x + sigmoidExpDelta)))
+        return sigmoidNumeratorMultiplier / (1 + exp(-(-sigmoidNumeratorMultiplier + (x * sigmoidExpDelta))))
     }
 
     /**

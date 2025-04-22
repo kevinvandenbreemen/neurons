@@ -21,10 +21,9 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in 0x00..0x1F }.forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                // Map activation from [0, 1] to [0, maxMovementDelta]
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(y = currentPos.y - delta)
-                setAgentPosition(agent, newPos)
+                val newY = (currentPos.y - delta + world.height) % world.height
+                setAgentPosition(agent, currentPos.copy(y = newY))
             }
         }
 
@@ -33,8 +32,9 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(x = currentPos.x + delta, y = currentPos.y - delta)
-                setAgentPosition(agent, newPos)
+                val newX = (currentPos.x + delta + world.width) % world.width
+                val newY = (currentPos.y - delta + world.height) % world.height
+                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
             }
         }
 
@@ -43,8 +43,8 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(x = currentPos.x + delta)
-                setAgentPosition(agent, newPos)
+                val newX = (currentPos.x + delta + world.width) % world.width
+                setAgentPosition(agent, currentPos.copy(x = newX))
             }
         }
 
@@ -53,8 +53,9 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(x = currentPos.x + delta, y = currentPos.y + delta)
-                setAgentPosition(agent, newPos)
+                val newX = (currentPos.x + delta + world.width) % world.width
+                val newY = (currentPos.y + delta + world.height) % world.height
+                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
             }
         }
 
@@ -63,8 +64,8 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(y = currentPos.y + delta)
-                setAgentPosition(agent, newPos)
+                val newY = (currentPos.y + delta + world.height) % world.height
+                setAgentPosition(agent, currentPos.copy(y = newY))
             }
         }
 
@@ -73,8 +74,9 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(x = currentPos.x - delta, y = currentPos.y + delta)
-                setAgentPosition(agent, newPos)
+                val newX = (currentPos.x - delta + world.width) % world.width
+                val newY = (currentPos.y + delta + world.height) % world.height
+                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
             }
         }
 
@@ -83,8 +85,8 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(x = currentPos.x - delta)
-                setAgentPosition(agent, newPos)
+                val newX = (currentPos.x - delta + world.width) % world.width
+                setAgentPosition(agent, currentPos.copy(x = newX))
             }
         }
 
@@ -93,8 +95,9 @@ class NavigationWorldSimulation(
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newPos = currentPos.copy(x = currentPos.x - delta, y = currentPos.y - delta)
-                setAgentPosition(agent, newPos)
+                val newX = (currentPos.x - delta + world.width) % world.width
+                val newY = (currentPos.y - delta + world.height) % world.height
+                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
             }
         }
     }
@@ -103,81 +106,49 @@ class NavigationWorldSimulation(
         // North
         agent.findSensoryNeurons { idByte -> idByte in 0x00..0x1F }.forEach { neuron ->
             // Sensory neuron for detecting walls to the north
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 0, -1))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 0, -1))
         }
 
         // Northeast
         agent.findSensoryNeurons { idByte -> idByte in 0x20..0x3F }.forEach { neuron ->
             // Sensory neuron for detecting walls to the northeast
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, -1))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, -1))
         }
 
         // East
         agent.findSensoryNeurons { idByte -> idByte in 0x40..0x5F }.forEach { neuron ->
             // Sensory neuron for detecting walls to the east
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, 0))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, 0))
         }
 
         // Southeast
         agent.findSensoryNeurons { idByte -> idByte in 0x60..0x7F }.forEach { neuron ->
             // Sensory neuron for detecting walls to the southeast
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, 1))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, 1))
         }
 
         // South
         agent.findSensoryNeurons { idByte -> idByte in 0x80..0x9F }.forEach { neuron ->
             // Sensory neuron for detecting walls to the south
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 0, 1))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 0, 1))
         }
 
         // Southwest
         agent.findSensoryNeurons { idByte -> idByte in 0xA0..0xBF }.forEach { neuron ->
             // Sensory neuron for detecting walls to the southwest
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, 1))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, 1))
         }
 
         // West
         agent.findSensoryNeurons { idByte -> idByte in 0xC0..0xDF }.forEach { neuron ->
             // Sensory neuron for detecting walls to the west
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, 0))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, 0))
         }
 
         // Northwest
         agent.findSensoryNeurons { idByte -> idByte in 0xE0..0xFF }.forEach { neuron ->
             // Sensory neuron for detecting walls to the northwest
-            if (isAgentOutOfBounds(agent)) {
-                neuron.stimulateFromEnvironment(1.0)
-            } else {
-                neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, -1))
-            }
+            neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, -1))
         }
     }
 
@@ -204,13 +175,13 @@ class NavigationWorldSimulation(
         var distance = 0
         var x = currentPos.x
         var y = currentPos.y
-        
+
         // Maximum distance to check (half the world size)
         val maxDistance = minOf(world.width, world.height) / 2
 
         while (distance < maxDistance) {
-            x += dx
-            y += dy
+            x = (x + dx + world.width) % world.width // Wrap around x
+            y = (y + dy + world.height) % world.height // Wrap around y
             distance++
 
             if (world.isWall(x, y)) {
@@ -229,11 +200,6 @@ class NavigationWorldSimulation(
     private fun isAgentOnWall(agent: NeuralAgent): Boolean {
         val currentPos = getAgentPosition(agent) ?: return false
         return world.isWall(currentPos.x, currentPos.y)
-    }
-
-    fun isAgentOutOfBounds(agent: NeuralAgent): Boolean {
-        val currentPos = getAgentPosition(agent) ?: return false
-        return world.isOutOfBounds(currentPos.x, currentPos.y)
     }
 
 }

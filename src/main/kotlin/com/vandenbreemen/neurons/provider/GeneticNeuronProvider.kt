@@ -75,7 +75,7 @@ class GeneticNeuronProvider(
     private fun getSigmoidExpDeltaFromGene(gene: Long): Double {
         // Use bits 41-48 (8 bits) to determine sigmoidExpDelta (-3.0 to 3.0)
         val incrementValue = ((gene shr 41) and 0xFF).toInt() // 8 bits = 256 possible values
-        return (incrementValue * (6.0 / 255.0) - 3.0).coerceIn(-3.0, 3.0) // Map to range -3.0 to 3.0
+        return (incrementValue * (6.0 / 255.0) + 7.0) // Map to range 7.0 to 13.0
     }
 
     private fun getSigmoidNumeratorMultiplierFromGene(gene: Long): Double {
