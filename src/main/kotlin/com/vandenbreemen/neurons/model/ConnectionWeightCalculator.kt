@@ -1,7 +1,6 @@
 package com.vandenbreemen.neurons.model
 
 import kotlin.math.abs
-import com.vandenbreemen.neurons.math.combinedSigmoidV1
 
 interface ConnectionWeightCalculator {
     /**
