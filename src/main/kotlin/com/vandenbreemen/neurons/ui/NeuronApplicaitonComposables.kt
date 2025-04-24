@@ -49,12 +49,14 @@ fun NeuralApplicationComposables(state: NeuralNetApplicationState) {
 
     // Show neuron details if a neuron is selected, regardless of state
     state.selectedNeuron?.let { neuron ->
-        NeuronDetailsUI(neuron)
+        NeuronDetailsUI(neuron) {
+            state.selectedNeuron = null
+        }
     }
 }
 
 @Composable
-private fun NeuronDetailsUI(neuron: NeuronInfoState) {
+private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
     var showDetails by remember { mutableStateOf(true) }
 
     if (showDetails) {
@@ -150,7 +152,10 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState) {
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showDetails = false }) {
+                TextButton(onClick = {
+                    showDetails = false
+                    onCloseClick()
+                }) {
                     Text("Close")
                 }
             }
