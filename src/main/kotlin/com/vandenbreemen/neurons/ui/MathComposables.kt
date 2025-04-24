@@ -111,12 +111,13 @@ fun FunctionPlot(
             Offset(x.toFloat(), y)
         }
 
-        // Draw function points
-        points.forEach { point ->
-            drawCircle(
+        // Draw function as a series of lines
+        for (i in 0 until points.size - 1) {
+            drawLine(
                 color = Color.Blue,
-                radius = 2f,
-                center = point
+                start = points[i],
+                end = points[i + 1],
+                strokeWidth = 1f
             )
         }
     }
