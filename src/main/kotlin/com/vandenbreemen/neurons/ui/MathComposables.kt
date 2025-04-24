@@ -54,53 +54,53 @@ fun FunctionPlot(
         )
 
         // Draw axis labels
-        val xStep = (endX - startX) / 10
-        val yStep = (endY - startY) / 10
+        val xStep = if (endX != startX) (endX - startX) / 10 else 1.0
+        val yStep = if (endY != startY) (endY - startY) / 10 else 1.0
 
         // X-axis labels
-        for (x in startX.toInt()..endX.toInt()) {
-            if (x % xStep.toInt() == 0) {
-                val xPos = ((x - startX) * xScale).toFloat()
-                // Draw tick mark
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(xPos, zeroY - 5f),
-                    end = Offset(xPos, zeroY + 5f),
-                    strokeWidth = 1f
-                )
-                // Draw label
-                val text = textMeasurer.measure(
-                    AnnotatedString(x.toString()),
-                    style = TextStyle(fontSize = 12.sp)
-                )
-                drawText(
-                    text,
-                    topLeft = Offset(xPos - text.size.width / 2, zeroY + 10f)
-                )
-            }
+        var currentX = startX
+        while (currentX <= endX) {
+            val xPos = ((currentX - startX) * xScale).toFloat()
+            // Draw tick mark
+            drawLine(
+                color = Color.Gray,
+                start = Offset(xPos, zeroY - 5f),
+                end = Offset(xPos, zeroY + 5f),
+                strokeWidth = 1f
+            )
+            // Draw label
+            val text = textMeasurer.measure(
+                AnnotatedString("%.1f".format(currentX)),
+                style = TextStyle(fontSize = 12.sp)
+            )
+            drawText(
+                text,
+                topLeft = Offset(xPos - text.size.width / 2, zeroY + 10f)
+            )
+            currentX += xStep
         }
 
         // Y-axis labels
-        for (y in startY.toInt()..endY.toInt()) {
-            if (y % yStep.toInt() == 0) {
-                val yPos = height - ((y - startY) * yScale).toFloat()
-                // Draw tick mark
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(zeroX - 5f, yPos),
-                    end = Offset(zeroX + 5f, yPos),
-                    strokeWidth = 1f
-                )
-                // Draw label
-                val text = textMeasurer.measure(
-                    AnnotatedString(y.toString()),
-                    style = TextStyle(fontSize = 12.sp)
-                )
-                drawText(
-                    text,
-                    topLeft = Offset(zeroX - text.size.width - 10f, yPos - text.size.height / 2)
-                )
-            }
+        var currentY = startY
+        while (currentY <= endY) {
+            val yPos = height - ((currentY - startY) * yScale).toFloat()
+            // Draw tick mark
+            drawLine(
+                color = Color.Gray,
+                start = Offset(zeroX - 5f, yPos),
+                end = Offset(zeroX + 5f, yPos),
+                strokeWidth = 1f
+            )
+            // Draw label
+            val text = textMeasurer.measure(
+                AnnotatedString("%.1f".format(currentY)),
+                style = TextStyle(fontSize = 12.sp)
+            )
+            drawText(
+                text,
+                topLeft = Offset(zeroX - text.size.width - 10f, yPos - text.size.height / 2)
+            )
+            currentY += yStep
         }
 
         // Draw function
@@ -110,14 +110,6 @@ fun FunctionPlot(
             val y = height - ((yValue - startY) * yScale).toFloat()
             Offset(x.toFloat(), y)
         }
-
-        // Draw function line
-        drawLine(
-            color = Color.Blue,
-            start = points.first(),
-            end = points.last(),
-            strokeWidth = 2f
-        )
 
         // Draw function points
         points.forEach { point ->
