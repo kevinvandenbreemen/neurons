@@ -71,82 +71,98 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                     Text("Learning Rate: ${neuron.learningRate}")
                     Text("Weight Calculator: ${neuron.weightCalculatorTypeName}")
                     Text("Connections:")
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp)
-                            .padding(16.dp)
-                    ) {
-
-                        val measurer = rememberTextMeasurer()
-
-                        Canvas(
-                            modifier = Modifier.fillMaxSize()
-                                .background(Color.Black)
+                    Row {
+                        Box(
+                            modifier = Modifier
+                                .size(200.dp)
+                                .padding(16.dp)
                         ) {
-                            val centerX = size.width / 2
-                            val centerY = size.height / 2
-                            val radius = minOf(size.width, size.height) * 0.4f
+                            val measurer = rememberTextMeasurer()
 
-                            // Draw the center neuron
-                            drawCircle(
-                                color = Color.Gray,
-                                radius = 10f,
-                                center = Offset(centerX, centerY)
-                            )
+                            Canvas(
+                                modifier = Modifier.fillMaxSize()
+                                    .background(Color.Black)
+                            ) {
+                                val centerX = size.width / 2
+                                val centerY = size.height / 2
+                                val radius = minOf(size.width, size.height) * 0.4f
 
-                            // Draw connections in a circle around the center
-                            neuron.connections.forEachIndexed { index, connection ->
-                                val angle = (index * 2 * Math.PI / neuron.connections.size).toFloat()
-                                val targetX = centerX + radius * kotlin.math.cos(angle)
-                                val targetY = centerY + radius * kotlin.math.sin(angle)
-
-                                // Draw connection line
-                                val color = if (connection.weight > 0) Color.Green.copy(
-                                    alpha = kotlin.math.abs(
-                                        connection.weight.coerceIn(
-                                            0.0,
-                                            1.0
-                                        )
-                                    ).toFloat()
-                                ) else Color.Red.copy(
-                                    alpha = kotlin.math.abs(connection.weight.coerceIn(0.0, 1.0)).toFloat()
-                                )
-                                drawLine(
-                                    color = color.copy(alpha = kotlin.math.abs(connection.weight).toFloat()),
-                                    start = Offset(centerX, centerY),
-                                    end = Offset(targetX, targetY),
-                                    strokeWidth = 2f
-                                )
-
-                                // Draw target neuron
+                                // Draw the center neuron
                                 drawCircle(
                                     color = Color.Gray,
-                                    radius = 8f,
-                                    center = Offset(targetX, targetY)
+                                    radius = 10f,
+                                    center = Offset(centerX, centerY)
                                 )
 
-                                // Draw weight value
-                                val result = measurer.measure(
-                                    AnnotatedString(
-                                        text = "%.2f".format(connection.weight),
-                                        spanStyles = listOf()
-                                    ),
-                                    style = TextStyle(
-                                        fontSize = 12.sp,
-                                        color = Color.White
-                                    ),
-                                    maxLines = 1,
-                                    softWrap = false
-                                )
-                                drawText(
-                                    result,
-                                    topLeft = Offset(
-                                        x = targetX - result.size.width / 2,
-                                        y = targetY - result.size.height / 2
+                                // Draw connections in a circle around the center
+                                neuron.connections.forEachIndexed { index, connection ->
+                                    val angle = (index * 2 * Math.PI / neuron.connections.size).toFloat()
+                                    val targetX = centerX + radius * kotlin.math.cos(angle)
+                                    val targetY = centerY + radius * kotlin.math.sin(angle)
+
+                                    // Draw connection line
+                                    val color = if (connection.weight > 0) Color.Green.copy(
+                                        alpha = kotlin.math.abs(
+                                            connection.weight.coerceIn(
+                                                0.0,
+                                                1.0
+                                            )
+                                        ).toFloat()
+                                    ) else Color.Red.copy(
+                                        alpha = kotlin.math.abs(connection.weight.coerceIn(0.0, 1.0)).toFloat()
                                     )
-                                )
+                                    drawLine(
+                                        color = color.copy(alpha = kotlin.math.abs(connection.weight).toFloat()),
+                                        start = Offset(centerX, centerY),
+                                        end = Offset(targetX, targetY),
+                                        strokeWidth = 2f
+                                    )
 
+                                    // Draw target neuron
+                                    drawCircle(
+                                        color = Color.Gray,
+                                        radius = 8f,
+                                        center = Offset(targetX, targetY)
+                                    )
+
+                                    // Draw weight value
+                                    val result = measurer.measure(
+                                        AnnotatedString(
+                                            text = "%.2f".format(connection.weight),
+                                            spanStyles = listOf()
+                                        ),
+                                        style = TextStyle(
+                                            fontSize = 12.sp,
+                                            color = Color.White
+                                        ),
+                                        maxLines = 1,
+                                        softWrap = false
+                                    )
+                                    drawText(
+                                        result,
+                                        topLeft = Offset(
+                                            x = targetX - result.size.width / 2,
+                                            y = targetY - result.size.height / 2
+                                        )
+                                    )
+                                }
                             }
+                        }
+
+                        // Add activation function plot
+                        Box(
+                            modifier = Modifier
+                                .size(200.dp)
+                                .padding(16.dp)
+                        ) {
+                            FunctionPlot(
+                                startX = -5.0,
+                                endX = 5.0,
+                                startY = -5.0,
+                                endY = 5.0,
+                                f = neuron.neuronSigmoidFunction,
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                     }
                 }

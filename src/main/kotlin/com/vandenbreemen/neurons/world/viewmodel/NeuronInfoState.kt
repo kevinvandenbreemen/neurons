@@ -13,6 +13,10 @@ class NeuronInfoState(private val neuron: Neuron) {
     val learningRate: Double get() = neuron.learningRateOverride
     val weightCalculatorTypeName: String
         get() = neuron.weightCalculator::class.simpleName ?: "Unknown"
+    val neuronSigmoidFunction: (Double) -> Double
+        get() = {
+            neuron.sigmoid(it)
+        }
 
 
     fun copy(): NeuronInfoState {
