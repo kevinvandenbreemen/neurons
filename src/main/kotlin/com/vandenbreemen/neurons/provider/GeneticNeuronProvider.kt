@@ -59,15 +59,17 @@ class GeneticNeuronProvider(
     }
 
     private fun getSigmoidExpDeltaFromGene(gene: LongArray): Double {
-        // Use first 32 bits of the second long to determine sigmoidExpDelta (7.0 to 13.0)
-        val incrementValue = ((gene[1] shr 0) and 0xFFFFFFFF).toInt() // 32 bits = 4,294,967,296 possible values
-        return (incrementValue * (6.0 / 4294967295.0) + 7.0) // Map to range 7.0 to 13.0
+        val min = 7.0
+        val max = 13.0
+        val incrementValue = ((gene[1] shr 0) and 0xFFFFFFFF).toDouble() // 32 bits = 4,294,967,296 possible values
+        return (incrementValue * ((max - min) / 4294967295.0) + min) // Map to range 7.0 to 13.0
     }
 
     private fun getSigmoidNumeratorMultiplierFromGene(gene: LongArray): Double {
-        // Use second 32 bits of the second long to determine sigmoidNumeratorMultiplier (-5.0 to 5.0)
-        val incrementValue = ((gene[1] shr 32) and 0xFFFFFFFF).toInt() // 32 bits = 4,294,967,296 possible values
-        return (incrementValue * (10.0 / 4294967295.0) - 5.0).coerceIn(-5.0, 5.0) // Map to range -5.0 to 5.0
+        val min = -5.0
+        val max = 5.0
+        val incrementValue = ((gene[1] shr 32) and 0xFFFFFFFF).toDouble() // 32 bits = 4,294,967,296 possible values
+        return (incrementValue * ((max - min) / 4294967295.0) + min).coerceIn(min, max) // Map to range -5.0 to 5.0
     }
 
     private fun assembleNeuronBasedOnGene(gene: LongArray): Neuron {
