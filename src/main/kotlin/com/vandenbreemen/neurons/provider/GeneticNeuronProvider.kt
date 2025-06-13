@@ -53,9 +53,10 @@ class GeneticNeuronProvider(
     }
 
     private fun getLearningRateFromGene(gene: LongArray): Double {
-        // Use bits 30-37 (8 bits) to determine learning rate (0-1.0 in increments of 1/1024)
-        val incrementValue = ((gene[0] shr 30) and 0x3FF).toInt() // 10 bits = 1024 possible values
-        return (incrementValue * (1.0 / 1024.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
+        val min = 0.0
+        val max = 1.0
+        val incrementValue = ((gene[2] shr 0) and 0xFFFF).toDouble() // 16 bits = 65,536 possible values
+        return (incrementValue * ((max - min) / 65535.0) + min).coerceIn(min, max) // Map to range 0.0 to 1.0
     }
 
     private fun getSigmoidExpDeltaFromGene(gene: LongArray): Double {
