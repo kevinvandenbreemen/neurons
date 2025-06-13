@@ -38,22 +38,6 @@ class GeneticNeuronProvider(
         return assembleNeuronBasedOnGene(gene)
     }
 
-    private fun getDirectionFromGene(gene: Long): Direction {
-        // Use bits 8-10 (3 bits) to determine direction
-        val directionBits = (gene shr 8) and 0x7 // 0x7 is binary 111 (3 bits)
-        return when (directionBits) {
-            0L -> Direction.UP
-            1L -> Direction.DOWN
-            2L -> Direction.LEFT
-            3L -> Direction.RIGHT
-            4L -> Direction.UP_LEFT
-            5L -> Direction.UP_RIGHT
-            6L -> Direction.DOWN_LEFT
-            7L -> Direction.DOWN_RIGHT
-            else -> Direction.UP // Should never happen due to bit masking
-        }
-    }
-
     private fun getActionIdFromGene(gene: Long): Byte {
         // Use bits 11-18 (8 bits) to determine actionId
         return ((gene shr 11) and 0xFF).toByte()
