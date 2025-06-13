@@ -113,16 +113,6 @@ class World(
             val world = World(width, height)
             val random = kotlin.random.Random
 
-            // Create border walls
-            for (x in 0 until width) {
-                world.setBoundary(x, 0, true) // Top border
-                world.setBoundary(x, height - 1, true) // Bottom border
-            }
-            for (y in 0 until height) {
-                world.setBoundary(0, y, true) // Left border
-                world.setBoundary(width - 1, y, true) // Right border
-            }
-
             // Generate random rectangular rooms
             repeat(numRooms) {
                 val roomWidth = random.nextInt(minRoomSize, maxRoomSize)
