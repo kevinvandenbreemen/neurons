@@ -261,9 +261,18 @@ fun Function3DPlot(
         val yAxis = project3D(0.0, yRange, 0.0)
         val zAxis = project3D(0.0, 0.0, 1.0)
 
-        // Draw axis lines
-        drawLine(color = Color.Red, start = origin, end = xAxis, strokeWidth = 2f)
+        // Draw axis lines with color based on positive/negative
+        // X-axis
+        val xNegAxis = project3D(-xRange, 0.0, 0.0)
+        drawLine(color = Color.Red, start = xNegAxis, end = origin, strokeWidth = 2f)
+        drawLine(color = Color.Green, start = origin, end = xAxis, strokeWidth = 2f)
+
+        // Y-axis
+        val yNegAxis = project3D(0.0, -yRange, 0.0)
+        drawLine(color = Color.Red, start = yNegAxis, end = origin, strokeWidth = 2f)
         drawLine(color = Color.Green, start = origin, end = yAxis, strokeWidth = 2f)
+
+        // Z-axis (keep blue)
         drawLine(color = Color.Blue, start = origin, end = zAxis, strokeWidth = 2f)
 
         // Draw axis labels
