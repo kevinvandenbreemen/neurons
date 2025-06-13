@@ -71,7 +71,7 @@ fun FunctionPlot(
             // Draw label
             val text = textMeasurer.measure(
                 AnnotatedString("%.1f".format(currentX)),
-                style = TextStyle(fontSize = 12.sp)
+                style = TextStyle(fontSize = 8.sp)
             )
             drawText(
                 text,
@@ -94,7 +94,7 @@ fun FunctionPlot(
             // Draw label
             val text = textMeasurer.measure(
                 AnnotatedString("%.1f".format(currentY)),
-                style = TextStyle(fontSize = 12.sp)
+                style = TextStyle(fontSize = 8.sp)
             )
             drawText(
                 text,
