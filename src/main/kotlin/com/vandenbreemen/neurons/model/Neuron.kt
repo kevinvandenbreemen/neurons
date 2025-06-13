@@ -13,6 +13,8 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     open val activation: Double
         get() = value
 
+    var optionalInitialConnectionWeightAndDirectionForRandomDirectedConnectionSetups: Pair<Direction, Double>? = null
+
     private var sigmoidExpDelta = 0.0
     fun setSigmaExpDelta(delta: Double) {
         sigmoidExpDelta = delta
