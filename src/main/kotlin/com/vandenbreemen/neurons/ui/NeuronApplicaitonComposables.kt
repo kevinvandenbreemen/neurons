@@ -3,6 +3,8 @@ package com.vandenbreemen.neurons.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -17,6 +19,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vandenbreemen.neurons.evolution.model.GeneticWorldState
+import com.vandenbreemen.neurons.model.normalizedStrengthUpdate
 import com.vandenbreemen.neurons.world.view.NavigationWorldSimulationView
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetworkDemoState
@@ -64,14 +67,18 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
             onDismissRequest = { showDetails = false },
             title = { Text("Neuron Details") },
             text = {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxWidth()
+                ) {
                     Text("Neuron type: ${neuron.type}")
                     Text("Neuron activation: ${neuron.activation}")
                     Text("Sigmoid Numerator Multiplier:  ${neuron.sigmoidNumeratorMultiplier}")
                     Text("Learning Rate: ${neuron.learningRate}")
                     Text("Weight Calculator: ${neuron.weightCalculatorTypeName}")
                     Text("Connections:")
-                    Row {
+                    Column {
                         Box(
                             modifier = Modifier
                                 .size(200.dp)
@@ -161,6 +168,31 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                                 startY = -5.0,
                                 endY = 5.0,
                                 f = neuron.neuronSigmoidFunction,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        // Add strength update function plot
+                        Box(
+                            modifier = Modifier
+                                .size(200.dp)
+                                .padding(16.dp)
+                        ) {
+                            FunctionPlot(
+                                startX = -1.0,
+                                endX = 1.0,
+                                startY = -1.0,
+                                endY = 1.0,
+                                f = { x ->
+                                    normalizedStrengthUpdate(
+                                        sourceActivation = x,
+                                        targetActivation = x,
+                                        sourceMaxActivation = 1.0,
+                                        targetMaxActivation = 1.0,
+                                        currentStrength = 0.0,
+                                        learningRate = neuron.learningRate
+                                    )
+                                },
                                 modifier = Modifier.fillMaxSize()
                             )
                         }

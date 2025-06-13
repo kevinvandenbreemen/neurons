@@ -30,16 +30,18 @@ interface ConnectionWeightCalculator {
     ): Double
 }
 
-private fun normalizedStrengthUpdate(
-    sourceNeuron: Neuron,
-    targetNeuron: Neuron,
+fun normalizedStrengthUpdate(
+    sourceActivation: Double,
+    targetActivation: Double,
+    sourceMaxActivation: Double,
+    targetMaxActivation: Double,
     currentStrength: Double,
     learningRate: Double
 ): Double {
-    val maxPossibleSrc = abs(sourceNeuron.maxActivationValue)
-    val maxPossibleTgt = abs(targetNeuron.maxActivationValue)
-    val proxSrc = abs(sourceNeuron.activation) / maxPossibleSrc
-    val proxTgt = abs(targetNeuron.activation) / maxPossibleTgt
+    val maxPossibleSrc = abs(sourceMaxActivation)
+    val maxPossibleTgt = abs(targetMaxActivation)
+    val proxSrc = abs(sourceActivation) / maxPossibleSrc
+    val proxTgt = abs(targetActivation) / maxPossibleTgt
     val delta = (proxSrc * proxTgt) - currentStrength // Avoid division by zero
     return currentStrength + (learningRate * delta)
 }
@@ -51,7 +53,14 @@ object StrengthBasedConnector : ConnectionWeightCalculator {
         currentStrength: Double,
         learningRate: Double
     ): Double {
-        return normalizedStrengthUpdate(sourceNeuron, targetNeuron, currentStrength, learningRate)
+        return normalizedStrengthUpdate(
+            sourceNeuron.activation,
+            targetNeuron.activation,
+            sourceNeuron.maxActivationValue,
+            targetNeuron.maxActivationValue,
+            currentStrength,
+            learningRate
+        )
     }
 
     override fun calculateStartingConnectionWeight(
