@@ -190,10 +190,10 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                                         .background(Color.White)
                                 ) {
                                     Function3DPlot(
-                                        startX = -5.0,
-                                        endX = 5.0,
-                                        startY = -5.0,
-                                        endY = 5.0,
+                                        startX = -1.0,
+                                        endX = 1.0,
+                                        startY = -1.0,
+                                        endY = 1.0,
                                         elevation = 75.0,
                                         stepCount = 25,
                                         f = { x, y ->
