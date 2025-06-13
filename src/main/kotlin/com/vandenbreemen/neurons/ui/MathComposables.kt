@@ -259,7 +259,7 @@ fun Function3DPlot(
         val origin = project3D(0.0, 0.0, 0.0)
         val xAxis = project3D(xRange, 0.0, 0.0)
         val yAxis = project3D(0.0, yRange, 0.0)
-        val zAxis = project3D(0.0, 0.0, 1.0)
+        val zAxis = project3D(0.0, 0.0, -endY)  // Negate Z to make it point up
 
         // Draw axis lines with color based on positive/negative
         // X-axis
