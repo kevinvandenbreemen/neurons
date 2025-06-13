@@ -184,7 +184,7 @@ class NavigationWorldSimulation(
             y = (y + dy + world.height) % world.height // Wrap around y
             distance++
 
-            if (world.isWall(x, y)) {
+            if (world.isBoundary(x, y)) {
                 // Return a value between 0.0 and 1.0, where closer walls give higher values
                 // Using inverse square law to make the response more sensitive to nearby walls
                 return 1.0 / (1.0 + (distance * distance))
@@ -199,7 +199,7 @@ class NavigationWorldSimulation(
      */
     private fun isAgentOnWall(agent: NeuralAgent): Boolean {
         val currentPos = getAgentPosition(agent) ?: return false
-        return world.isWall(currentPos.x, currentPos.y)
+        return world.isBoundary(currentPos.x, currentPos.y)
     }
 
 }

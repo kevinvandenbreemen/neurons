@@ -28,7 +28,7 @@ fun WorldSimulationView(
         // Draw walls
         for (y in 0 until simulation.world.height) {
             for (x in 0 until simulation.world.width) {
-                if (simulation.world.isWall(x, y)) {
+                if (simulation.world.isBoundary(x, y)) {
                     drawRect(
                         color = Color.Gray,
                         topLeft = Offset(x * cellWidth, y * cellHeight),

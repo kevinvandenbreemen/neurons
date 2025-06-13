@@ -17,7 +17,7 @@ class World(
      * @param y The y coordinate (row)
      * @return true if the cell is a wall, false otherwise
      */
-    fun isWall(x: Int, y: Int): Boolean {
+    fun isBoundary(x: Int, y: Int): Boolean {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             return true // Treat out-of-bounds as walls
         }
@@ -34,7 +34,7 @@ class World(
      * @param y The y coordinate (row)
      * @param isWall true to make the cell a wall, false to make it empty
      */
-    fun setWall(x: Int, y: Int, isWall: Boolean) {
+    fun setBoundary(x: Int, y: Int, isWall: Boolean) {
         if (x in 0 until width && y in 0 until height) {
             grid[y][x] = isWall
         }
@@ -55,7 +55,7 @@ class World(
         for (i in 0..steps) {
             val x = x1 + (dx * i / steps)
             val y = y1 + (dy * i / steps)
-            setWall(x, y, true)
+            setBoundary(x, y, true)
         }
     }
 
@@ -69,7 +69,7 @@ class World(
     fun createWallRectangle(x1: Int, y1: Int, x2: Int, y2: Int) {
         for (x in x1..x2) {
             for (y in y1..y2) {
-                setWall(x, y, true)
+                setBoundary(x, y, true)
             }
         }
     }
@@ -78,7 +78,7 @@ class World(
         val emptyCells = mutableListOf<AgentPosition>()
         for (y in 0 until height) {
             for (x in 0 until width) {
-                if (!isWall(x, y)) {
+                if (!isBoundary(x, y)) {
                     emptyCells.add(AgentPosition(x, y))
                 }
             }
@@ -119,12 +119,12 @@ class World(
 
             // Create border walls
             for (x in 0 until width) {
-                world.setWall(x, 0, true) // Top border
-                world.setWall(x, height - 1, true) // Bottom border
+                world.setBoundary(x, 0, true) // Top border
+                world.setBoundary(x, height - 1, true) // Bottom border
             }
             for (y in 0 until height) {
-                world.setWall(0, y, true) // Left border
-                world.setWall(width - 1, y, true) // Right border
+                world.setBoundary(0, y, true) // Left border
+                world.setBoundary(width - 1, y, true) // Right border
             }
 
             // Generate random rectangular rooms
@@ -149,7 +149,7 @@ class World(
             for (x in 1 until width - 1) { // Leave space for border
                 for (y in 1 until height - 1) { // Leave space for border
                     if (random.nextDouble() < wallDensity) {
-                        world.setWall(x, y, true)
+                        world.setBoundary(x, y, true)
                     }
                 }
             }
