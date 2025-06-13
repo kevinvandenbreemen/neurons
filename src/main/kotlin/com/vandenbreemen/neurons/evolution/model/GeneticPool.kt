@@ -91,8 +91,8 @@ class GeneticPool(
                 }
                 else -> {
                     // Tournament selection
-                    val parent1Index = tournamentSelect()
-                    val parent2Index = tournamentSelect()
+                    val parent1Index = tournamentSelect(eliteSize)
+                    val parent2Index = tournamentSelect(eliteSize, exludingIndex = parent1Index)
 
                     // Create child through crossover
                     val offspring = crossover(parent1Index, parent2Index)
@@ -111,8 +111,11 @@ class GeneticPool(
         fitnessScores = List(generationSize) { 0.0 }
     }
 
-    private fun tournamentSelect(tournamentSize: Int = 3): Int {
-        val tournament = (0 until poolSize).shuffled().take(tournamentSize)
+    private fun tournamentSelect(tournamentSize: Int = 3, exludingIndex: Int? = null): Int {
+        val tournament = (0 until poolSize)
+            .filter { it != exludingIndex }
+            .shuffled()
+            .take(tournamentSize)
         return tournament.maxByOrNull { fitnessScores[it] } ?: tournament.first()
     }
 
