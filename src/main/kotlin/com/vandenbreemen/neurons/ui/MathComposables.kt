@@ -1,5 +1,6 @@
 package com.vandenbreemen.neurons.ui
 
+import androidx.compose.animation.core.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -15,7 +15,6 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.absoluteValue
 import kotlin.math.exp
 
 @Composable
@@ -149,123 +148,128 @@ fun Function3DPlot(
 ) {
     val textMeasurer = rememberTextMeasurer()
 
+    // Create an infinite animation for rotation
+    val infiniteTransition = rememberInfiniteTransition()
+    val rotation = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width
         val height = size.height
 
-        // Calculate scales
-        val xScale = width / (endX - startX)
-        val yScale = height / (endY - startY)
+        // 3D transformation parameters
+        val elevation = 45.0 // degrees
+        val scale = 0.8 // Scale factor for the plot
+        val zScale = 0.3 // Scale factor for the z-axis (function values)
 
-        // Draw grid and heat map
-        val cellWidth = width / 50  // 50x50 grid
-        val cellHeight = height / 50
+        // Convert angles to radians
+        val elevationRad = elevation * Math.PI / 180.0
+        val rotationRad = (rotation.value * Math.PI / 180.0)
 
-        // Draw heat map
-        for (i in 0..50) {
-            for (j in 0..50) {
-                val x = startX + (i * (endX - startX) / 50)
-                val y = startY + (j * (endY - startY) / 50)
-                val value = f(x, y)
+        // Calculate the center of the plot
+        val centerX = width / 2
+        val centerY = height / 2
 
-                // Convert value to color (blue for negative, red for positive)
-                val color = if (value < 0) {
-                    Color.Blue.copy(alpha = value.absoluteValue.coerceIn(0.0, 1.0).toFloat())
-                } else {
-                    Color.Red.copy(alpha = value.coerceIn(0.0, 1.0).toFloat())
+        // Function to project 3D point to 2D
+        fun project3D(x: Double, y: Double, z: Double): Offset {
+            // Apply rotation around Y axis
+            val rotatedX = x * Math.cos(rotationRad) + z * Math.sin(rotationRad)
+            val rotatedZ = -x * Math.sin(rotationRad) + z * Math.cos(rotationRad)
+
+            // Apply elevation
+            val elevatedY = y * Math.cos(elevationRad) - rotatedZ * Math.sin(elevationRad)
+            val elevatedZ = y * Math.sin(elevationRad) + rotatedZ * Math.cos(elevationRad)
+
+            // Project to 2D
+            val projectedX = centerX + (rotatedX * scale * width / 2)
+            val projectedY = centerY - (elevatedY * scale * height / 2)
+
+            return Offset(projectedX.toFloat(), projectedY.toFloat())
+        }
+
+        // Draw the surface
+        val gridSize = 20
+        val xStep = (endX - startX) / gridSize
+        val yStep = (endY - startY) / gridSize
+
+        // Draw the surface grid
+        for (i in 0..gridSize) {
+            for (j in 0..gridSize) {
+                val x = startX + i * xStep
+                val y = startY + j * yStep
+                val z = f(x, y) * zScale
+
+                val point = project3D(x, y, z)
+
+                // Draw vertical lines
+                if (i < gridSize) {
+                    val nextX = startX + (i + 1) * xStep
+                    val nextZ = f(nextX, y) * zScale
+                    val nextPoint = project3D(nextX, y, nextZ)
+                    drawLine(
+                        color = Color.Gray.copy(alpha = 0.5f),
+                        start = point,
+                        end = nextPoint,
+                        strokeWidth = 1f
+                    )
                 }
 
-                drawRect(
-                    color = color,
-                    topLeft = Offset(i * cellWidth, j * cellHeight),
-                    size = Size(cellWidth, cellHeight)
+                // Draw horizontal lines
+                if (j < gridSize) {
+                    val nextY = startY + (j + 1) * yStep
+                    val nextZ = f(x, nextY) * zScale
+                    val nextPoint = project3D(x, nextY, nextZ)
+                    drawLine(
+                        color = Color.Gray.copy(alpha = 0.5f),
+                        start = point,
+                        end = nextPoint,
+                        strokeWidth = 1f
+                    )
+                }
+
+                // Draw points
+                drawCircle(
+                    color = if (z > 0) Color.Red else Color.Blue,
+                    radius = 2f,
+                    center = point
                 )
             }
         }
 
         // Draw axes
-        drawLine(
-            color = Color.Gray,
-            start = Offset(0f, height),
-            end = Offset(width, height),
-            strokeWidth = 1f
-        )
-        drawLine(
-            color = Color.Gray,
-            start = Offset(0f, 0f),
-            end = Offset(0f, height),
-            strokeWidth = 1f
-        )
+        val origin = project3D(0.0, 0.0, 0.0)
+        val xAxis = project3D(1.0, 0.0, 0.0)
+        val yAxis = project3D(0.0, 1.0, 0.0)
+        val zAxis = project3D(0.0, 0.0, 1.0)
+
+        // Draw axis lines
+        drawLine(color = Color.Red, start = origin, end = xAxis, strokeWidth = 2f)
+        drawLine(color = Color.Green, start = origin, end = yAxis, strokeWidth = 2f)
+        drawLine(color = Color.Blue, start = origin, end = zAxis, strokeWidth = 2f)
 
         // Draw axis labels
-        val xStep = (endX - startX) / 5
-        val yStep = (endY - startY) / 5
-
-        // X-axis labels
-        for (i in 0..5) {
-            val x = startX + i * xStep
-            val xPos = (i * width / 5).toFloat()
-
-            // Draw tick mark
-            drawLine(
-                color = Color.Gray,
-                start = Offset(xPos, height - 5f),
-                end = Offset(xPos, height + 5f),
-                strokeWidth = 1f
-            )
-
-            // Draw label
-            val text = textMeasurer.measure(
-                AnnotatedString("%.1f".format(x)),
-                style = TextStyle(fontSize = 8.sp)
-            )
-            drawText(
-                text,
-                topLeft = Offset(xPos - text.size.width / 2, height + 10f)
-            )
-        }
-
-        // Y-axis labels
-        for (i in 0..5) {
-            val y = startY + i * yStep
-            val yPos = height - (i * height / 5).toFloat()
-
-            // Draw tick mark
-            drawLine(
-                color = Color.Gray,
-                start = Offset(-5f, yPos),
-                end = Offset(5f, yPos),
-                strokeWidth = 1f
-            )
-
-            // Draw label
-            val text = textMeasurer.measure(
-                AnnotatedString("%.1f".format(y)),
-                style = TextStyle(fontSize = 8.sp)
-            )
-            drawText(
-                text,
-                topLeft = Offset(-text.size.width - 10f, yPos - text.size.height / 2)
-            )
-        }
-
-        // Draw value labels
-        val valueText = textMeasurer.measure(
-            AnnotatedString("Source Activation →"),
-            style = TextStyle(fontSize = 8.sp)
+        val xLabel = textMeasurer.measure(
+            AnnotatedString("X"),
+            style = TextStyle(fontSize = 8.sp, color = Color.Red)
         )
-        drawText(
-            valueText,
-            topLeft = Offset(width / 2 - valueText.size.width / 2, height + 25f)
-        )
+        drawText(xLabel, topLeft = Offset(xAxis.x, xAxis.y - xLabel.size.height))
 
-        val valueText2 = textMeasurer.measure(
-            AnnotatedString("Target Activation ↑"),
-            style = TextStyle(fontSize = 8.sp)
+        val yLabel = textMeasurer.measure(
+            AnnotatedString("Y"),
+            style = TextStyle(fontSize = 8.sp, color = Color.Green)
         )
-        drawText(
-            valueText2,
-            topLeft = Offset(-valueText2.size.width - 15f, height / 2)
+        drawText(yLabel, topLeft = Offset(yAxis.x, yAxis.y - yLabel.size.height))
+
+        val zLabel = textMeasurer.measure(
+            AnnotatedString("Z"),
+            style = TextStyle(fontSize = 8.sp, color = Color.Blue)
         )
+        drawText(zLabel, topLeft = Offset(zAxis.x, zAxis.y - zLabel.size.height))
     }
 }
