@@ -63,6 +63,9 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
     var showDetails by remember { mutableStateOf(true) }
 
     if (showDetails) {
+
+        val boxSizeAccomodation = 200.dp
+
         AlertDialog(
             onDismissRequest = { showDetails = false },
             title = { Text("Neuron Details") },
@@ -159,7 +162,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                         Text("Activation Function", style = TextStyle(fontSize = 16.sp))
                         Box(
                             modifier = Modifier
-                                .size(200.dp)
+                                .size(boxSizeAccomodation)
                                 .padding(16.dp)
                         ) {
                             FunctionPlot(
@@ -175,18 +178,18 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                         Text("Connection Strength Update", style = TextStyle(fontSize = 16.sp))
                         Box(
                             modifier = Modifier
-                                .size(200.dp)
+                                .size(boxSizeAccomodation)
                                 .padding(16.dp)
                         ) {
-                            FunctionPlot(
-                                startX = -1.0,
-                                endX = 1.0,
-                                startY = -1.0,
-                                endY = 1.0,
-                                f = { x ->
+                            Function3DPlot(
+                                startX = -5.0,
+                                endX = 5.0,
+                                startY = -5.0,
+                                endY = 5.0,
+                                f = { x, y ->
                                     normalizedStrengthUpdate(
                                         sourceActivation = x,
-                                        targetActivation = x,
+                                        targetActivation = y,
                                         sourceMaxActivation = neuron.sigmoidNumeratorMultiplier,
                                         targetMaxActivation = 1.0,
                                         currentStrength = 0.0,
@@ -198,7 +201,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                         }
 
                         Spacer(
-                            modifier = Modifier.height(48.dp)
+                            modifier = Modifier.height(boxSizeAccomodation)
                         )
                     }
                 }
