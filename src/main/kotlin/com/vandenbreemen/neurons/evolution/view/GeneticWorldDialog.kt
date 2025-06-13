@@ -17,7 +17,6 @@ data class GeneticWorldParams(
     val numMovesPerTest: Int = 100,
     val costOfNotMoving: Double = 1.0,
     val mutationRate: Double = 0.1,
-    val pruningRate: Double = 0.05,
     val eliteSize: Int = 5,
     val learningRate: Double = 0.1,
     val worldWidth: Int = 100,
@@ -45,7 +44,6 @@ fun GeneticWorldDialog(
     var numMovesPerTest by remember { mutableStateOf("100") }
     var costOfNotMoving by remember { mutableStateOf("1.0") }
     var mutationRate by remember { mutableStateOf("0.25") }
-    var pruningRate by remember { mutableStateOf("0.05") }
     var eliteSize by remember { mutableStateOf("25") }
     var worldWidth by remember { mutableStateOf("100") }
     var worldHeight by remember { mutableStateOf("100") }
@@ -106,18 +104,11 @@ fun GeneticWorldDialog(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
-                                value = pruningRate,
-                                onValueChange = { pruningRate = it },
-                                label = { Text("Pruning Rate") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
                                 value = eliteSize,
                                 onValueChange = { eliteSize = it },
                                 label = { Text("Elite Size") },
                                 modifier = Modifier.fillMaxWidth()
                             )
-
                         }
 
                         // Left column - Genetic Algorithm Parameters
@@ -236,7 +227,6 @@ fun GeneticWorldDialog(
                                 numMovesPerTest = numMovesPerTest.toIntOrNull() ?: 100,
                                 costOfNotMoving = costOfNotMoving.toDoubleOrNull() ?: 1.0,
                                 mutationRate = mutationRate.toDoubleOrNull() ?: 0.1,
-                                pruningRate = pruningRate.toDoubleOrNull() ?: 0.05,
                                 eliteSize = eliteSize.toIntOrNull() ?: 5,
                                 learningRate = 0.1,
                                 worldWidth = worldWidth.toIntOrNull() ?: 100,

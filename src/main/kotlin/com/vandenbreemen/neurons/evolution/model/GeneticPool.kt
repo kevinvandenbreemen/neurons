@@ -7,8 +7,7 @@ class GeneticPool(
     private val rows: Int,
     private val cols: Int,
     private val poolSize: Int,
-    private val mutationRate: Double = 0.1,
-    private val pruningRate: Double = 0.05
+    private val mutationRate: Double = 0.1
 ) {
 
     private var pool: List<LongArray> = List(poolSize) { generateGenome() }
@@ -64,28 +63,6 @@ class GeneticPool(
         fitnessScores = fitnessScores.toMutableList().apply { set(index, fitness) }
     }
 
-    private fun prune(genome: LongArray): LongArray {
-        val prunedGenome = genome.copyOf()
-        for (i in prunedGenome.indices) {
-            if (Random.nextDouble() < pruningRate) {
-                // Get the current gene
-                var gene = prunedGenome[i]
-
-                // Clear bits 4-7 (neuron type bits)
-                // 0xF0 is 11110000 in binary, we want to clear these bits
-                val mask = 0xF0L
-                gene = gene and mask.inv()
-
-                // Set neuron type to 1 (DeadNeuron)
-                gene = gene or (1L shl 4)
-
-                // Update the gene in the genome
-                prunedGenome[i] = gene
-            }
-        }
-        return prunedGenome
-    }
-
     fun evolve(generationSize: Int, eliteSize: Int = 2, newGeneProbability: Double = 0.1) {
         require(eliteSize < generationSize) { "Elite size must be less than generation size" }
 
@@ -99,11 +76,6 @@ class GeneticPool(
             .take(eliteSize)
         newPool.addAll(eliteIndices.map { pool[it] })
 
-        val prunableIndices = fitnessScores.indices
-            .filter { !eliteIndices.contains(it) }
-            .take((eliteSize * pruningRate).toInt())
-        newPool.addAll(prunableIndices.map { prune(pool[it]) })
-
         // Generate rest of new generation through crossover, mutation, and new genes
         while (newPool.size < generationSize) {
             val child = when {
@@ -111,7 +83,6 @@ class GeneticPool(
                     // Create a completely new random gene
                     generateGenome()
                 }
-
                 else -> {
                     // Tournament selection
                     val parent1Index = tournamentSelect()
@@ -121,7 +92,8 @@ class GeneticPool(
                     val offspring = crossover(parent1Index, parent2Index)
 
                     // Mutate child with some probability (except for completely new genes)
-                    return mutateGenome(offspring)
+                    mutateGenome(offspring)
+                    offspring
                 }
             }
 

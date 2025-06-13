@@ -9,14 +9,13 @@ open class GeneticFitnessDriver(
     private val brainSizeY: Int,
     private val numGenes: Int,
     mutationRate: Double = 0.1,
-    pruningRate: Double = 0.05,
     private val eliteSize: Int = 5,
     private val numEpochs: Int = 10,
     private val newGeneProbability: Double = 0.1,
     existingGenePool: GeneticPool? = null
 ) {
     private val genePool = existingGenePool ?: GeneticPool(
-        brainSizeX, brainSizeY, numGenes, mutationRate, pruningRate
+        brainSizeX, brainSizeY, numGenes, mutationRate
     )
 
     fun getGenePool(): GeneticPool {

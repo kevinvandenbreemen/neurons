@@ -99,7 +99,7 @@ class GeneticNeuronProvider(
         val neuronType = (gene shr 4) and 0xF
         val neuron = when (neuronType) {
             0L -> Neuron(weightCalculator)
-            1L -> DeadNeuron(weightCalculator)
+            1L -> Neuron(weightCalculator)
             2L -> RelayNeuron(weightCalculator)
             3L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             4L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
@@ -108,19 +108,15 @@ class GeneticNeuronProvider(
                 val incrementValue = ((gene shr 27) and 0x7F).toInt() // 7 bits = 128 possible values
                 BlinkerNeuron(2 + (incrementValue * 2), weightCalculator)
             }
-
             6L -> {
                 PainReceptorNeuron(weightCalculator)
             }
-
             7L -> {
                 Neuron(weightCalculator)
             }
-
             8L -> {
-                DeadNeuron(weightCalculator)
+                Neuron(weightCalculator)
             }
-
             9L -> {
                 RelayNeuron(weightCalculator)
             }
@@ -142,7 +138,7 @@ class GeneticNeuronProvider(
                 Neuron(weightCalculator)
             }
             15L -> {
-                DeadNeuron(weightCalculator)
+                Neuron(weightCalculator)
             }
             else -> {
                 Neuron(weightCalculator)

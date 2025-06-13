@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.model.*
+import com.vandenbreemen.neurons.model.Direction
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
@@ -41,24 +42,6 @@ fun NeuronLegendDialog(
                             )
                         }
                         Text("Fixed Weight Neuron - Maintains constant connection strength")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Canvas(modifier = Modifier.size(30.dp)) {
-                            drawLine(
-                                color = Color.Red,
-                                start = Offset(size.width * 0.2f, size.height * 0.2f),
-                                end = Offset(size.width * 0.8f, size.height * 0.8f),
-                                strokeWidth = 2f
-                            )
-                            drawLine(
-                                color = Color.Red,
-                                start = Offset(size.width * 0.2f, size.height * 0.8f),
-                                end = Offset(size.width * 0.8f, size.height * 0.2f),
-                                strokeWidth = 2f
-                            )
-                        }
-                        Text("Dead Neuron - Does nothing, blocks signal flow")
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -316,25 +299,6 @@ fun NeuralNetworkDisplay(
                                 color = Color.Blue,
                                 radius = dotRadius,
                                 center = Offset(centerX, centerY)
-                            )
-                        }
-
-                        is DeadNeuron -> {
-                            // Draw a red X at the center
-                            val xSize = minOf(cellWidth, cellHeight) * 0.2f // Size of the X
-                            // Draw first diagonal of X
-                            drawLine(
-                                color = Color.Red,
-                                start = Offset(centerX - xSize, centerY - xSize),
-                                end = Offset(centerX + xSize, centerY + xSize),
-                                strokeWidth = 2f
-                            )
-                            // Draw second diagonal of X
-                            drawLine(
-                                color = Color.Red,
-                                start = Offset(centerX - xSize, centerY + xSize),
-                                end = Offset(centerX + xSize, centerY - xSize),
-                                strokeWidth = 2f
                             )
                         }
 
