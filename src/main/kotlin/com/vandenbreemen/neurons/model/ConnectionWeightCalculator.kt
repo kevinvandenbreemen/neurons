@@ -36,8 +36,8 @@ private fun normalizedStrengthUpdate(
     currentStrength: Double,
     learningRate: Double
 ): Double {
-    val maxPossibleSrc = abs(sourceNeuron.sigmoidMultiplier)
-    val maxPossibleTgt = abs(targetNeuron.sigmoidMultiplier)
+    val maxPossibleSrc = abs(sourceNeuron.maxActivationValue)
+    val maxPossibleTgt = abs(targetNeuron.maxActivationValue)
     val proxSrc = abs(sourceNeuron.activation) / maxPossibleSrc
     val proxTgt = abs(targetNeuron.activation) / maxPossibleTgt
     val delta = (proxSrc * proxTgt) - currentStrength // Avoid division by zero

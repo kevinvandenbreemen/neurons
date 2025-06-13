@@ -29,7 +29,7 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
         sigmoidNumeratorMultiplier = multiplier
     }
 
-    val sigmoidMultiplier: Double
+    val maxActivationValue: Double
         get() = sigmoidNumeratorMultiplier
 
     /**
