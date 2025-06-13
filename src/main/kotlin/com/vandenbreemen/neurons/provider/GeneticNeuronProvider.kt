@@ -49,20 +49,20 @@ class GeneticNeuronProvider(
     }
 
     private fun getLearningRateFromGene(gene: Long): Double {
-        // Use bits 34-40 (7 bits) to determine learning rate (0-1.27 in increments of 0.01)
-        val incrementValue = ((gene shr 34) and 0x7F).toInt() // 7 bits = 128 possible values
-        return (incrementValue * (1.0 / 128.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
+        // Use bits 34-43 (10 bits) to determine learning rate (0-1.0 in increments of 1/1024)
+        val incrementValue = ((gene shr 34) and 0x3FF).toInt() // 10 bits = 1024 possible values
+        return (incrementValue * (1.0 / 1024.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
     }
 
     private fun getSigmoidExpDeltaFromGene(gene: Long): Double {
-        // Use bits 41-48 (8 bits) to determine sigmoidExpDelta (-3.0 to 3.0)
-        val incrementValue = ((gene shr 41) and 0xFF).toInt() // 8 bits = 256 possible values
+        // Use bits 44-51 (8 bits) to determine sigmoidExpDelta (-3.0 to 3.0)
+        val incrementValue = ((gene shr 44) and 0xFF).toInt() // 8 bits = 256 possible values
         return (incrementValue * (6.0 / 255.0) + 7.0) // Map to range 7.0 to 13.0
     }
 
     private fun getSigmoidNumeratorMultiplierFromGene(gene: Long): Double {
-        // Use bits 49-56 (8 bits) to determine sigmoidNumeratorMultiplier (-5.0 to 5.0)
-        val incrementValue = ((gene shr 49) and 0xFF).toInt() // 8 bits = 256 possible values
+        // Use bits 52-59 (8 bits) to determine sigmoidNumeratorMultiplier (-5.0 to 5.0)
+        val incrementValue = ((gene shr 52) and 0xFF).toInt() // 8 bits = 256 possible values
         return (incrementValue * (10.0 / 255.0) - 5.0).coerceIn(-5.0, 5.0) // Map to range -5.0 to 5.0
     }
 
