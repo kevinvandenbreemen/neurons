@@ -66,21 +66,23 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
 
         val boxSizeAccomodation = 200.dp
 
+        val neuronInfoStyle = TextStyle(fontSize = 8.sp)
+        val neuronInfoHeaderStyle = TextStyle(fontSize = 10.sp)
         AlertDialog(
             onDismissRequest = { showDetails = false },
-            title = { Text("Neuron Details") },
+            title = { Text("Neuron Details", style = neuronInfoHeaderStyle) },
             text = {
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .fillMaxWidth()
+                        .fillMaxWidth().padding(10.dp)
                 ) {
-                    Text("Neuron type: ${neuron.type}")
-                    Text("Neuron activation: ${neuron.activation}")
-                    Text("Sigmoid Numerator Multiplier:  ${neuron.sigmoidNumeratorMultiplier}")
-                    Text("Learning Rate: ${neuron.learningRate}")
-                    Text("Weight Calculator: ${neuron.weightCalculatorTypeName}")
-                    Text("Connections:")
+                    Text("Neuron type: ${neuron.type}", style = neuronInfoStyle)
+                    Text("Neuron activation: ${neuron.activation}", style = neuronInfoStyle)
+                    Text("Sigmoid Numerator Multiplier:  ${neuron.sigmoidNumeratorMultiplier}", style = neuronInfoStyle)
+                    Text("Learning Rate: ${neuron.learningRate}", style = neuronInfoStyle)
+                    Text("Weight Calculator: ${neuron.weightCalculatorTypeName}", style = neuronInfoStyle)
+                    Text("Connections:", style = neuronInfoStyle)
                     Column {
                         Box(
                             modifier = Modifier
@@ -159,38 +161,45 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                             }
                         }
 
-                        Text("Activation Function", style = TextStyle(fontSize = 16.sp))
-                        FunctionPlot(
-                            startX = -5.0,
-                            endX = 5.0,
-                            startY = -5.0,
-                            endY = 5.0,
-                            f = neuron.neuronSigmoidFunction,
-                            modifier = Modifier
-                                .size(boxSizeAccomodation)
-                                .padding(16.dp)
-                        )
-
-                        Text("Connection Strength Update", style = TextStyle(fontSize = 16.sp))
-                        Function3DPlot(
-                            startX = -5.0,
-                            endX = 5.0,
-                            startY = -5.0,
-                            endY = 5.0,
-                            f = { x, y ->
-                                normalizedStrengthUpdate(
-                                    sourceActivation = x,
-                                    targetActivation = y,
-                                    sourceMaxActivation = neuron.sigmoidNumeratorMultiplier,
-                                    targetMaxActivation = 1.0,
-                                    currentStrength = 0.0,
-                                    learningRate = neuron.learningRate
+                        Row {
+                            Column {
+                                Text("Activation Function", style = neuronInfoHeaderStyle)
+                                FunctionPlot(
+                                    startX = -5.0,
+                                    endX = 5.0,
+                                    startY = -5.0,
+                                    endY = 5.0,
+                                    f = neuron.neuronSigmoidFunction,
+                                    modifier = Modifier
+                                        .size(boxSizeAccomodation)
+                                        .padding(16.dp)
                                 )
-                            },
-                            modifier = Modifier
-                                .size(boxSizeAccomodation)
-                                .padding(16.dp)
-                        )
+                            }
+
+
+                            Column {
+                                Text("Connection Strength Update", style = neuronInfoHeaderStyle)
+                                Function3DPlot(
+                                    startX = -5.0,
+                                    endX = 5.0,
+                                    startY = -5.0,
+                                    endY = 5.0,
+                                    f = { x, y ->
+                                        normalizedStrengthUpdate(
+                                            sourceActivation = x,
+                                            targetActivation = y,
+                                            sourceMaxActivation = neuron.sigmoidNumeratorMultiplier,
+                                            targetMaxActivation = 1.0,
+                                            currentStrength = 0.0,
+                                            learningRate = neuron.learningRate
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .size(boxSizeAccomodation)
+                                        .padding(16.dp)
+                                )
+                            }
+                        }
 
                         Spacer(
                             modifier = Modifier.height(boxSizeAccomodation)
