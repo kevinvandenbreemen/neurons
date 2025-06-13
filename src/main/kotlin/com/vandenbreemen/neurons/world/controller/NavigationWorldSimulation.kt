@@ -1,12 +1,56 @@
 package com.vandenbreemen.neurons.world.controller
 
 import com.vandenbreemen.neurons.agent.NeuralAgent
+import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
 
 class NavigationWorldSimulation(
     world: World = World(),
     private val maxMovementDelta: Int = 1
 ) : WorldSimulation(world) {
+
+    private val agentPositions = mutableMapOf<NeuralAgent, AgentPosition>()
+
+    /**
+     * Adds a new agent to the simulation
+     * @param agent The agent to add
+     * @param position The initial position of the agent
+     */
+    fun addAgent(agent: NeuralAgent, position: AgentPosition) {
+        super.addAgent(agent)
+        agentPositions[agent] = position
+    }
+
+    /**
+     * Removes an agent from the simulation
+     * @param agent The agent to remove
+     * @return true if the agent was found and removed, false otherwise
+     */
+    override fun removeAgent(agent: NeuralAgent): Boolean {
+        agentPositions.remove(agent)
+        return super.removeAgent(agent)
+    }
+
+    /**
+     * Gets the position of an agent
+     * @param agent The agent to get the position for
+     * @return The agent's position, or null if the agent is not in the simulation
+     */
+    fun getAgentPosition(agent: NeuralAgent): AgentPosition? = agentPositions[agent]
+
+    /**
+     * Sets the position of an agent
+     * @param agent The agent to set the position for
+     * @param position The new position
+     * @return true if the agent exists and the position was set, false otherwise
+     */
+    fun setAgentPosition(agent: NeuralAgent, position: AgentPosition): Boolean {
+        if (agent in getAgents()) {
+            agentPositions[agent] = position
+            return true
+        }
+        return false
+    }
 
     override fun doAgentSetup(agent: NeuralAgent) {
         motorNeuronSetup(agent)

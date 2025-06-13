@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vandenbreemen.neurons.agent.NeuralAgent
 import com.vandenbreemen.neurons.model.NeuralNet
-import com.vandenbreemen.neurons.world.controller.WorldSimulation
+import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
 
@@ -26,7 +26,7 @@ fun WorldSimulationPreview() {
     )
 
     // Create a simulation with some agents
-    val simulation = WorldSimulation(world).apply {
+    val simulation = NavigationWorldSimulation(world).apply {
         // Add some agents at different positions
         addAgent(
             NeuralAgent(NeuralNet(10, 10), 0.1),

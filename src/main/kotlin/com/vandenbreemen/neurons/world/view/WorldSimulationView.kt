@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import com.vandenbreemen.neurons.world.controller.WorldSimulation
+import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 
 /**
  * A composable that visualizes a world simulation
@@ -16,7 +16,7 @@ import com.vandenbreemen.neurons.world.controller.WorldSimulation
  */
 @Composable
 fun WorldSimulationView(
-    simulation: WorldSimulation,
+    simulation: NavigationWorldSimulation,
     modifier: Modifier = Modifier
 ) {
     Canvas(

@@ -1,7 +1,6 @@
 package com.vandenbreemen.neurons.world.controller
 
 import com.vandenbreemen.neurons.agent.NeuralAgent
-import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
 
 /**
@@ -14,7 +13,6 @@ open class WorldSimulation(
     initialAgents: List<NeuralAgent> = emptyList()
 ) {
     private val agents = mutableListOf<NeuralAgent>()
-    private val agentPositions = mutableMapOf<NeuralAgent, AgentPosition>()
 
     init {
         initialAgents.forEach { agent ->
@@ -42,12 +40,10 @@ open class WorldSimulation(
     /**
      * Adds a new agent to the simulation
      * @param agent The agent to add
-     * @param position The initial position of the agent (defaults to 0,0)
      */
-    fun addAgent(agent: NeuralAgent, position: AgentPosition = AgentPosition(0, 0)) {
+    fun addAgent(agent: NeuralAgent) {
         agents.add(agent)
         doAgentSetup(agent)
-        agentPositions[agent] = position
     }
 
     /**
@@ -55,8 +51,7 @@ open class WorldSimulation(
      * @param agent The agent to remove
      * @return true if the agent was found and removed, false otherwise
      */
-    fun removeAgent(agent: NeuralAgent): Boolean {
-        agentPositions.remove(agent)
+    open fun removeAgent(agent: NeuralAgent): Boolean {
         return agents.remove(agent)
     }
 
@@ -69,25 +64,4 @@ open class WorldSimulation(
      * Gets the number of agents in the simulation
      */
     fun getAgentCount(): Int = agents.size
-
-    /**
-     * Gets the position of an agent
-     * @param agent The agent to get the position for
-     * @return The agent's position, or null if the agent is not in the simulation
-     */
-    fun getAgentPosition(agent: NeuralAgent): AgentPosition? = agentPositions[agent]
-
-    /**
-     * Sets the position of an agent
-     * @param agent The agent to set the position for
-     * @param position The new position
-     * @return true if the agent exists and the position was set, false otherwise
-     */
-    fun setAgentPosition(agent: NeuralAgent, position: AgentPosition): Boolean {
-        if (agent in agents) {
-            agentPositions[agent] = position
-            return true
-        }
-        return false
-    }
 } 
