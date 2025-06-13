@@ -53,7 +53,7 @@ class GeneticNeuronProvider(
     }
 
     private fun getLearningRateFromGene(gene: LongArray): Double {
-        val min = 0.0
+        val min = -1.0
         val max = 1.0
         val incrementValue = ((gene[2] shr 0) and 0xFFFF).toDouble() // 16 bits = 65,536 possible values
         return (incrementValue * ((max - min) / 65535.0) + min).coerceIn(min, max) // Map to range 0.0 to 1.0
