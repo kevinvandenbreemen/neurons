@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.vandenbreemen.neurons.evolution.model.GeneticWorldState
 import com.vandenbreemen.neurons.evolution.view.GeneticWorldDialog
 import com.vandenbreemen.neurons.model.NeuralNet
@@ -262,7 +263,11 @@ fun SigmoidFunctionPlotter(
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "Neural Network Visualization",
+        state = rememberWindowState(width = 1600.dp, height = 900.dp)
+    ) {
         App()
     }
 }
