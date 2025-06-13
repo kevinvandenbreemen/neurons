@@ -22,7 +22,6 @@ class GeneticWorldState(
     costOfNotMoving: Double = 0.1,
     mutationRate: Double = 0.1,
     eliteSize: Int = 5,
-    private val learningRate: Double = 0.1,
     worldWidth: Int = 100,
     worldHeight: Int = 100,
     wallDensity: Double = 0.001,
@@ -42,7 +41,6 @@ class GeneticWorldState(
         costOfNotMoving = costOfNotMoving,
         mutationRate = mutationRate,
         eliteSize = eliteSize,
-        learningRate = learningRate,
         worldWidth = worldWidth,
         worldHeight = worldHeight,
         wallDensity = wallDensity,
@@ -85,7 +83,7 @@ class GeneticWorldState(
             neuralNet = bestNeuralNet
             // Create a new simulation with the best neural network
             val world = driver.getRandomWorld()
-            val agent = NeuralAgent(bestNeuralNet!!, learningRate)
+            val agent = NeuralAgent(bestNeuralNet!!)
             navigationSimulation = NavigationWorldSimulation(world).apply {
                 addAgent(agent, world.getRandomEmptyCell())
             }
@@ -169,7 +167,7 @@ class GeneticWorldState(
         }
 
         neuralNet?.fireAndUpdate()
-        neuralNet?.updateAllWeights(0.001)  // Update weights after firing
+        neuralNet?.updateAllWeights()  // Update weights after firing
         navigationSimulation?.step()
         navSimulationForDisplay = navigationSimulation
     }

@@ -132,7 +132,6 @@ fun App() {
                         costOfNotMoving = params.costOfNotMoving,
                         mutationRate = params.mutationRate,
                         eliteSize = params.eliteSize,
-                        learningRate = params.learningRate,
                         worldWidth = params.worldWidth,
                         worldHeight = params.worldHeight,
                         wallDensity = params.wallDensity,

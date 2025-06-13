@@ -72,15 +72,14 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
      * Updates all connection weights based on Hebbian learning.
      * The weight change is determined by the correlation between this neuron's activation
      * and each target neuron's activation.
-     * @param learningRate How quickly the weights should change (default 0.1)
      */
-    open fun updateAllConnectionWeights(learningRate: Double = 0.1) {
+    open fun updateAllConnectionWeights() {
         val updatedConnections = connections.map { connection ->
             val newStrength = weightCalculator.calculateWeight(
                 this,
                 connection.neuron,
                 connection.strength,
-                learningRate
+                this.learningRate
             )
             Connection(connection.neuron, newStrength)
         }

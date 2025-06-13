@@ -51,7 +51,7 @@ class NeuralNetworkDemoState(dim: Int) : NeuralNetApplicationState() {
 
     override fun doIterate() {
         neuralNet.fireAndUpdate()
-        neuralNet.updateAllWeights(0.001)  // Update weights after firing
+        neuralNet.updateAllWeights()  // Update weights after firing
     }
 
 }

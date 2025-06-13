@@ -29,15 +29,15 @@ fun NavigationWorldSimulationPreview() {
     val simulation = NavigationWorldSimulation(world).apply {
         // Add some agents at different positions
         addAgent(
-            NeuralAgent(NeuralNet(10, 10), 0.1),
+            NeuralAgent(NeuralNet(10, 10)),
             AgentPosition(5, 5)
         )
         addAgent(
-            NeuralAgent(NeuralNet(10, 10), 0.1),
+            NeuralAgent(NeuralNet(10, 10)),
             AgentPosition(25, 25)
         )
         addAgent(
-            NeuralAgent(NeuralNet(10, 10), 0.1),
+            NeuralAgent(NeuralNet(10, 10)),
             AgentPosition(85, 85)
         )
     }

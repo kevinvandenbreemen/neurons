@@ -22,7 +22,6 @@ class GeneticWorldDriver(
     private val costOfNotMoving: Double = 0.1,
     private val mutationRate: Double = 0.1,
     private val eliteSize: Int = 5,
-    private val learningRate: Double = 0.1,
     private val worldWidth: Int = 100,
     private val worldHeight: Int = 100,
     private val wallDensity: Double = 0.001,
@@ -66,7 +65,7 @@ class GeneticWorldDriver(
     fun createSimulationWithAgent(): Pair<NavigationWorldSimulation, NeuralNet> {
         val world = randomWorlds.random()
         val neuralNet = getRandomNeuralNetwork()
-        val agent = NeuralAgent(neuralNet, learningRate)
+        val agent = NeuralAgent(neuralNet)
         return Pair(NavigationWorldSimulation(world).apply {
             addAgent(agent, world.getRandomEmptyCell())
         }, neuralNet)
@@ -93,7 +92,7 @@ class GeneticWorldDriver(
                     brainSizeY,
                     freshProvider
                 )
-                val agent = NeuralAgent(neuralNet, learningRate)
+                val agent = NeuralAgent(neuralNet)
                 val simulation = NavigationWorldSimulation(world).also {
                     it.addAgent(
                         agent,

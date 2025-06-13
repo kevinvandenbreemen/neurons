@@ -3,24 +3,22 @@ package com.vandenbreemen.neurons.agent
 import com.vandenbreemen.neurons.model.*
 
 /**
- * An agent that manages a neural network and provides methods for iteration and learning
- * @param neuralNet The neural network to be managed by this agent
- * @param learningRate The rate at which the network learns and updates its weights
+ * An agent that uses a neural network for decision making
+ * @param neuralNet The neural network that powers this agent
  */
 class NeuralAgent(
-    private val neuralNet: NeuralNet,
-    private val learningRate: Double
+    private val neuralNet: NeuralNet
 ) {
 
     private val neuronActionsMap: MutableMap<Neuron, MutableList<(Neuron) -> Unit>> = mutableMapOf()
 
 
     /**
-     * Performs one iteration of the neural network, including firing, updating, and weight adjustments
+     * Causes the agent to perform one iteration of its neural network
      */
     fun iterate() {
         neuralNet.fireAndUpdate()
-        neuralNet.updateAllWeights(learningRate)
+        neuralNet.updateAllWeights()
         neuronActionsMap.entries.forEach {
             it.value.forEach { action ->
                 action(it.key)
@@ -89,4 +87,9 @@ class NeuralAgent(
         }
         return result
     }
+
+    /**
+     * Gets the neural network used by this agent
+     */
+    fun getNeuralNet(): NeuralNet = neuralNet
 } 

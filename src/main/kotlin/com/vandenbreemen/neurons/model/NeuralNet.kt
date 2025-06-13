@@ -120,13 +120,10 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
     /**
      * Updates connection weights across the entire network based on current neuron activations
      */
-    fun updateAllWeights(learningRate: Double = 0.1) {
+    fun updateAllWeights() {
         for (i in 0 until rows) {
             for (j in 0 until cols) {
-                grid[i][j].apply {
-                    val lrnRate = if (this.learningRateOverride != 0.0) this.learningRateOverride else learningRate
-                    updateAllConnectionWeights(lrnRate)
-                }
+                grid[i][j].updateAllConnectionWeights()
             }
         }
     }
