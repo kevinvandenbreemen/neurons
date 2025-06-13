@@ -100,7 +100,7 @@ class GeneticNeuronProvider(
         val neuron = when (neuronType) {
             0L -> Neuron(weightCalculator)
             1L -> Neuron(weightCalculator)
-            2L -> RelayNeuron(weightCalculator)
+            2L -> Neuron(weightCalculator)
             3L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
             4L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             5L -> {
@@ -118,7 +118,7 @@ class GeneticNeuronProvider(
                 Neuron(weightCalculator)
             }
             9L -> {
-                RelayNeuron(weightCalculator)
+                Neuron(weightCalculator)
             }
             10L -> {
                 MotorNeuron(getActionIdFromGene(gene), weightCalculator)
@@ -147,11 +147,6 @@ class GeneticNeuronProvider(
             it.setLearningRate(learningRate)
             it.setSigmaExpDelta(getSigmoidExpDeltaFromGene(gene))
             it.setSigmoidNumeratorMultiplier(getSigmoidNumeratorMultiplierFromGene(gene))
-        }
-
-        // If it's a RelayNeuron, store the direction in its metadata
-        if (neuron is RelayNeuron) {
-            neuron.direction = getDirectionFromGene(gene)
         }
 
         return neuron

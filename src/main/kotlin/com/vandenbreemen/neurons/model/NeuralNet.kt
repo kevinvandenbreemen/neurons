@@ -17,36 +17,24 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 val targetNeuron = grid[upRow][j]
                 val initialWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, targetNeuron)
                 neuron.connect(targetNeuron, initialWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.UP) {
-                    neuron.setTargetNeuron(targetNeuron)
-                }
 
                 // Down connection
                 val downRow = if (i < rows - 1) i + 1 else 0
                 val downNeuron = grid[downRow][j]
                 val downWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, downNeuron)
                 neuron.connect(downNeuron, downWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.DOWN) {
-                    neuron.setTargetNeuron(downNeuron)
-                }
 
                 // Left connection
                 val leftCol = if (j > 0) j - 1 else cols - 1
                 val leftNeuron = grid[i][leftCol]
                 val leftWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, leftNeuron)
                 neuron.connect(leftNeuron, leftWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.LEFT) {
-                    neuron.setTargetNeuron(leftNeuron)
-                }
 
                 // Right connection
                 val rightCol = if (j < cols - 1) j + 1 else 0
                 val rightNeuron = grid[i][rightCol]
                 val rightWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, rightNeuron)
                 neuron.connect(rightNeuron, rightWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.RIGHT) {
-                    neuron.setTargetNeuron(rightNeuron)
-                }
 
                 // Diagonal connections
                 // Up-Left
@@ -55,9 +43,6 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 val upLeftNeuron = grid[upLeftRow][upLeftCol]
                 val upLeftWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, upLeftNeuron)
                 neuron.connect(upLeftNeuron, upLeftWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.UP_LEFT) {
-                    neuron.setTargetNeuron(upLeftNeuron)
-                }
 
                 // Up-Right
                 val upRightRow = if (i > 0) i - 1 else rows - 1
@@ -65,9 +50,6 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 val upRightNeuron = grid[upRightRow][upRightCol]
                 val upRightWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, upRightNeuron)
                 neuron.connect(upRightNeuron, upRightWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.UP_RIGHT) {
-                    neuron.setTargetNeuron(upRightNeuron)
-                }
 
                 // Down-Left
                 val downLeftRow = if (i < rows - 1) i + 1 else 0
@@ -75,9 +57,6 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 val downLeftNeuron = grid[downLeftRow][downLeftCol]
                 val downLeftWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, downLeftNeuron)
                 neuron.connect(downLeftNeuron, downLeftWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.DOWN_LEFT) {
-                    neuron.setTargetNeuron(downLeftNeuron)
-                }
 
                 // Down-Right
                 val downRightRow = if (i < rows - 1) i + 1 else 0
@@ -85,9 +64,6 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 val downRightNeuron = grid[downRightRow][downRightCol]
                 val downRightWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, downRightNeuron)
                 neuron.connect(downRightNeuron, downRightWeight)
-                if (neuron is RelayNeuron && neuron.direction == Direction.DOWN_RIGHT) {
-                    neuron.setTargetNeuron(downRightNeuron)
-                }
             }
         }
     }
