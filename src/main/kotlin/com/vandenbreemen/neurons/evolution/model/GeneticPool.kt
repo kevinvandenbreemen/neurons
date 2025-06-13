@@ -10,28 +10,34 @@ class GeneticPool(
     private val mutationRate: Double = 0.1
 ) {
 
-    private var pool: List<LongArray> = List(poolSize) { generateGenome() }
+    private var pool: List<Array<LongArray>> = List(poolSize) { generateGenome() }
     private var fitnessScores: List<Double> = List(poolSize) { 0.0 }
 
-    private fun generateGenome(): LongArray {
-        val geneList = LongArray(rows * cols)
+    private fun generateGenome(): Array<LongArray> {
+        val geneList = Array(rows * cols) { LongArray(GeneticNeuronProvider.GENES_PER_NEURON) }
         for (i in 0 until rows * cols) {
-            geneList[i] = Random.nextLong()
+            for (j in 0 until GeneticNeuronProvider.GENES_PER_NEURON) {
+                geneList[i][j] = Random.nextLong()
+            }
         }
         return geneList
     }
 
-    private fun crossover(parent1Index: Int, parent2Index: Int): LongArray {
+    private fun crossover(parent1Index: Int, parent2Index: Int): Array<LongArray> {
         require(parent1Index in 0 until poolSize && parent2Index in 0 until poolSize) { "Parent indices out of bounds" }
 
         val parent1 = pool[parent1Index]
         val parent2 = pool[parent2Index]
-        val child = LongArray(parent1.size)
+        val child = Array(parent1.size) { LongArray(GeneticNeuronProvider.GENES_PER_NEURON) }
 
         // Perform single-point crossover
         val crossoverPoint = Random.nextInt(parent1.size)
         for (i in child.indices) {
-            child[i] = if (i < crossoverPoint) parent1[i] else parent2[i]
+            if (i < crossoverPoint) {
+                child[i] = parent1[i].copyOf()
+            } else {
+                child[i] = parent2[i].copyOf()
+            }
         }
 
         return child
@@ -67,7 +73,7 @@ class GeneticPool(
         require(eliteSize < generationSize) { "Elite size must be less than generation size" }
 
         // Create new generation
-        val newPool = mutableListOf<LongArray>()
+        val newPool = mutableListOf<Array<LongArray>>()
 
         // Keep elite genomes
         val eliteIndices = fitnessScores.indices
@@ -110,15 +116,17 @@ class GeneticPool(
         return tournament.maxByOrNull { fitnessScores[it] } ?: tournament.first()
     }
 
-    private fun mutateGenome(genome: LongArray) {
+    private fun mutateGenome(genome: Array<LongArray>) {
         for (i in genome.indices) {
-            var gene = genome[i]
-            for (bit in 0 until 64) {
-                if (Random.nextDouble() < mutationRate) {
-                    gene = gene xor (1L shl bit)
+            for (j in 0 until GeneticNeuronProvider.GENES_PER_NEURON) {
+                var gene = genome[i][j]
+                for (bit in 0 until 64) {
+                    if (Random.nextDouble() < mutationRate) {
+                        gene = gene xor (1L shl bit)
+                    }
                 }
+                genome[i][j] = gene
             }
-            genome[i] = gene
         }
     }
 

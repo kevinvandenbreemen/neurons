@@ -4,14 +4,18 @@ import com.vandenbreemen.neurons.model.*
 import kotlin.random.Random
 
 class GeneticNeuronProvider(
-    private val geneList: LongArray
+    private val geneList: Array<LongArray>
 ) : NeuronProvider {
 
     companion object {
-        private fun generateGenomeForGridDimensions(rows: Int, cols: Int): LongArray {
-            val geneList = LongArray(rows * cols)
+        const val GENES_PER_NEURON = 3
+
+        private fun generateGenomeForGridDimensions(rows: Int, cols: Int): Array<LongArray> {
+            val geneList = Array(rows * cols) { LongArray(GENES_PER_NEURON) }
             for (i in 0 until rows * cols) {
-                geneList[i] = Random.nextLong()
+                for (j in 0 until GENES_PER_NEURON) {
+                    geneList[i][j] = Random.nextLong()
+                }
             }
             return geneList
         }
@@ -38,41 +42,41 @@ class GeneticNeuronProvider(
         return assembleNeuronBasedOnGene(gene)
     }
 
-    private fun getActionIdFromGene(gene: Long): Byte {
+    private fun getActionIdFromGene(gene: LongArray): Byte {
         // Use bits 7-14 (8 bits) to determine actionId
-        return ((gene shr 7) and 0xFF).toByte()
+        return ((gene[0] shr 7) and 0xFF).toByte()
     }
 
-    private fun getSensorIdFromGene(gene: Long): Byte {
+    private fun getSensorIdFromGene(gene: LongArray): Byte {
         // Use bits 15-22 (8 bits) to determine sensorId
-        return ((gene shr 15) and 0xFF).toByte()
+        return ((gene[0] shr 15) and 0xFF).toByte()
     }
 
-    private fun getLearningRateFromGene(gene: Long): Double {
+    private fun getLearningRateFromGene(gene: LongArray): Double {
         // Use bits 30-37 (8 bits) to determine learning rate (0-1.0 in increments of 1/1024)
-        val incrementValue = ((gene shr 30) and 0x3FF).toInt() // 10 bits = 1024 possible values
+        val incrementValue = ((gene[0] shr 30) and 0x3FF).toInt() // 10 bits = 1024 possible values
         return (incrementValue * (1.0 / 1024.0)).coerceIn(0.0, 1.0) // Ensure value is between 0 and 1
     }
 
-    private fun getSigmoidExpDeltaFromGene(gene: Long): Double {
+    private fun getSigmoidExpDeltaFromGene(gene: LongArray): Double {
         // Use bits 38-45 (8 bits) to determine sigmoidExpDelta (-3.0 to 3.0)
-        val incrementValue = ((gene shr 38) and 0xFF).toInt() // 8 bits = 256 possible values
+        val incrementValue = ((gene[0] shr 38) and 0xFF).toInt() // 8 bits = 256 possible values
         return (incrementValue * (6.0 / 255.0) + 7.0) // Map to range 7.0 to 13.0
     }
 
-    private fun getSigmoidNumeratorMultiplierFromGene(gene: Long): Double {
+    private fun getSigmoidNumeratorMultiplierFromGene(gene: LongArray): Double {
         // Use bits 46-53 (8 bits) to determine sigmoidNumeratorMultiplier (-5.0 to 5.0)
-        val incrementValue = ((gene shr 46) and 0xFF).toInt() // 8 bits = 256 possible values
+        val incrementValue = ((gene[0] shr 46) and 0xFF).toInt() // 8 bits = 256 possible values
         return (incrementValue * (10.0 / 255.0) - 5.0).coerceIn(-5.0, 5.0) // Map to range -5.0 to 5.0
     }
 
-    private fun assembleNeuronBasedOnGene(gene: Long): Neuron {
+    private fun assembleNeuronBasedOnGene(gene: LongArray): Neuron {
         val weightCalculator = StrengthBasedConnector
 
         val learningRate = getLearningRateFromGene(gene)
 
         // Use round-robin selection for neuron types
-        val neuronType = (((gene shr 0) and 0xF) % totalNeuronTypes).toInt()
+        val neuronType = (((gene[0] shr 0) and 0xF) % totalNeuronTypes).toInt()
 
         val neuron = when (neuronType) {
             0 -> Neuron(weightCalculator) // Regular Neuron
@@ -80,7 +84,7 @@ class GeneticNeuronProvider(
             2 -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
             3 -> {
                 // For BlinkerNeuron, use bits 23-29 to determine turnsBeforeActivation (2-514 in increments of 1)
-                val incrementValue = ((gene shr 23) and 0x1FF).toInt() // 9 bits = 512 possible values
+                val incrementValue = ((gene[0] shr 23) and 0x1FF).toInt() // 9 bits = 512 possible values
                 BlinkerNeuron(2 + incrementValue, weightCalculator)
             }
             4 -> PainReceptorNeuron(weightCalculator)
