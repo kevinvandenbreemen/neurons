@@ -42,6 +42,10 @@ class GeneticNeuronProvider(
         return assembleNeuronBasedOnGene(gene)
     }
 
+    fun copy(): GeneticNeuronProvider {
+        return GeneticNeuronProvider(geneList.map { it.copyOf() }.toTypedArray())
+    }
+
     private fun getActionIdFromGene(gene: LongArray): Byte {
         // Use bits 7-14 (8 bits) to determine actionId
         return ((gene[0] shr 7) and 0xFF).toByte()

@@ -8,6 +8,10 @@ import com.vandenbreemen.neurons.provider.GeneticNeuronProvider
 import com.vandenbreemen.neurons.world.controller.NavigationWorldSimulation
 import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlin.math.max
 
 class GeneticWorldDriver(
@@ -74,66 +78,65 @@ class GeneticWorldDriver(
         numMoves: Int,
         numWorldsToTest: Int = 1,
         minViability: Double = 0.01,
+    ): Double = runBlocking {
+        val scores = List(numWorldsToTest) { worldIndex ->
+            async(Dispatchers.Default) {
+                var numIterationWithoutMovement = 0.0
+                var didAgentMove = false
 
-    ): Double {
-        var totalScore = 0.0
-        val minDistinctPointsInPath = (numMoves * 0.5).toInt()
+                // Create a fresh provider for this world test
+                val freshProvider = geneticNeuronProvider.copy()
 
-        val pointsVisitedPath = mutableListOf<AgentPosition>()
-
-        // Test the neural network on multiple random worlds
-        for (worldIndex in 0 until numWorldsToTest) {
-            var numIterationWithoutMovement = 0.0
-            var didAgentMove = false
-
-            val world = randomWorlds.random()
-            val neuralNet = NeuralNet(
-                brainSizeX,
-                brainSizeY,
-                geneticNeuronProvider
-            )
-            val agent = NeuralAgent(neuralNet, learningRate)
-            val simulation = NavigationWorldSimulation(world).also {
-                it.addAgent(
-                    agent,
-                    world.getRandomEmptyCell()
+                val world = randomWorlds.random()
+                val neuralNet = NeuralNet(
+                    brainSizeX,
+                    brainSizeY,
+                    freshProvider
                 )
-            }
-
-            for (i in 0 until numMoves) {
-
-                if (pointsVisitedPath.size > minDistinctPointsInPath) {
-                    pointsVisitedPath.removeFirst()
+                val agent = NeuralAgent(neuralNet, learningRate)
+                val simulation = NavigationWorldSimulation(world).also {
+                    it.addAgent(
+                        agent,
+                        world.getRandomEmptyCell()
+                    )
                 }
 
-                simulation.getAgentPosition(agent)?.let {
-                    pointsVisitedPath.add(it)
+                val pointsVisitedPath = mutableListOf<AgentPosition>()
+                val minDistinctPointsInPath = (numMoves * 0.5).toInt()
+
+                for (i in 0 until numMoves) {
+                    if (pointsVisitedPath.size > minDistinctPointsInPath) {
+                        pointsVisitedPath.removeFirst()
+                    }
+
+                    simulation.getAgentPosition(agent)?.let {
+                        pointsVisitedPath.add(it)
+                    }
+
+                    simulation.step()
+                    if (pointsVisitedPath.contains(simulation.getAgentPosition(agent))) {
+                        numIterationWithoutMovement += costOfNotMoving
+                    } else {
+                        didAgentMove = true
+                    }
+
+                    if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
+                        return@async 0.0
+                    }
                 }
 
-                simulation.step()
-                if (pointsVisitedPath.contains(simulation.getAgentPosition(agent))) {
-                    numIterationWithoutMovement += costOfNotMoving
-                } else {
-                    didAgentMove = true
-                }
-
-                if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
-                    return 0.0
-                }
-            }
-
-            val score = if (didAgentMove) (
+                if (didAgentMove) {
                     max(
                         (numMoves.toDouble() - numIterationWithoutMovement - (simulation.errorCount * errorWeight)),
                         0.0
-                    )
-                            / numMoves) else 0.0
+                    ) / numMoves
+                } else {
+                    0.0
+                }
+            }
+        }.awaitAll()
 
-            totalScore += score
-        }
-
-        // Return the average score across all tested worlds
-        return totalScore / numWorldsToTest
+        scores.average()
     }
 
 }
