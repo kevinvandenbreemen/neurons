@@ -187,7 +187,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                                     normalizedStrengthUpdate(
                                         sourceActivation = x,
                                         targetActivation = x,
-                                        sourceMaxActivation = 1.0,
+                                        sourceMaxActivation = neuron.sigmoidNumeratorMultiplier,
                                         targetMaxActivation = 1.0,
                                         currentStrength = 0.0,
                                         learningRate = neuron.learningRate
@@ -196,6 +196,10 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+
+                        Spacer(
+                            modifier = Modifier.height(48.dp)
+                        )
                     }
                 }
             },
