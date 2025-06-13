@@ -8,7 +8,7 @@ class GeneticNeuronProvider(
 ) : NeuronProvider {
 
     companion object {
-        const val GENES_PER_NEURON = 3
+        const val GENES_PER_NEURON = 4
 
         private fun generateGenomeForGridDimensions(rows: Int, cols: Int): Array<LongArray> {
             val geneList = Array(rows * cols) { LongArray(GENES_PER_NEURON) }
@@ -53,10 +53,10 @@ class GeneticNeuronProvider(
     }
 
     private fun getLearningRateFromGene(gene: LongArray): Double {
-        val min = -1.0
-        val max = 1.0
-        val incrementValue = ((gene[2] shr 0) and 0xFFFF).toDouble() // 16 bits = 65,536 possible values
-        return (incrementValue * ((max - min) / 65535.0) + min).coerceIn(min, max) // Map to range 0.0 to 1.0
+        val min = -3.0
+        val max = 3.0
+        val incrementValue = ((gene[2] shr 0) and 0xFFFFFFFF).toDouble() // 32 bits = 4,294,967,296 possible values
+        return (incrementValue * ((max - min) / 4294967295.0) + min).coerceIn(min, max) // Map to range -1.0 to 1.0
     }
 
     private fun getSigmoidExpDeltaFromGene(gene: LongArray): Double {
@@ -74,8 +74,8 @@ class GeneticNeuronProvider(
     }
 
     private fun getSigmoidNumeratorFromGene(gene: LongArray, multiplier: Double): Double {
-        val incrementValue = ((gene[2] shr 16) and 0xFFFFFFFFFFFF).toDouble() // 48 bits
-        return (incrementValue * (multiplier / 281474976710655.0))
+        val incrementValue = ((gene[2] shr 32) and 0xFFFFFFFF).toDouble() // 32 bits = 4,294,967,296 possible values
+        return (incrementValue * (multiplier / 4294967295.0))
     }
 
     private fun assembleNeuronBasedOnGene(gene: LongArray): Neuron {
