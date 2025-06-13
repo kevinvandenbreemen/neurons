@@ -155,7 +155,7 @@ class NavigationWorldSimulation(
     private fun painReceptorSetup(agent: NeuralAgent) {
         agent.findPainReceptorNeurons().forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                if (isAgentOnWall(agent)) {
+                if (isAgentCollidingWithSomething(agent)) {
                     painAmount += 1.0
                     neuron.stimulateFromEnvironment(1.0)
                 }
@@ -201,7 +201,7 @@ class NavigationWorldSimulation(
     /**
      * Checks if the agent is on a wall
      */
-    private fun isAgentOnWall(agent: NeuralAgent): Boolean {
+    private fun isAgentCollidingWithSomething(agent: NeuralAgent): Boolean {
         val currentPos = getAgentPosition(agent) ?: return false
         return world.isBoundary(currentPos.x, currentPos.y)
     }
