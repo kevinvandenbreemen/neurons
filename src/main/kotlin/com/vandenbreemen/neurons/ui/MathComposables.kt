@@ -178,13 +178,13 @@ fun Function3DPlot(
 
         // Function to project 3D point to 2D
         fun project3D(x: Double, y: Double, z: Double): Offset {
-            // Apply rotation around Y axis
-            val rotatedX = x * Math.cos(rotationRad) + z * Math.sin(rotationRad)
-            val rotatedZ = -x * Math.sin(rotationRad) + z * Math.cos(rotationRad)
+            // Apply rotation around Z axis
+            val rotatedX = x * Math.cos(rotationRad) - y * Math.sin(rotationRad)
+            val rotatedY = x * Math.sin(rotationRad) + y * Math.cos(rotationRad)
 
             // Apply elevation
-            val elevatedY = y * Math.cos(elevationRad) - rotatedZ * Math.sin(elevationRad)
-            val elevatedZ = y * Math.sin(elevationRad) + rotatedZ * Math.cos(elevationRad)
+            val elevatedY = rotatedY * Math.cos(elevationRad) - z * Math.sin(elevationRad)
+            val elevatedZ = rotatedY * Math.sin(elevationRad) + z * Math.cos(elevationRad)
 
             // Project to 2D
             val projectedX = centerX + (rotatedX * scale * width / 2)
@@ -235,8 +235,8 @@ fun Function3DPlot(
 
                 // Draw points
                 drawCircle(
-                    color = if (z > 0) Color.Red else Color.Blue,
-                    radius = 2f,
+                    color = if (z > 0) Color.Red.copy(alpha = 0.3f) else Color.Blue.copy(alpha = 0.3f),
+                    radius = 1f,
                     center = point
                 )
             }
