@@ -205,6 +205,21 @@ class NavigationWorldSimulation(
     }
 
     /**
+     * Steps through the simulation, allowing each agent to perform its actions
+     * and checking for collisions after all agents have moved.
+     */
+    override fun step() {
+        super.step()
+
+        // After all agents have iterated, check for collisions
+        getAgents().forEach { agent ->
+            if (isAgentCollidingWithSomething(agent)) {
+                incrementErrorCount()
+            }
+        }
+    }
+
+    /**
      * Calculates the distance to the nearest wall in a given direction
      * @param agent The neural agent whose position will be used as the reference point
      * @param dx The change in x-coordinate per step (-1 for west, 0 for no change, 1 for east)

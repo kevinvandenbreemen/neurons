@@ -26,6 +26,7 @@ class GeneticWorldDriver(
     private val numRooms: Int = 2,
     private val numRandomWalls: Int = 2,
     private val newGeneProbability: Double = 0.1,
+    private val errorWeight: Double = 1.0,
     existingGenePool: GeneticPool? = null
 ) : GeneticFitnessDriver(
     brainSizeX = brainSizeX,
@@ -73,9 +74,10 @@ class GeneticWorldDriver(
         numMoves: Int,
         numWorldsToTest: Int = 1,
         minViability: Double = 0.01,
-        minDistinctPointsInPath: Int = 10,
+
     ): Double {
         var totalScore = 0.0
+        val minDistinctPointsInPath = (numMoves * 0.5).toInt()
 
         val pointsVisitedPath = mutableListOf<AgentPosition>()
 
@@ -121,7 +123,10 @@ class GeneticWorldDriver(
             }
 
             val score = if (didAgentMove) (
-                    max((numMoves.toDouble() - numIterationWithoutMovement), 0.0)
+                    max(
+                        (numMoves.toDouble() - numIterationWithoutMovement - (simulation.errorCount * errorWeight)),
+                        0.0
+                    )
                             / numMoves) else 0.0
 
             totalScore += score
@@ -131,35 +136,4 @@ class GeneticWorldDriver(
         return totalScore / numWorldsToTest
     }
 
-}
-
-fun main() {
-    val driver = GeneticWorldDriver(
-        numWorlds = 100,
-        brainSizeX = 10,
-        brainSizeY = 10,
-        numGenes = 100,
-        costOfNotMoving = 0.1,
-        mutationRate = 0.1,
-        eliteSize = 5,
-        learningRate = 0.1,
-        worldWidth = 100,
-        worldHeight = 100,
-        wallDensity = 0.001,
-        numEpochs = 10,
-        numRooms = 2,
-        numRandomWalls = 2,
-    )
-
-    driver.drive(
-        fitnessFunction = {
-            driver.getFitness(
-                geneticNeuronProvider = it,
-                numMoves = 1000,
-                numWorldsToTest = 10,
-                minViability = 0.1,
-                minDistinctPointsInPath = 10
-            )
-        }
-    )
 }

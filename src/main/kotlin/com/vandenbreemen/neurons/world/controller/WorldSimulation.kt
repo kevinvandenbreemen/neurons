@@ -14,6 +14,13 @@ open class WorldSimulation(
 ) {
     private val agents = mutableListOf<NeuralAgent>()
 
+    var errorCount: Int = 0
+        private set
+
+    protected fun incrementErrorCount() {
+        errorCount++
+    }
+
     init {
         initialAgents.forEach { agent ->
             addAgent(agent)
@@ -33,7 +40,7 @@ open class WorldSimulation(
      * Updates the simulation by one step
      * This causes all agents to perform one iteration of their neural networks
      */
-    fun step() {
+    open fun step() {
         agents.forEach { it.iterate() }
     }
 

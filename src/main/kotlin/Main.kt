@@ -137,6 +137,7 @@ fun App() {
                         numEpochs = params.numEpochs,
                         numRooms = params.numRooms,
                         numRandomWalls = params.numRandomWalls,
+                        errorWeight = params.errorWeight,
                         existingGenePool = if (params.reuseGenePool) currentGenePool else null
                     )
                     applicationViewModel.switchToApplication(state)

@@ -27,7 +27,7 @@ data class GeneticWorldParams(
     val numRandomWalls: Int = 2,
     val numWorldsToTest: Int = 3,
     val newGeneProbability: Double = 0.1,
-    val painTolerance: Double = 0.5,
+    val errorWeight: Double = 1.0,
     val reuseGenePool: Boolean = false
 )
 
@@ -53,7 +53,7 @@ fun GeneticWorldDialog(
     var numRandomWalls by remember { mutableStateOf("2") }
     var numWorldsToTest by remember { mutableStateOf("3") }
     var newGeneProbability by remember { mutableStateOf("0.1") }
-    var painTolerance by remember { mutableStateOf("5") }
+    var errorWeight by remember { mutableStateOf("1.0") }
     var isReusingGenePool by remember { mutableStateOf(currentGenePool != null) }
 
     if (showDialog) {
@@ -183,15 +183,15 @@ fun GeneticWorldDialog(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             OutlinedTextField(
-                                value = painTolerance,
-                                onValueChange = { painTolerance = it },
-                                label = { Text("Pain Tolerance") },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            OutlinedTextField(
                                 value = costOfNotMoving,
                                 onValueChange = { costOfNotMoving = it },
                                 label = { Text("Cost of Not Moving") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = errorWeight,
+                                onValueChange = { errorWeight = it },
+                                label = { Text("Error Weight") },
                                 modifier = Modifier.fillMaxWidth()
                             )
 
@@ -237,7 +237,7 @@ fun GeneticWorldDialog(
                                 numRandomWalls = numRandomWalls.toIntOrNull() ?: 2,
                                 numWorldsToTest = numWorldsToTest.toIntOrNull() ?: 3,
                                 newGeneProbability = newGeneProbability.toDoubleOrNull() ?: 0.1,
-                                painTolerance = painTolerance.toDoubleOrNull() ?: 0.5,
+                                errorWeight = errorWeight.toDoubleOrNull() ?: 1.0,
                                 reuseGenePool = isReusingGenePool
                             )
                         )
