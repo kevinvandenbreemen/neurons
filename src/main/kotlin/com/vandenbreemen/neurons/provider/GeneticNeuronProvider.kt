@@ -9,7 +9,6 @@ class GeneticNeuronProvider(
 
     companion object {
         private fun generateGenomeForGridDimensions(rows: Int, cols: Int): LongArray {
-
             val geneList = LongArray(rows * cols)
             for (i in 0 until rows * cols) {
                 geneList[i] = Random.nextLong()
@@ -27,9 +26,9 @@ class GeneticNeuronProvider(
     }
 
     private var pointer = 0
+    private val totalNeuronTypes = 5 // Regular, Motor, Sensory, Blinker, Pain Receptor
 
     override fun getNeuron(): Neuron {
-
         val gene = geneList[pointer]
         pointer++
         if (pointer >= geneList.size) {
@@ -37,7 +36,6 @@ class GeneticNeuronProvider(
         }
 
         return assembleNeuronBasedOnGene(gene)
-
     }
 
     private fun getDirectionFromGene(gene: Long): Direction {
@@ -95,54 +93,21 @@ class GeneticNeuronProvider(
 
         val learningRate = getLearningRateFromGene(gene)
 
-        //  Use the next four bits to determine the type of neuron
-        val neuronType = (gene shr 4) and 0xF
+        // Use round-robin selection for neuron types
+        val neuronType = (((gene shr 4) and 0xF) % totalNeuronTypes).toInt()
+
         val neuron = when (neuronType) {
-            0L -> Neuron(weightCalculator)
-            1L -> Neuron(weightCalculator)
-            2L -> Neuron(weightCalculator)
-            3L -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
-            4L -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
-            5L -> {
+            0 -> Neuron(weightCalculator) // Regular Neuron
+            1 -> MotorNeuron(getActionIdFromGene(gene), weightCalculator)
+            2 -> SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
+            3 -> {
                 // For BlinkerNeuron, use bits 27-33 to determine turnsBeforeActivation (2-200 in increments of 2)
                 val incrementValue = ((gene shr 27) and 0x7F).toInt() // 7 bits = 128 possible values
                 BlinkerNeuron(2 + (incrementValue * 2), weightCalculator)
             }
-            6L -> {
-                PainReceptorNeuron(weightCalculator)
-            }
-            7L -> {
-                Neuron(weightCalculator)
-            }
-            8L -> {
-                Neuron(weightCalculator)
-            }
-            9L -> {
-                Neuron(weightCalculator)
-            }
-            10L -> {
-                MotorNeuron(getActionIdFromGene(gene), weightCalculator)
-            }
-            11L -> {
-                SensoryNeuron(getSensorIdFromGene(gene), weightCalculator)
-            }
-            12L -> {
-                // For BlinkerNeuron, use bits 27-33 to determine turnsBeforeActivation (2-200 in increments of 2)
-                val incrementValue = ((gene shr 27) and 0x7F).toInt() // 7 bits = 128 possible values
-                BlinkerNeuron(2 + (incrementValue * 2), weightCalculator)
-            }
-            13L -> {
-                PainReceptorNeuron(weightCalculator)
-            }
-            14L -> {
-                Neuron(weightCalculator)
-            }
-            15L -> {
-                Neuron(weightCalculator)
-            }
-            else -> {
-                Neuron(weightCalculator)
-            }
+
+            4 -> PainReceptorNeuron(weightCalculator)
+            else -> Neuron(weightCalculator) // Fallback to regular neuron
         }.also {
             it.setLearningRate(learningRate)
             it.setSigmaExpDelta(getSigmoidExpDeltaFromGene(gene))
