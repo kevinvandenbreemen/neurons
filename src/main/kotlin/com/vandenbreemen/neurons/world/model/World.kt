@@ -24,10 +24,6 @@ class World(
         return grid[y][x]
     }
 
-    fun isOutOfBounds(x: Int, y: Int): Boolean {
-        return x < 0 || x >= width || y < 0 || y >= height
-    }
-
     /**
      * Sets a cell at the given coordinates to be a wall
      * @param x The x coordinate (column)
