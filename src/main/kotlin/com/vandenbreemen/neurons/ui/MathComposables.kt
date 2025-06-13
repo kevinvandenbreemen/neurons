@@ -143,6 +143,7 @@ fun Function3DPlot(
     endX: Double,
     startY: Double,
     endY: Double,
+    numSteps: Int = 20,
     f: (Double, Double) -> Double,
     modifier: Modifier = Modifier
 ) {
@@ -205,21 +206,21 @@ fun Function3DPlot(
 
         // Draw the surface
         val gridSize = 20
-        val xStep = xRange / gridSize
-        val yStep = yRange / gridSize
+        val stepX = (endX - startX) / numSteps.toDouble()
+        val stepY = (endY - startY) / numSteps.toDouble()
 
         // Draw the surface grid
         for (i in 0..gridSize) {
             for (j in 0..gridSize) {
-                val x = startX + i * xStep
-                val y = startY + j * yStep
+                val x = startX + i * stepX
+                val y = startY + j * stepY
                 val z = f(x, y) * zScale
 
                 val point = project3D(x, y, z)
 
                 // Draw vertical lines
                 if (i < gridSize) {
-                    val nextX = startX + (i + 1) * xStep
+                    val nextX = startX + (i + 1) * stepX
                     val nextZ = f(nextX, y) * zScale
                     val nextPoint = project3D(nextX, y, nextZ)
                     drawLine(
@@ -232,7 +233,7 @@ fun Function3DPlot(
 
                 // Draw horizontal lines
                 if (j < gridSize) {
-                    val nextY = startY + (j + 1) * yStep
+                    val nextY = startY + (j + 1) * stepY
                     val nextZ = f(x, nextY) * zScale
                     val nextPoint = project3D(x, nextY, nextZ)
                     drawLine(
