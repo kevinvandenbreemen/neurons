@@ -124,6 +124,7 @@ fun App() {
                     } else null
 
                     val state = GeneticWorldState(
+                        numWorlds = params.numWorldsToTest,
                         brainSizeX = params.brainSizeX,
                         brainSizeY = params.brainSizeY,
                         numGenes = params.numGenes,
