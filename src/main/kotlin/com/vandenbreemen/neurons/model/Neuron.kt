@@ -24,13 +24,16 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     val learningRateOverride: Double
         get() = learningRate
 
+    var sigmoidNumerator: Double? = null
+
+
     private var sigmoidNumeratorMultiplier = 1.0
     fun setSigmoidNumeratorMultiplier(multiplier: Double) {
         sigmoidNumeratorMultiplier = multiplier
     }
 
     val maxActivationValue: Double
-        get() = sigmoidNumeratorMultiplier
+        get() = sigmoidNumerator ?: sigmoidNumeratorMultiplier
 
     /**
      * Current amount of stimulation this neuron has received.  Note that this is not the same as the value of the neuron.
@@ -61,7 +64,8 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     }
 
     fun sigmoid(x: Double): Double {
-        return sigmoidNumeratorMultiplier / (1 + exp(-(-sigmoidNumeratorMultiplier + (x * sigmoidExpDelta))))
+        return (sigmoidNumerator
+            ?: sigmoidNumeratorMultiplier) / (1 + exp(-(-sigmoidNumeratorMultiplier + (x * sigmoidExpDelta))))
     }
 
     /**

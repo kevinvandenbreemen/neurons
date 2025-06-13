@@ -73,6 +73,11 @@ class GeneticNeuronProvider(
         return (incrementValue * ((max - min) / 4294967295.0) + min).coerceIn(min, max) // Map to range -5.0 to 5.0
     }
 
+    private fun getSigmoidNumeratorFromGene(gene: LongArray, multiplier: Double): Double {
+        val incrementValue = ((gene[2] shr 16) and 0xFFFFFFFFFFFF).toDouble() // 48 bits
+        return (incrementValue * (multiplier / 281474976710655.0))
+    }
+
     private fun assembleNeuronBasedOnGene(gene: LongArray): Neuron {
         val weightCalculator = StrengthBasedConnector
 
@@ -96,6 +101,7 @@ class GeneticNeuronProvider(
             it.setLearningRate(learningRate)
             it.setSigmaExpDelta(getSigmoidExpDeltaFromGene(gene))
             it.setSigmoidNumeratorMultiplier(getSigmoidNumeratorMultiplierFromGene(gene))
+            it.sigmoidNumerator = (getSigmoidNumeratorFromGene(gene, it.maxActivationValue))
         }
 
         return neuron
