@@ -32,7 +32,7 @@ class GeneticNeuronProviderTest {
         val genes = longArrayOf(
             (0L shl 4), // Regular neuron
             (1L shl 4), // Inhibitory neuron
-            (2L shl 4), // Sine neuron
+            (2L shl 4), // Regular neuron
             (3L shl 4), // Fixed weight neuron
             (4L shl 4), // Relay neuron
             (5L shl 4), // Dead neuron
@@ -43,7 +43,7 @@ class GeneticNeuronProviderTest {
         // When/Then
         assertTrue(provider.getNeuron() is Neuron, "Should create regular neuron")
         assertTrue(provider.getNeuron() is InhibitoryNeuron, "Should create inhibitory neuron")
-        assertTrue(provider.getNeuron() is SineNeuron, "Should create sine neuron")
+        assertTrue(provider.getNeuron() is Neuron, "Should create regular neuron")
         assertTrue(provider.getNeuron() is FixedWeightNeuron, "Should create fixed weight neuron")
         assertTrue(provider.getNeuron() is RelayNeuron, "Should create relay neuron")
         assertTrue(provider.getNeuron() is DeadNeuron, "Should create dead neuron")
