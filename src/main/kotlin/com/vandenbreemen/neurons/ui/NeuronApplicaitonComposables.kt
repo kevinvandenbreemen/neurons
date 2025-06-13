@@ -156,7 +156,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                             }
                         }
 
-                        // Add activation function plot
+                        Text("Activation Function", style = TextStyle(fontSize = 16.sp))
                         Box(
                             modifier = Modifier
                                 .size(200.dp)
@@ -172,7 +172,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                             )
                         }
 
-                        // Add strength update function plot
+                        Text("Connection Strength Update", style = TextStyle(fontSize = 16.sp))
                         Box(
                             modifier = Modifier
                                 .size(200.dp)
