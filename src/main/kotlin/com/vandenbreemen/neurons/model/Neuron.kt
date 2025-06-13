@@ -26,8 +26,7 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     fun setSigmoidNumeratorMultiplier(multiplier: Double) {
         sigmoidNumeratorMultiplier = multiplier
     }
-    val isNegativeSigmoidFunction: Boolean
-        get() = sigmoidNumeratorMultiplier < 0
+
     val sigmoidMultiplier: Double
         get() = sigmoidNumeratorMultiplier
 
