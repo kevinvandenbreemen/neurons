@@ -161,6 +161,16 @@ fun Function3DPlot(
         )
     )
 
+    // Create an infinite animation for elevation
+    val elevationAnimation = infiniteTransition.animateFloat(
+        initialValue = (elevation - 15).toFloat(),
+        targetValue = (elevation + 15).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width
         val height = size.height
@@ -180,7 +190,7 @@ fun Function3DPlot(
         )
 
         // Convert angles to radians
-        val elevationRad = elevation * Math.PI / 180.0
+        val elevationRad = elevationAnimation.value * Math.PI / 180.0
         val rotationRad = (rotation.value * Math.PI / 180.0)
 
         // Calculate the center of the plot
