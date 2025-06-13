@@ -277,13 +277,6 @@ fun NeuralNetworkDisplay(
                     val dotRadius = minOf(cellWidth, cellHeight) * 0.15f
 
                     when (neuron) {
-                        is FixedWeightNeuron -> {
-                            drawCircle(
-                                color = Color.Blue,
-                                radius = dotRadius,
-                                center = Offset(centerX, centerY)
-                            )
-                        }
 
                         is MotorNeuron -> {
                             //  Draw a green M at the center of the neuron

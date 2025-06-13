@@ -44,7 +44,6 @@ class GeneticNeuronProviderTest {
         assertTrue(provider.getNeuron() is Neuron, "Should create regular neuron")
         assertTrue(provider.getNeuron() is InhibitoryNeuron, "Should create inhibitory neuron")
         assertTrue(provider.getNeuron() is Neuron, "Should create regular neuron")
-        assertTrue(provider.getNeuron() is FixedWeightNeuron, "Should create fixed weight neuron")
         assertTrue(provider.getNeuron() is RelayNeuron, "Should create relay neuron")
         assertTrue(provider.getNeuron() is DeadNeuron, "Should create dead neuron")
         val motorNeuron = provider.getNeuron()
