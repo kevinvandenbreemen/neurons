@@ -144,6 +144,8 @@ fun Function3DPlot(
     startY: Double,
     endY: Double,
     f: (Double, Double) -> Double,
+    stepCount: Int = 60,
+    elevation: Double = 45.0,
     modifier: Modifier = Modifier
 ) {
     val textMeasurer = rememberTextMeasurer()
@@ -164,7 +166,6 @@ fun Function3DPlot(
         val height = size.height
 
         // 3D transformation parameters
-        val elevation = 45.0 // degrees
         val zScale = 0.3 // Scale factor for the z-axis (function values)
 
         // Calculate ranges
@@ -204,7 +205,7 @@ fun Function3DPlot(
         }
 
         // Draw the surface
-        val gridSize = 20
+        val gridSize = stepCount
         val xStep = xRange / gridSize
         val yStep = yRange / gridSize
 
