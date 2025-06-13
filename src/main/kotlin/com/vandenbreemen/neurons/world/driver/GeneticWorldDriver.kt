@@ -124,15 +124,6 @@ class GeneticWorldDriver(
                     return 0.0
                 }
 
-                //  Don't consider anything viable if it drops below 50% of the moves
-                if (max(
-                        (numMoves.toDouble() - simulation.getPainAmount() - numIterationWithoutMovement),
-                        0.0
-                    ) < minViability
-                ) {
-                    return 0.0
-                }
-
             }
 
             val score = if (didAgentMove) (
