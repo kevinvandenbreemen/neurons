@@ -64,7 +64,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
 
     if (showDetails) {
 
-        val boxSizeAccomodation = 200.dp
+        val boxSizeAccomodation = 300.dp
 
         val neuronInfoStyle = TextStyle(fontSize = 8.sp)
         val neuronInfoHeaderStyle = TextStyle(fontSize = 10.sp)
@@ -164,41 +164,50 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                         Row {
                             Column {
                                 Text("Activation Function", style = neuronInfoHeaderStyle)
-                                FunctionPlot(
-                                    startX = -5.0,
-                                    endX = 5.0,
-                                    startY = -5.0,
-                                    endY = 5.0,
-                                    f = neuron.neuronSigmoidFunction,
+                                Box(
                                     modifier = Modifier
                                         .size(boxSizeAccomodation)
                                         .padding(16.dp)
-                                )
+                                        .background(Color.White)
+                                ) {
+                                    FunctionPlot(
+                                        startX = -5.0,
+                                        endX = 5.0,
+                                        startY = -5.0,
+                                        endY = 5.0,
+                                        f = neuron.neuronSigmoidFunction,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
                             }
-
 
                             Column {
                                 Text("Connection Strength Update", style = neuronInfoHeaderStyle)
-                                Function3DPlot(
-                                    startX = -5.0,
-                                    endX = 5.0,
-                                    startY = -5.0,
-                                    endY = 5.0,
-                                    elevation = 75.0,
-                                    f = { x, y ->
-                                        normalizedStrengthUpdate(
-                                            sourceActivation = x,
-                                            targetActivation = y,
-                                            sourceMaxActivation = neuron.sigmoidNumeratorMultiplier,
-                                            targetMaxActivation = 1.0,
-                                            currentStrength = 0.0,
-                                            learningRate = neuron.learningRate
-                                        )
-                                    },
+                                Box(
                                     modifier = Modifier
                                         .size(boxSizeAccomodation)
                                         .padding(16.dp)
-                                )
+                                        .background(Color.White)
+                                ) {
+                                    Function3DPlot(
+                                        startX = -5.0,
+                                        endX = 5.0,
+                                        startY = -5.0,
+                                        endY = 5.0,
+                                        elevation = 75.0,
+                                        f = { x, y ->
+                                            normalizedStrengthUpdate(
+                                                sourceActivation = x,
+                                                targetActivation = y,
+                                                sourceMaxActivation = neuron.sigmoidNumeratorMultiplier,
+                                                targetMaxActivation = 1.0,
+                                                currentStrength = 0.0,
+                                                learningRate = neuron.learningRate
+                                            )
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
                             }
                         }
 
