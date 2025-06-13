@@ -72,7 +72,6 @@ class GeneticWorldDriver(
         geneticNeuronProvider: GeneticNeuronProvider,
         numMoves: Int,
         numWorldsToTest: Int = 1,
-        painTolerance: Double = 5.0,
         minViability: Double = 0.01,
         minDistinctPointsInPath: Int = 10,
     ): Double {
@@ -119,15 +118,10 @@ class GeneticWorldDriver(
                 if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
                     return 0.0
                 }
-
-                if (simulation.getPainAmount() > painTolerance) {
-                    return 0.0
-                }
-
             }
 
             val score = if (didAgentMove) (
-                    max((numMoves.toDouble() - simulation.getPainAmount() - numIterationWithoutMovement), 0.0)
+                    max((numMoves.toDouble() - numIterationWithoutMovement), 0.0)
                             / numMoves) else 0.0
 
             totalScore += score
@@ -163,7 +157,6 @@ fun main() {
                 geneticNeuronProvider = it,
                 numMoves = 1000,
                 numWorldsToTest = 10,
-                painTolerance = 5.0,
                 minViability = 0.1,
                 minDistinctPointsInPath = 10
             )

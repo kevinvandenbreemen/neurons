@@ -8,8 +8,6 @@ class NavigationWorldSimulation(
     private val maxMovementDelta: Int = 1
 ) : WorldSimulation(world) {
 
-    private var painAmount: Double = 0.0
-
     override fun doAgentSetup(agent: NeuralAgent) {
         motorNeuronSetup(agent)
         sensoryNeuronSetup(agent)
@@ -156,15 +154,10 @@ class NavigationWorldSimulation(
         agent.findPainReceptorNeurons().forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 if (isAgentCollidingWithSomething(agent)) {
-                    painAmount += 1.0
                     neuron.stimulateFromEnvironment(1.0)
                 }
             }
         }
-    }
-
-    override fun getPainAmount(): Double {
-        return this.painAmount
     }
 
     /**
