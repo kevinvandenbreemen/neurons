@@ -195,6 +195,7 @@ private fun NeuronDetailsUI(neuron: NeuronInfoState, onCloseClick: () -> Unit) {
                                         startY = -5.0,
                                         endY = 5.0,
                                         elevation = 75.0,
+                                        stepCount = 25,
                                         f = { x, y ->
                                             normalizedStrengthUpdate(
                                                 sourceActivation = x,
