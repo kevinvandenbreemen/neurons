@@ -76,7 +76,7 @@ class GeneticWorldDriver(
         geneticNeuronProvider: GeneticNeuronProvider,
         numMoves: Int,
         numWorldsToTest: Int = 1,
-        minViability: Double = 0.01,
+        minScore: Double = 0.1,
     ): Double = runBlocking {
         val scores = List(numWorldsToTest) { worldIndex ->
             async(Dispatchers.Default) {
@@ -125,17 +125,29 @@ class GeneticWorldDriver(
                 }
 
                 if (didAgentMove) {
-                    max(
+                    (max(
                         (numMoves.toDouble() - numIterationWithoutMovement - (simulation.errorCount * errorWeight)),
                         0.0
-                    ) / numMoves
+                    ) / numMoves).let {
+                        return@let if (it >= minScore) {  //  Don't let crappy genes continue to next iteration
+                            it
+                        } else {
+                            0.0
+                        }
+                    }
                 } else {
                     0.0
                 }
             }
         }.awaitAll()
 
-        scores.average()
+        return@runBlocking scores.average().let {
+            if (it >= minScore) {  //  Don't let crappy genes continue to next iteration
+                return@let it
+            } else {
+                return@let 0.0
+            }
+        }
     }
 
 }

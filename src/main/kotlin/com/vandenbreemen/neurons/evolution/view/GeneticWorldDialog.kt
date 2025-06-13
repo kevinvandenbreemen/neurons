@@ -27,6 +27,7 @@ data class GeneticWorldParams(
     val numWorldsToTest: Int = 3,
     val newGeneProbability: Double = 0.1,
     val errorWeight: Double = 1.0,
+    val minScore: Double = 0.1,
     val reuseGenePool: Boolean = false
 )
 
@@ -53,6 +54,7 @@ fun GeneticWorldDialog(
     var numWorldsToTest by remember { mutableStateOf("10") }
     var newGeneProbability by remember { mutableStateOf("0.2") }
     var errorWeight by remember { mutableStateOf("45.0") }
+    var minScore by remember { mutableStateOf("0.1") }
     var isReusingGenePool by remember { mutableStateOf(currentGenePool != null) }
 
     if (showDialog) {
@@ -193,6 +195,12 @@ fun GeneticWorldDialog(
                                 label = { Text("Error Weight") },
                                 modifier = Modifier.fillMaxWidth()
                             )
+                            OutlinedTextField(
+                                value = minScore,
+                                onValueChange = { minScore = it },
+                                label = { Text("Minimum Score") },
+                                modifier = Modifier.fillMaxWidth()
+                            )
 
 
                         }
@@ -236,6 +244,7 @@ fun GeneticWorldDialog(
                                 numWorldsToTest = numWorldsToTest.toIntOrNull() ?: 3,
                                 newGeneProbability = newGeneProbability.toDoubleOrNull() ?: 0.1,
                                 errorWeight = errorWeight.toDoubleOrNull() ?: 1.0,
+                                minScore = minScore.toDoubleOrNull() ?: 0.1,
                                 reuseGenePool = isReusingGenePool
                             )
                         )
