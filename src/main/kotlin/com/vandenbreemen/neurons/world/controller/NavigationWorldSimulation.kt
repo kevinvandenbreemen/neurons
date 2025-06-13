@@ -163,6 +163,10 @@ class NavigationWorldSimulation(
         }
     }
 
+    override fun getPainAmount(): Double {
+        return this.painAmount
+    }
+
     /**
      * Calculates the distance to the nearest wall in a given direction
      * @param agent The neural agent whose position will be used as the reference point
