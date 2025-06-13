@@ -165,8 +165,18 @@ fun Function3DPlot(
 
         // 3D transformation parameters
         val elevation = 45.0 // degrees
-        val scale = 0.8 // Scale factor for the plot
         val zScale = 0.3 // Scale factor for the z-axis (function values)
+
+        // Calculate ranges
+        val xRange = endX - startX
+        val yRange = endY - startY
+
+        // Calculate scale to fit the plot in the available space
+        // We use 0.8 to leave some margin around the edges
+        val scale = 0.8 * minOf(
+            width / xRange,
+            height / yRange
+        )
 
         // Convert angles to radians
         val elevationRad = elevation * Math.PI / 180.0
@@ -187,16 +197,16 @@ fun Function3DPlot(
             val elevatedZ = rotatedY * Math.sin(elevationRad) + z * Math.cos(elevationRad)
 
             // Project to 2D
-            val projectedX = centerX + (rotatedX * scale * width / 2)
-            val projectedY = centerY - (elevatedY * scale * height / 2)
+            val projectedX = centerX + (rotatedX * scale)
+            val projectedY = centerY - (elevatedY * scale)
 
             return Offset(projectedX.toFloat(), projectedY.toFloat())
         }
 
         // Draw the surface
         val gridSize = 20
-        val xStep = (endX - startX) / gridSize
-        val yStep = (endY - startY) / gridSize
+        val xStep = xRange / gridSize
+        val yStep = yRange / gridSize
 
         // Draw the surface grid
         for (i in 0..gridSize) {
@@ -244,8 +254,8 @@ fun Function3DPlot(
 
         // Draw axes
         val origin = project3D(0.0, 0.0, 0.0)
-        val xAxis = project3D(1.0, 0.0, 0.0)
-        val yAxis = project3D(0.0, 1.0, 0.0)
+        val xAxis = project3D(xRange, 0.0, 0.0)
+        val yAxis = project3D(0.0, yRange, 0.0)
         val zAxis = project3D(0.0, 0.0, 1.0)
 
         // Draw axis lines
