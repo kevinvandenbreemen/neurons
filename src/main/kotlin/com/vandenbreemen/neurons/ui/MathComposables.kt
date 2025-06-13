@@ -214,14 +214,16 @@ fun Function3DPlot(
             for (j in 0..gridSize) {
                 val x = startX + i * xStep
                 val y = startY + j * yStep
-                val z = f(x, y) * zScale
+
+                val rawFx = f(x, y)
+                val z = -rawFx * zScale  // Negate the function value to flip the plot
 
                 val point = project3D(x, y, z)
 
                 // Draw vertical lines
                 if (i < gridSize) {
                     val nextX = startX + (i + 1) * xStep
-                    val nextZ = f(nextX, y) * zScale
+                    val nextZ = -f(nextX, y) * zScale  // Negate here too
                     val nextPoint = project3D(nextX, y, nextZ)
                     drawLine(
                         color = Color.Gray.copy(alpha = 0.5f),
@@ -234,7 +236,7 @@ fun Function3DPlot(
                 // Draw horizontal lines
                 if (j < gridSize) {
                     val nextY = startY + (j + 1) * yStep
-                    val nextZ = f(x, nextY) * zScale
+                    val nextZ = -f(x, nextY) * zScale  // And here
                     val nextPoint = project3D(x, nextY, nextZ)
                     drawLine(
                         color = Color.Gray.copy(alpha = 0.5f),
@@ -246,7 +248,7 @@ fun Function3DPlot(
 
                 // Draw points
                 drawCircle(
-                    color = if (z > 0) Color.Red.copy(alpha = 0.3f) else Color.Blue.copy(alpha = 0.3f),
+                    color = if (rawFx > 0) Color.Green.copy(alpha = 0.3f) else Color.Red.copy(alpha = 0.3f),
                     radius = 1f,
                     center = point
                 )
