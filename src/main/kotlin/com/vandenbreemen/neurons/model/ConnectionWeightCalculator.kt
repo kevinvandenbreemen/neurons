@@ -44,28 +44,6 @@ private fun normalizedStrengthUpdate(
     return currentStrength + (learningRate * delta)
 }
 
-object DefaultConnectionWeightCalculator : ConnectionWeightCalculator {
-    override fun calculateWeight(
-        sourceNeuron: Neuron,
-        targetNeuron: Neuron,
-        currentStrength: Double,
-        learningRate: Double
-    ): Double {
-
-        return normalizedStrengthUpdate(sourceNeuron, targetNeuron, currentStrength, learningRate)
-
-    }
-
-
-    override fun calculateStartingConnectionWeight(
-        sourceNeuron: Neuron,
-        targetNeuron: Neuron
-    ): Double {
-        // For default calculator, start with a random weight between -0.5 and 0.5
-        return 0.0
-    }
-}
-
 object StrengthBasedConnector : ConnectionWeightCalculator {
     override fun calculateWeight(
         sourceNeuron: Neuron,
