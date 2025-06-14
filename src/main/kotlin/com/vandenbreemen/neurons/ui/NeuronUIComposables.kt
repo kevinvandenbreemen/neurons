@@ -12,6 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.onPointerEvent
@@ -398,12 +402,12 @@ fun NeuralNetworkDisplay(
                                 val endOffsetX = endX - dx * offset
                                 val endOffsetY = endY - dy * offset
 
-                                // Calculate the middle point with a perpendicular offset
+                                // Calculate the control points for the arc
                                 val midX = (startOffsetX + endOffsetX) / 2
                                 val midY = (startOffsetY + endOffsetY) / 2
                                 val perpOffset = minOf(cellWidth, cellHeight) * 0.3f // 30% of cell size
-                                val perpX = midX + dy * perpOffset
-                                val perpY = midY - dx * perpOffset
+                                val controlX = midX + dy * perpOffset
+                                val controlY = midY - dx * perpOffset
 
                                 // Draw three connected lines
                                 val connectionColor = if (strength < 0)
@@ -411,32 +415,34 @@ fun NeuralNetworkDisplay(
                                 else
                                     Color.Green.copy(alpha = strength.toFloat().coerceIn(0f, 1f))
 
-                                // First line from start to middle point
-                                drawLine(
-                                    color = connectionColor,
-                                    start = Offset(startOffsetX, startOffsetY),
-                                    end = Offset(perpX, perpY),
-                                    strokeWidth = 1f
-                                )
+                                // Draw the arc
+                                val path = Path().apply {
+                                    moveTo(startOffsetX, startOffsetY)
+                                    quadraticBezierTo(controlX, controlY, endOffsetX, endOffsetY)
+                                }
 
-                                // Second line from middle point to end
-                                drawLine(
+                                drawPath(
+                                    path = path,
                                     color = connectionColor,
-                                    start = Offset(perpX, perpY),
-                                    end = Offset(endOffsetX, endOffsetY),
-                                    strokeWidth = 1f
+                                    style = Stroke(
+                                        width = 1f,
+                                        cap = StrokeCap.Round,
+                                        join = StrokeJoin.Round
+                                    )
                                 )
 
                                 // Draw arrow at the end
                                 val arrowSize = minOf(cellWidth, cellHeight) * 0.15f // Size of the arrow
-                                val angle = kotlin.math.atan2(endOffsetY - perpY, endOffsetX - perpX)
-                                val arrowAngle1 = angle + Math.PI / 6 // 30 degrees
-                                val arrowAngle2 = angle - Math.PI / 6 // -30 degrees
+
+                                // Calculate the angle of the curve at the end point
+                                val endAngle = kotlin.math.atan2(endOffsetY - controlY, endOffsetX - controlX)
+                                val arrowAngle1 = endAngle + Math.PI / 6 // 30 degrees
+                                val arrowAngle2 = endAngle - Math.PI / 6 // -30 degrees
 
                                 // Calculate arrow points with adjusted positioning to prevent cutoff
                                 val arrowHeadSize = arrowSize * 0.3f // Reduced from 0.4f to prevent cutoff
-                                val arrowBaseX = endOffsetX - (arrowHeadSize * kotlin.math.cos(angle)).toFloat()
-                                val arrowBaseY = endOffsetY - (arrowHeadSize * kotlin.math.sin(angle)).toFloat()
+                                val arrowBaseX = endOffsetX - (arrowHeadSize * kotlin.math.cos(endAngle)).toFloat()
+                                val arrowBaseY = endOffsetY - (arrowHeadSize * kotlin.math.sin(endAngle)).toFloat()
 
                                 // Calculate arrow points with adjusted positioning
                                 val arrowPoint1 = Offset(
