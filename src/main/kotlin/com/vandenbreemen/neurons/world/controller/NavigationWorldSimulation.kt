@@ -5,12 +5,15 @@ import com.vandenbreemen.neurons.model.MotorNeuronDirections
 import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
 
+data class MovementVector(val dx: Double, val dy: Double)
+
 class NavigationWorldSimulation(
     world: World = World(),
     private val maxMovementDelta: Int = 1
 ) : WorldSimulation(world) {
 
     private val agentPositions = mutableMapOf<NeuralAgent, AgentPosition>()
+    private val agentMovementVectors = mutableMapOf<NeuralAgent, MutableList<MovementVector>>()
 
     /**
      * Adds a new agent to the simulation
@@ -54,6 +57,7 @@ class NavigationWorldSimulation(
     }
 
     override fun doAgentSetup(agent: NeuralAgent) {
+        agentMovementVectors[agent] = mutableListOf()
         motorNeuronSetup(agent)
         sensoryNeuronSetup(agent)
         painReceptorSetup(agent)
@@ -64,10 +68,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.NORTH_START..MotorNeuronDirections.NORTH_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newY = (currentPos.y - delta + world.height) % world.height
-                setAgentPosition(agent, currentPos.copy(y = newY))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(0.0, -delta))
             }
         }
 
@@ -75,11 +77,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.NORTHEAST_START..MotorNeuronDirections.NORTHEAST_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newX = (currentPos.x + delta + world.width) % world.width
-                val newY = (currentPos.y - delta + world.height) % world.height
-                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(delta, -delta))
             }
         }
 
@@ -87,10 +86,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.EAST_START..MotorNeuronDirections.EAST_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newX = (currentPos.x + delta + world.width) % world.width
-                setAgentPosition(agent, currentPos.copy(x = newX))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(delta, 0.0))
             }
         }
 
@@ -98,11 +95,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.SOUTHEAST_START..MotorNeuronDirections.SOUTHEAST_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newX = (currentPos.x + delta + world.width) % world.width
-                val newY = (currentPos.y + delta + world.height) % world.height
-                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(delta, delta))
             }
         }
 
@@ -110,10 +104,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.SOUTH_START..MotorNeuronDirections.SOUTH_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newY = (currentPos.y + delta + world.height) % world.height
-                setAgentPosition(agent, currentPos.copy(y = newY))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(0.0, delta))
             }
         }
 
@@ -121,11 +113,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.SOUTHWEST_START..MotorNeuronDirections.SOUTHWEST_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newX = (currentPos.x - delta + world.width) % world.width
-                val newY = (currentPos.y + delta + world.height) % world.height
-                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(-delta, delta))
             }
         }
 
@@ -133,10 +122,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.WEST_START..MotorNeuronDirections.WEST_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newX = (currentPos.x - delta + world.width) % world.width
-                setAgentPosition(agent, currentPos.copy(x = newX))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(-delta, 0.0))
             }
         }
 
@@ -144,11 +131,8 @@ class NavigationWorldSimulation(
         agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.NORTHWEST_START..MotorNeuronDirections.NORTHWEST_END }
             .forEach { neuron ->
             agent.addNeuronAction(neuron) {
-                val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
-                val delta = (neuron.activation * maxMovementDelta).toInt()
-                val newX = (currentPos.x - delta + world.width) % world.width
-                val newY = (currentPos.y - delta + world.height) % world.height
-                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
+                val delta = neuron.activation * maxMovementDelta
+                agentMovementVectors[agent]?.add(MovementVector(-delta, -delta))
             }
         }
     }
@@ -226,7 +210,28 @@ class NavigationWorldSimulation(
      * and checking for collisions after all agents have moved.
      */
     override fun step() {
+        // Clear movement vectors before processing
+        agentMovementVectors.values.forEach { it.clear() }
+        
         super.step()
+
+        // Apply accumulated movement vectors
+        getAgents().forEach { agent ->
+            val currentPos = getAgentPosition(agent) ?: return@forEach
+            val vectors = agentMovementVectors[agent] ?: return@forEach
+
+            if (vectors.isNotEmpty()) {
+                // Sum up all vectors
+                val totalDx = vectors.sumOf { it.dx }
+                val totalDy = vectors.sumOf { it.dy }
+
+                // Calculate new position with wrapping
+                val newX = (currentPos.x + totalDx.toInt() + world.width) % world.width
+                val newY = (currentPos.y + totalDy.toInt() + world.height) % world.height
+
+                setAgentPosition(agent, currentPos.copy(x = newX, y = newY))
+            }
+        }
 
         // After all agents have iterated, check for collisions
         getAgents().forEach { agent ->
