@@ -42,7 +42,7 @@ fun GeneticWorldDialog(
     var brainSizeY by remember { mutableStateOf("10") }
     var numGenes by remember { mutableStateOf("100") }
     var numMovesPerTest by remember { mutableStateOf("400") }
-    var costOfNotMoving by remember { mutableStateOf("10.0") }
+    var costOfNotMoving by remember { mutableStateOf("1.5") }
     var mutationRate by remember { mutableStateOf("0.2") }
     var eliteSize by remember { mutableStateOf("20") }
     var worldWidth by remember { mutableStateOf("100") }
@@ -53,7 +53,7 @@ fun GeneticWorldDialog(
     var numRandomWalls by remember { mutableStateOf("2") }
     var numWorldsToTest by remember { mutableStateOf("10") }
     var newGeneProbability by remember { mutableStateOf("0.2") }
-    var errorWeight by remember { mutableStateOf("45.0") }
+    var errorWeight by remember { mutableStateOf("1.5") }
     var minScore by remember { mutableStateOf("0.1") }
     var isReusingGenePool by remember { mutableStateOf(currentGenePool != null) }
 

@@ -114,7 +114,7 @@ class GeneticWorldDriver(
 
                     simulation.step()
                     if (pointsVisitedPath.contains(simulation.getAgentPosition(agent))) {
-                        numIterationWithoutMovement += costOfNotMoving
+                        numIterationWithoutMovement++
                     } else {
                         didAgentMove = true
                     }
@@ -124,7 +124,7 @@ class GeneticWorldDriver(
                         return@async 0.0
                     }
 
-                    val noMovementProportion = numIterationWithoutMovement / numMoves.toDouble()
+                    val noMovementProportion = (numIterationWithoutMovement * costOfNotMoving) / numMoves.toDouble()
                     if (1.0 - noMovementProportion < minScore) {
                         return@async 0.0
                     }
@@ -132,7 +132,7 @@ class GeneticWorldDriver(
 
                 if (didAgentMove) {
                     (max(
-                        (numMoves.toDouble() - numIterationWithoutMovement - (simulation.errorCount * errorWeight)),
+                        (numMoves.toDouble() - (numIterationWithoutMovement * costOfNotMoving) - (simulation.errorCount * errorWeight)),
                         0.0
                     ) / numMoves).let {
                         return@let if (it >= minScore) {  //  Don't let crappy genes continue to next iteration
