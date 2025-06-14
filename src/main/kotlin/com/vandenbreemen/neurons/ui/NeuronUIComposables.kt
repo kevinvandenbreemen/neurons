@@ -433,14 +433,19 @@ fun NeuralNetworkDisplay(
                                 val arrowAngle1 = angle + Math.PI / 6 // 30 degrees
                                 val arrowAngle2 = angle - Math.PI / 6 // -30 degrees
 
-                                // Calculate arrow points
+                                // Calculate arrow points with adjusted positioning to prevent cutoff
+                                val arrowHeadSize = arrowSize * 0.3f // Reduced from 0.4f to prevent cutoff
+                                val arrowBaseX = endOffsetX - (arrowHeadSize * kotlin.math.cos(angle)).toFloat()
+                                val arrowBaseY = endOffsetY - (arrowHeadSize * kotlin.math.sin(angle)).toFloat()
+
+                                // Calculate arrow points with adjusted positioning
                                 val arrowPoint1 = Offset(
-                                    (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle1)).toFloat(),
-                                    (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle1)).toFloat()
+                                    arrowBaseX - (arrowHeadSize * kotlin.math.cos(arrowAngle1)).toFloat(),
+                                    arrowBaseY - (arrowHeadSize * kotlin.math.sin(arrowAngle1)).toFloat()
                                 )
                                 val arrowPoint2 = Offset(
-                                    (endOffsetX - arrowSize * kotlin.math.cos(arrowAngle2)).toFloat(),
-                                    (endOffsetY - arrowSize * kotlin.math.sin(arrowAngle2)).toFloat()
+                                    arrowBaseX - (arrowHeadSize * kotlin.math.cos(arrowAngle2)).toFloat(),
+                                    arrowBaseY - (arrowHeadSize * kotlin.math.sin(arrowAngle2)).toFloat()
                                 )
 
                                 // Draw arrow lines
