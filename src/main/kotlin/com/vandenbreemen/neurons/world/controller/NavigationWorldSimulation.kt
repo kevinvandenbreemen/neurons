@@ -1,6 +1,7 @@
 package com.vandenbreemen.neurons.world.controller
 
 import com.vandenbreemen.neurons.agent.NeuralAgent
+import com.vandenbreemen.neurons.model.MotorNeuronDirections
 import com.vandenbreemen.neurons.world.model.AgentPosition
 import com.vandenbreemen.neurons.world.model.World
 
@@ -60,7 +61,8 @@ class NavigationWorldSimulation(
 
     private fun motorNeuronSetup(agent: NeuralAgent) {
         // North
-        agent.findMotorNeurons { idByte -> idByte in 0x00..0x1F }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.NORTH_START..MotorNeuronDirections.NORTH_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -70,7 +72,8 @@ class NavigationWorldSimulation(
         }
 
         // Northeast
-        agent.findMotorNeurons { idByte -> idByte in 0x20..0x3F }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.NORTHEAST_START..MotorNeuronDirections.NORTHEAST_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -81,7 +84,8 @@ class NavigationWorldSimulation(
         }
 
         // East
-        agent.findMotorNeurons { idByte -> idByte in 0x40..0x5F }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.EAST_START..MotorNeuronDirections.EAST_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -91,7 +95,8 @@ class NavigationWorldSimulation(
         }
 
         // Southeast
-        agent.findMotorNeurons { idByte -> idByte in 0x60..0x7F }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.SOUTHEAST_START..MotorNeuronDirections.SOUTHEAST_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -102,7 +107,8 @@ class NavigationWorldSimulation(
         }
 
         // South
-        agent.findMotorNeurons { idByte -> idByte in 0x80..0x9F }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.SOUTH_START..MotorNeuronDirections.SOUTH_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -112,7 +118,8 @@ class NavigationWorldSimulation(
         }
 
         // Southwest
-        agent.findMotorNeurons { idByte -> idByte in 0xA0..0xBF }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.SOUTHWEST_START..MotorNeuronDirections.SOUTHWEST_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -123,7 +130,8 @@ class NavigationWorldSimulation(
         }
 
         // West
-        agent.findMotorNeurons { idByte -> idByte in 0xC0..0xDF }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.WEST_START..MotorNeuronDirections.WEST_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -133,7 +141,8 @@ class NavigationWorldSimulation(
         }
 
         // Northwest
-        agent.findMotorNeurons { idByte -> idByte in 0xE0..0xFF }.forEach { neuron ->
+        agent.findMotorNeurons { idByte -> idByte in MotorNeuronDirections.NORTHWEST_START..MotorNeuronDirections.NORTHWEST_END }
+            .forEach { neuron ->
             agent.addNeuronAction(neuron) {
                 val currentPos = getAgentPosition(agent) ?: return@addNeuronAction
                 val delta = (neuron.activation * maxMovementDelta).toInt()
@@ -146,49 +155,57 @@ class NavigationWorldSimulation(
 
     private fun sensoryNeuronSetup(agent: NeuralAgent) {
         // North
-        agent.findSensoryNeurons { idByte -> idByte in 0x00..0x1F }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.NORTH_START..MotorNeuronDirections.NORTH_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the north
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 0, -1))
         }
 
         // Northeast
-        agent.findSensoryNeurons { idByte -> idByte in 0x20..0x3F }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.NORTHEAST_START..MotorNeuronDirections.NORTHEAST_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the northeast
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, -1))
         }
 
         // East
-        agent.findSensoryNeurons { idByte -> idByte in 0x40..0x5F }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.EAST_START..MotorNeuronDirections.EAST_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the east
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, 0))
         }
 
         // Southeast
-        agent.findSensoryNeurons { idByte -> idByte in 0x60..0x7F }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.SOUTHEAST_START..MotorNeuronDirections.SOUTHEAST_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the southeast
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 1, 1))
         }
 
         // South
-        agent.findSensoryNeurons { idByte -> idByte in 0x80..0x9F }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.SOUTH_START..MotorNeuronDirections.SOUTH_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the south
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, 0, 1))
         }
 
         // Southwest
-        agent.findSensoryNeurons { idByte -> idByte in 0xA0..0xBF }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.SOUTHWEST_START..MotorNeuronDirections.SOUTHWEST_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the southwest
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, 1))
         }
 
         // West
-        agent.findSensoryNeurons { idByte -> idByte in 0xC0..0xDF }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.WEST_START..MotorNeuronDirections.WEST_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the west
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, 0))
         }
 
         // Northwest
-        agent.findSensoryNeurons { idByte -> idByte in 0xE0..0xFF }.forEach { neuron ->
+        agent.findSensoryNeurons { idByte -> idByte in MotorNeuronDirections.NORTHWEST_START..MotorNeuronDirections.NORTHWEST_END }
+            .forEach { neuron ->
             // Sensory neuron for detecting walls to the northwest
             neuron.stimulateFromEnvironment(getWallDistanceInDirection(agent, -1, -1))
         }
@@ -257,5 +274,4 @@ class NavigationWorldSimulation(
         val currentPos = getAgentPosition(agent) ?: return false
         return world.isBoundary(currentPos.x, currentPos.y)
     }
-
 }
