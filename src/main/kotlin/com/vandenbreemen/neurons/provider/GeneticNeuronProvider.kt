@@ -8,7 +8,7 @@ class GeneticNeuronProvider(
 ) : NeuronProvider {
 
     companion object {
-        const val GENES_PER_NEURON = 4
+        const val GENES_PER_NEURON = 8
 
         private fun generateGenomeForGridDimensions(rows: Int, cols: Int): Array<LongArray> {
             val geneList = Array(rows * cols) { LongArray(GENES_PER_NEURON) }
@@ -82,6 +82,33 @@ class GeneticNeuronProvider(
         return (incrementValue * (multiplier / 4294967295.0))
     }
 
+    private fun getInitialConnectionWeightFromGene(gene: LongArray, direction: Direction): Double {
+        // Use bits 0-31 of gene[4] through gene[7] for each direction
+        val geneIndex = when (direction) {
+            Direction.UP -> 4
+            Direction.DOWN -> 4
+            Direction.LEFT -> 5
+            Direction.RIGHT -> 5
+            Direction.UP_LEFT -> 6
+            Direction.UP_RIGHT -> 6
+            Direction.DOWN_LEFT -> 7
+            Direction.DOWN_RIGHT -> 7
+        }
+        val bitOffset = when (direction) {
+            Direction.UP -> 0
+            Direction.DOWN -> 32
+            Direction.LEFT -> 0
+            Direction.RIGHT -> 32
+            Direction.UP_LEFT -> 0
+            Direction.UP_RIGHT -> 32
+            Direction.DOWN_LEFT -> 0
+            Direction.DOWN_RIGHT -> 32
+        }
+
+        val incrementValue = ((gene[geneIndex] shr bitOffset) and 0xFFFFFFFF).toDouble()
+        return incrementValue / 4294967295.0  // Map to range 0.0 to 1.0
+    }
+
     private fun assembleNeuronBasedOnGene(gene: LongArray): Neuron {
         val weightCalculator = StrengthBasedConnector
 
@@ -106,6 +133,11 @@ class GeneticNeuronProvider(
             it.setSigmaExpDelta(getSigmoidExpDeltaFromGene(gene))
             it.setSigmoidNumeratorMultiplier(getSigmoidNumeratorMultiplierFromGene(gene))
             it.sigmoidNumerator = (getSigmoidNumeratorFromGene(gene, it.maxActivationValue))
+
+            // Set initial connection weights for each direction
+            Direction.entries.forEach { direction ->
+                it.setInitialConnectionWeight(direction, getInitialConnectionWeightFromGene(gene, direction))
+            }
         }
 
         return neuron

@@ -7,6 +7,30 @@ open class Neuron(val weightCalculator: ConnectionWeightCalculator = StrengthBas
     internal val connections = mutableListOf<Connection>()
 
     /**
+     * Map of initial connection weights for each direction
+     */
+    private val initialConnectionWeights = mutableMapOf<Direction, Double>()
+
+    /**
+     * Sets the initial connection weight for a specific direction
+     * @param direction The direction to set the weight for
+     * @param weight The initial weight (should be between 0 and 1)
+     */
+    fun setInitialConnectionWeight(direction: Direction, weight: Double) {
+        require(weight in 0.0..1.0) { "Weight must be between 0 and 1" }
+        initialConnectionWeights[direction] = weight
+    }
+
+    /**
+     * Gets the initial connection weight for a specific direction
+     * @param direction The direction to get the weight for
+     * @return The initial weight for that direction, or 0.0 if not set
+     */
+    fun getInitialConnectionWeight(direction: Direction): Double {
+        return initialConnectionWeights[direction] ?: 0.0
+    }
+
+    /**
      * Current value of this neuron.
      */
     protected var value = 0.0

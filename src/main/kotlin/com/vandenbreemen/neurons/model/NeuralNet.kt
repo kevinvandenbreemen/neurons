@@ -15,25 +15,25 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 // Up connection
                 val upRow = if (i > 0) i - 1 else rows - 1
                 val targetNeuron = grid[upRow][j]
-                val initialWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, targetNeuron)
-                neuron.connect(targetNeuron, initialWeight)
+                val upWeight = neuron.getInitialConnectionWeight(Direction.UP)
+                neuron.connect(targetNeuron, upWeight)
 
                 // Down connection
                 val downRow = if (i < rows - 1) i + 1 else 0
                 val downNeuron = grid[downRow][j]
-                val downWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, downNeuron)
+                val downWeight = neuron.getInitialConnectionWeight(Direction.DOWN)
                 neuron.connect(downNeuron, downWeight)
 
                 // Left connection
                 val leftCol = if (j > 0) j - 1 else cols - 1
                 val leftNeuron = grid[i][leftCol]
-                val leftWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, leftNeuron)
+                val leftWeight = neuron.getInitialConnectionWeight(Direction.LEFT)
                 neuron.connect(leftNeuron, leftWeight)
 
                 // Right connection
                 val rightCol = if (j < cols - 1) j + 1 else 0
                 val rightNeuron = grid[i][rightCol]
-                val rightWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, rightNeuron)
+                val rightWeight = neuron.getInitialConnectionWeight(Direction.RIGHT)
                 neuron.connect(rightNeuron, rightWeight)
 
                 // Diagonal connections
@@ -41,28 +41,28 @@ class NeuralNet(val rows: Int, val cols: Int, val neuronProvider: NeuronProvider
                 val upLeftRow = if (i > 0) i - 1 else rows - 1
                 val upLeftCol = if (j > 0) j - 1 else cols - 1
                 val upLeftNeuron = grid[upLeftRow][upLeftCol]
-                val upLeftWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, upLeftNeuron)
+                val upLeftWeight = neuron.getInitialConnectionWeight(Direction.UP_LEFT)
                 neuron.connect(upLeftNeuron, upLeftWeight)
 
                 // Up-Right
                 val upRightRow = if (i > 0) i - 1 else rows - 1
                 val upRightCol = if (j < cols - 1) j + 1 else 0
                 val upRightNeuron = grid[upRightRow][upRightCol]
-                val upRightWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, upRightNeuron)
+                val upRightWeight = neuron.getInitialConnectionWeight(Direction.UP_RIGHT)
                 neuron.connect(upRightNeuron, upRightWeight)
 
                 // Down-Left
                 val downLeftRow = if (i < rows - 1) i + 1 else 0
                 val downLeftCol = if (j > 0) j - 1 else cols - 1
                 val downLeftNeuron = grid[downLeftRow][downLeftCol]
-                val downLeftWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, downLeftNeuron)
+                val downLeftWeight = neuron.getInitialConnectionWeight(Direction.DOWN_LEFT)
                 neuron.connect(downLeftNeuron, downLeftWeight)
 
                 // Down-Right
                 val downRightRow = if (i < rows - 1) i + 1 else 0
                 val downRightCol = if (j < cols - 1) j + 1 else 0
                 val downRightNeuron = grid[downRightRow][downRightCol]
-                val downRightWeight = neuron.weightCalculator.calculateStartingConnectionWeight(neuron, downRightNeuron)
+                val downRightWeight = neuron.getInitialConnectionWeight(Direction.DOWN_RIGHT)
                 neuron.connect(downRightNeuron, downRightWeight)
             }
         }
