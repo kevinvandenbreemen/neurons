@@ -38,11 +38,13 @@ fun normalizedStrengthUpdate(
     currentStrength: Double,
     learningRate: Double
 ): Double {
-    val maxPossibleSrc = abs(sourceMaxActivation)
-    val maxPossibleTgt = abs(targetMaxActivation)
-    val proxSrc = abs(sourceActivation) / maxPossibleSrc
-    val proxTgt = abs(targetActivation) / maxPossibleTgt
-    val delta = (proxSrc * proxTgt) - currentStrength // Avoid division by zero
+    val maxPossibleSrc = (sourceMaxActivation)
+    val maxPossibleTgt = (targetMaxActivation)
+    val proxSrc = (sourceActivation) / maxPossibleSrc
+    val proxTgt = (targetActivation) / maxPossibleTgt
+    val difference = abs(proxSrc - proxTgt)
+    val similarityFactor = 1.0 / (1.0 + difference) // Approaches 1 as difference approaches 0
+    val delta = similarityFactor - currentStrength
     return currentStrength + (learningRate * delta)
 }
 
