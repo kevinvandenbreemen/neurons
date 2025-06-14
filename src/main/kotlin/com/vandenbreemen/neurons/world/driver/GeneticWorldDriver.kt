@@ -120,11 +120,12 @@ class GeneticWorldDriver(
                     }
 
                     //  If we get too many errors then we should stop
-                    if (numMoves.toDouble() - ((simulation.errorCount * errorWeight) / numMoves.toDouble()) < minScore) {
+                    if (1.0 - (simulation.errorCount * errorWeight) / numMoves.toDouble() < minScore) {
                         return@async 0.0
                     }
 
-                    if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
+                    val noMovementProportion = numIterationWithoutMovement / numMoves.toDouble()
+                    if (1.0 - noMovementProportion < minScore) {
                         return@async 0.0
                     }
                 }
