@@ -119,6 +119,11 @@ class GeneticWorldDriver(
                         didAgentMove = true
                     }
 
+                    //  If we get too many errors then we should stop
+                    if (numMoves.toDouble() - ((simulation.errorCount * errorWeight) / numMoves.toDouble()) < minScore) {
+                        return@async 0.0
+                    }
+
                     if ((numMoves.toDouble() - numIterationWithoutMovement) <= 0) {
                         return@async 0.0
                     }
