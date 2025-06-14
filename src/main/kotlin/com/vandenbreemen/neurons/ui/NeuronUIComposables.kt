@@ -20,7 +20,10 @@ import com.vandenbreemen.neurons.model.*
 import com.vandenbreemen.neurons.model.Direction
 import com.vandenbreemen.neurons.world.viewmodel.NeuralNetApplicationState
 import kotlinx.coroutines.delay
+import kotlin.math.PI
 import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun NeuronLegendDialog(
@@ -280,7 +283,7 @@ fun NeuralNetworkDisplay(
 
                         is MotorNeuron -> {
                             //  Draw a green M at the center of the neuron
-                            val mSize = minOf(cellWidth, cellHeight) * 0.2f // Size of the M
+                            val mSize = minOf(cellWidth, cellHeight) * 0.15f // Size of the M, reduced from 0.2f
                             drawLine(
                                 color = Color.Green,
                                 start = Offset(centerX - mSize, centerY + mSize),
@@ -303,6 +306,63 @@ fun NeuralNetworkDisplay(
                                 color = Color.Green,
                                 start = Offset(centerX + mSize, centerY - mSize),
                                 end = Offset(centerX - mSize, centerY + mSize),
+                                strokeWidth = 2f
+                            )
+
+                            // Draw directional arrow in top right corner
+                            val arrowSize = minOf(cellWidth, cellHeight) * 0.15f
+                            val arrowX = j * cellWidth + cellWidth * 0.8f
+                            val arrowY = i * cellHeight + cellHeight * 0.2f
+
+                            // Determine direction based on actionId
+                            val angle = when {
+                                neuron.actionId in MotorNeuronDirections.NORTH_START..MotorNeuronDirections.NORTH_END -> PI / 2
+                                neuron.actionId in MotorNeuronDirections.NORTHEAST_START..MotorNeuronDirections.NORTHEAST_END -> PI / 4
+                                neuron.actionId in MotorNeuronDirections.EAST_START..MotorNeuronDirections.EAST_END -> 0.0
+                                neuron.actionId in MotorNeuronDirections.SOUTHEAST_START..MotorNeuronDirections.SOUTHEAST_END -> -PI / 4
+                                neuron.actionId in MotorNeuronDirections.SOUTH_START..MotorNeuronDirections.SOUTH_END -> -PI / 2
+                                neuron.actionId in MotorNeuronDirections.SOUTHWEST_START..MotorNeuronDirections.SOUTHWEST_END -> -3 * PI / 4
+                                neuron.actionId in MotorNeuronDirections.WEST_START..MotorNeuronDirections.WEST_END -> PI
+                                neuron.actionId in MotorNeuronDirections.NORTHWEST_START..MotorNeuronDirections.NORTHWEST_END -> 3 * PI / 4
+                                else -> 0.0
+                            }
+
+                            // Draw arrow shaft
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(arrowX, arrowY),
+                                end = Offset(
+                                    arrowX + (arrowSize * cos(angle)).toFloat(),
+                                    arrowY + (arrowSize * sin(angle)).toFloat()
+                                ),
+                                strokeWidth = 2f
+                            )
+
+                            // Draw arrow head
+                            val arrowHeadSize = arrowSize * 0.4f
+                            val arrowHeadAngle1 = angle + PI / 6 // 30 degrees
+                            val arrowHeadAngle2 = angle - PI / 6 // -30 degrees
+
+                            val arrowEndX = arrowX + (arrowSize * cos(angle)).toFloat()
+                            val arrowEndY = arrowY + (arrowSize * sin(angle)).toFloat()
+
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(arrowEndX, arrowEndY),
+                                end = Offset(
+                                    arrowEndX - (arrowHeadSize * cos(arrowHeadAngle1)).toFloat(),
+                                    arrowEndY - (arrowHeadSize * sin(arrowHeadAngle1)).toFloat()
+                                ),
+                                strokeWidth = 2f
+                            )
+
+                            drawLine(
+                                color = Color.Green,
+                                start = Offset(arrowEndX, arrowEndY),
+                                end = Offset(
+                                    arrowEndX - (arrowHeadSize * cos(arrowHeadAngle2)).toFloat(),
+                                    arrowEndY - (arrowHeadSize * sin(arrowHeadAngle2)).toFloat()
+                                ),
                                 strokeWidth = 2f
                             )
                         }
